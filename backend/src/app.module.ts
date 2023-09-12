@@ -4,9 +4,11 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongooseConfigFactory } from './config/database.config.service';
+import { ProjectModule } from './modules/project/project.module';
 
 @Module({
   imports: [
+    ProjectModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
