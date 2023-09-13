@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { EmployeeService } from './employee.service';
+import { EmployeeService } from './service/employee.service';
 import { CreateController } from './use-case/create/create.controller';
 import { GetOneController } from './use-case/get-one/get-one.controller';
 import { DeleteController } from './use-case/delete/delete.controller';

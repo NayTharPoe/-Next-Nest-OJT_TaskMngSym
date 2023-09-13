@@ -1,5 +1,5 @@
 import { Controller, Put, Response, Param, Body } from '@nestjs/common';
-import { EmployeeService } from '../../employee.service';
+import { EmployeeService } from '../../service/employee.service';
 import { UpdateEmployeeResponseDto } from './update.response.dto';
 import { UpdateEmployeeRequestDto } from './update.request.dto';
 

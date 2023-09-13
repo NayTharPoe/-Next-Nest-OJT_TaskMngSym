@@ -7,6 +7,7 @@ import { mongooseConfigFactory } from './config/database.config.service';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ProjectModule } from './modules/project/project.module';
+import { TaskModule } from './modules/task/task.module';
 
 const configService = new ConfigService();
 
@@ -31,6 +32,7 @@ const configService = new ConfigService();
       },
     }),
     EmployeeModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],

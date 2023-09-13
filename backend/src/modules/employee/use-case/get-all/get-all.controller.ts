@@ -1,5 +1,5 @@
 import { Controller, Get, Response } from '@nestjs/common';
-import { EmployeeService } from '../../employee.service';
+import { EmployeeService } from '../../service/employee.service';
 import { GetAllEmployeeResponseDto } from './getAll.response.dto';
 
 @Controller('employee')

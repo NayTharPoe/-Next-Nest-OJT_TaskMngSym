@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { employee } from './entities/employee.entities';
+import { employee } from '../entities/employee.entities';
 import { Model } from 'mongoose';
 import * as randomstring from 'randomstring';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { CreateEmployeeRequestDto } from './use-case/create/create.request.dto';
+import { CreateEmployeeRequestDto } from '../use-case/create/create.request.dto';
 import { VerifyEmailService } from 'src/template/verifyEmail';
 import { EmailService } from 'src/utils/sendMail';
-import { UpdateEmployeeRequestDto } from './use-case/update/update.request.dto';
+import { UpdateEmployeeRequestDto } from '../use-case/update/update.request.dto';
 
 @Injectable()
 export class EmployeeService {

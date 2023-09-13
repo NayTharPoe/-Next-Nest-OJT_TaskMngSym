@@ -5,7 +5,7 @@ import {
   Body,
   NotFoundException,
 } from '@nestjs/common';
-import { EmployeeService } from '../../employee.service';
+import { EmployeeService } from '../../service/employee.service';
 import { CreateEmployeeRequestDto } from './create.request.dto';
 import { CreateEmployeeResponseDto } from './create.response.dto';
 
