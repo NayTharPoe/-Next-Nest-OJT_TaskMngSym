@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;900&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Public Sans', sans-serif;
+}
+
+/* custom design for table list */
+.css-1whpjm6-MuiToolbar-root {
+  background-color: #ffffff;
+  border-bottom: 1px solid #efefef;
+  height: 90px !important;
+}
+
+.css-pjjt8i-MuiToolbar-root {
+  border-bottom: 1px solid #efefef;
+  height: 90px !important;
+}
+
+
+/* custom design for notification  */
+.css-6hp17o-MuiList-root-MuiMenu-list {
+  padding: 0;
+}
+
+.css-1clv3wg-MuiPaper-root-MuiAppBar-root {
+  box-shadow: none;
+}
+
+.css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper{
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+}
+
+.css-hip9hq-MuiPaper-root-MuiAppBar-root{
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+}
+
+.css-11yukd5-MuiTabs-indicator{
+  background-color: transparent;
+}
+
