@@ -1,19 +1,25 @@
 import { Controller, Get, Res, Query, HttpStatus } from '@nestjs/common';
 import { ProjectService } from '../../service/project.service';
+import { GetAllProjectResponseDto } from './get-all.response.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
-import { GetAllResponseDto } from './get-all.response.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiQuery } from '@nestjs/swagger';
 
-@Controller('project')
+@Controller('projects')
 @ApiTags('Project')
 export class GetAllProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Get('/list')
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    description: 'Number of items per page',
+  })
+  @ApiQuery({ name: 'page', type: Number, description: 'Page number' })
   async findAll(
     @Res() response,
     @Query() query: ExpressQuery,
-  ): Promise<GetAllResponseDto[]> {
+  ): Promise<GetAllProjectResponseDto[]> {
     try {
       const result = await this.projectService.findAll(query);
       return response.status(HttpStatus.OK).json({

@@ -29,7 +29,16 @@ export class TaskService {
   }
 
   async getTaskById(id: string): Promise<task> {
-    const data = await this.taskModel.findById(id);
+    const data = await this.taskModel.findById(id).populate([
+      {
+        path: 'project',
+        select: '_id projectName',
+      },
+      {
+        path: 'assignedEmployee',
+        select: '_id employeeName',
+      },
+    ]);
     if (!data) {
       throw new NotFoundException('This user does not exists!');
     }

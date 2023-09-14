@@ -2,21 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config/dist';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { setupSwagger } from './infra/swagger/swagger.config';
+import { Logger } from '@nestjs/common';
 
 const configService = new ConfigService();
+const logger = new Logger('Main');
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const config = new DocumentBuilder()
-    .setTitle('Task Management System API')
-    .setDescription('API of task management system built with nestjs')
-    .setVersion('1.0.0')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
+  setupSwagger(app);
   app.enableCors({
     allowedHeaders: '*',
     origin: '*',
@@ -24,6 +19,14 @@ async function bootstrap() {
   });
 
   app.useGlobalPipes(new ValidationPipe({ stopAtFirstError: true }));
-  await app.listen(configService.get('PORT'));
+
+  const port = configService.get('PORT') || 8080;
+
+  await app.listen(port, () => {
+    logger.log(`Server is running at http://localhost:${port}`);
+    logger.log(
+      `Swagger API docs are running at http://localhost:${port}/api/docs`,
+    );
+  });
 }
 bootstrap();

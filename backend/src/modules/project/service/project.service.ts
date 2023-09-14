@@ -1,15 +1,15 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Query } from 'express-serve-static-core';
-import { ProjectEntity, ProjectDocument } from '../entities/project.entity';
+import { ProjectDocument } from '../entities/project.entity';
 import { CreateProjectRequestDto } from '../use-case/create/create.request.dto';
 import { UpdateProjectRequestDto } from '../use-case/update/update.request.dto';
 
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectModel(ProjectEntity.name)
+    @InjectModel('project')
     private readonly projectModel: Model<ProjectDocument>,
   ) {}
 
@@ -38,17 +38,15 @@ export class ProjectService {
       .sort({ createdAt: -1 })
       .select('-__v');
 
-    const result = { projects, totalProjects };
-    return result;
+    return { projects, totalProjects };
   }
 
   // find one service
   async findOne(id: string): Promise<ProjectDocument> {
     const project = await this.projectModel.findById(id);
     if (!project) {
-      throw new HttpException(
+      throw new NotFoundException(
         'There is no project with this id to retrieve',
-        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -62,10 +60,7 @@ export class ProjectService {
   ): Promise<ProjectDocument> {
     const project = await this.projectModel.findById(id);
     if (!project) {
-      throw new HttpException(
-        'There is no project with this id to update',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException('There is no project with this id to update');
     }
 
     return await this.projectModel.findByIdAndUpdate(id, updateProjectDto, {
@@ -77,10 +72,7 @@ export class ProjectService {
   async remove(id: string): Promise<ProjectDocument> {
     const project = await this.projectModel.findById(id);
     if (!project) {
-      throw new HttpException(
-        'There is no project with this id to delete',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException('There is no project with this id to delete');
     }
 
     return await this.projectModel.findByIdAndDelete(id);

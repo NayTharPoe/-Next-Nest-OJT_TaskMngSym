@@ -1,5 +1,5 @@
-export class GetOneResponseDto {
-  constructor(props: GetOneResponseDto) {
+export class GetOneProjectResponseDto {
+  constructor(props: GetOneProjectResponseDto) {
     Object.assign(this, props);
   }
 }

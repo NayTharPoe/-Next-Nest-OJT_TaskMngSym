@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Res, HttpStatus } from '@nestjs/common';
 import { ProjectService } from '../../service/project.service';
-import { GetOneResponseDto } from './get-one.response.dto';
+import { GetOneProjectResponseDto } from './get-one.response.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('project')
@@ -12,7 +12,7 @@ export class GetDetailProjectController {
   async findOne(
     @Res() response,
     @Param('id') id: string,
-  ): Promise<GetOneResponseDto> {
+  ): Promise<GetOneProjectResponseDto> {
     try {
       const result = await this.projectService.findOne(id);
       return response

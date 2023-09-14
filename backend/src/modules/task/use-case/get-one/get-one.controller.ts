@@ -6,7 +6,7 @@ import {
   Get,
 } from '@nestjs/common';
 import { TaskService } from '../../service/task.service';
-import { GetOneResponseDto } from 'src/modules/project/use-case/get-one/get-one.response.dto';
+import { GetOneTaskResponseDto } from './getOne.response.dto';
 
 @Controller('task')
 export class GetOneController {
@@ -16,7 +16,7 @@ export class GetOneController {
   async getById(
     @Param('id') id: string,
     @Response() res,
-  ): Promise<GetOneResponseDto> {
+  ): Promise<GetOneTaskResponseDto> {
     try {
       const data = await this.taskService.getTaskById(id);
       return res.status(200).json({ message: 'Get Task By id', data });

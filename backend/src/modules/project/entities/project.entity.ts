@@ -14,9 +14,6 @@ export class ProjectEntity extends Document {
   @Prop()
   description: string;
 
-  @Prop()
-  stack: string;
-
   @Prop({ required: true })
   startDate: string;
 

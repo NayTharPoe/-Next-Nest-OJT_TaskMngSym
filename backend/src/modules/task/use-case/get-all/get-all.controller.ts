@@ -10,7 +10,7 @@ export class GetAllController {
   async getAllTask(@Response() res): Promise<GetAllTaskResponseDto> {
     try {
       const data = await this.taskService.getAllTaskList();
-      return res.status(200).json({ messag: 'Get All Task Lists', data });
+      return res.status(200).json({ message: 'Get All Task Lists', data });
     } catch (err) {
       throw new NotFoundException(err.message);
     }
