@@ -11,6 +11,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { EmailService } from 'src/utils/sendMail';
 import { VerifyEmailService } from 'src/template/verifyEmail';
 import { SECRET_KEY } from 'src/common/constants/constant';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -21,12 +23,18 @@ import { SECRET_KEY } from 'src/common/constants/constant';
     }),
   ],
   controllers: [
-    CreateController,
     GetAllController,
+    CreateController,
+    GetOneController,
     UpdateController,
     DeleteController,
-    GetOneController,
   ],
-  providers: [EmployeeService, EmailService, VerifyEmailService],
+  providers: [
+    EmployeeService,
+    EmailService,
+    VerifyEmailService,
+    CloudinaryService,
+    ConfigService,
+  ],
 })
 export class EmployeeModule {}

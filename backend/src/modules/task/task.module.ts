@@ -6,12 +6,20 @@ import { GetOneController } from './use-case/get-one/get-one.controller';
 import { UpdateController } from './use-case/update/update.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { taskSchema } from './entities/task.entities';
+import { JwtModule } from '@nestjs/jwt';
+import { SECRET_KEY } from 'src/common/constants/constant';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'task', schema: taskSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: 'task', schema: taskSchema }]),
+    JwtModule.register({
+      secret: SECRET_KEY,
+      signOptions: { expiresIn: '1D' },
+    }),
+  ],
   controllers: [
-    CreateController,
     GetAllController,
+    CreateController,
     GetOneController,
     UpdateController,
   ],

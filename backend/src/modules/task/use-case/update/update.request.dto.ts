@@ -1,37 +1,36 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateTaskRequestDto {
-  @IsString()
+  @ApiProperty()
   project: string;
 
-  @IsString()
+  @ApiProperty()
   assignedEmployee: string;
 
-  @IsString()
+  @ApiProperty()
   title: string;
 
-  @IsString()
+  @ApiProperty()
   description: string;
 
-  @IsString()
+  @ApiProperty()
   estimateHour: number;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   actualHour: number;
 
-  @IsString()
+  @ApiProperty()
   status: string;
 
-  // @IsString()
+  @ApiProperty()
   estimate_start_date: string;
 
-  // @IsString()
+  @ApiProperty()
   estimate_finish_date: string;
 
-  // @IsString()
+  @ApiProperty()
   actual_start_date: string;
 
-  // @IsString()
+  @ApiProperty()
   actual_finish_date: string;
 }

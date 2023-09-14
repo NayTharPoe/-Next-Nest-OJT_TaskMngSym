@@ -31,12 +31,17 @@ export class TaskService {
   async getTaskById(id: string): Promise<task> {
     const data = await this.taskModel.findById(id);
     if (!data) {
-      throw new NotFoundException('This user does not exists!');
+      throw new NotFoundException('This task does not exists!');
     }
     return data;
   }
 
   async updateTask(id: string, payload: UpdateTaskRequestDto): Promise<task> {
+    const task = await this.taskModel.findOne({ _id: id });
+
+    if (!task) {
+      throw new NotFoundException('No task with this id! you cannot update');
+    }
     const data = await this.taskModel.findByIdAndUpdate(id, payload, {
       new: true,
     });

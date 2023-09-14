@@ -1,11 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ProjectEntity } from 'src/modules/project/entities/project.entity';
 
 @Schema({
   timestamps: true,
 })
 export class task {
-  @Prop({ ref: ProjectEntity.name, required: true })
+  @Prop({ ref: 'project', required: true })
   project: string;
 
   @Prop({ ref: 'employee', required: true })

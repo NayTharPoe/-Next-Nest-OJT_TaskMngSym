@@ -9,6 +9,7 @@ import { CreateEmployeeRequestDto } from '../use-case/create/create.request.dto'
 import { VerifyEmailService } from 'src/template/verifyEmail';
 import { EmailService } from 'src/utils/sendMail';
 import { UpdateEmployeeRequestDto } from '../use-case/update/update.request.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class EmployeeService {
@@ -17,27 +18,33 @@ export class EmployeeService {
     private readonly emailService: EmailService,
     private readonly verifyEmailService: VerifyEmailService,
     private readonly jwtService: JwtService,
+    private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async getAllEmployee(): Promise<employee[]> {
-    return await this.employeeModel.find();
+  async getAllEmployee(): Promise<any> {
+    return await this.employeeModel.find().select('-password -token');
   }
 
   async getEmployeeById(id: string): Promise<employee> {
-    const employee = await this.employeeModel.findById(id);
+    const employee = await this.employeeModel
+      .findById(id)
+      .select('-password -token');
     if (!employee) {
       throw new NotFoundException('No User with this id');
     }
     return employee;
   }
 
-  async createEmployee(payload: CreateEmployeeRequestDto): Promise<any> {
+  async createEmployee(
+    payload: CreateEmployeeRequestDto,
+    profile?: Express.Multer.File,
+  ): Promise<any> {
     const employeeData = {
       employeeName: payload.employeeName,
       email: payload.email,
       address: payload.address,
       phone: payload.phone,
-      DOB: payload.DOB,
+      dob: payload.dob,
       position: payload.position,
     };
 
@@ -52,11 +59,17 @@ export class EmployeeService {
 
     const token = this.jwtService.sign({ email: employeeData.email });
 
+    const cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
+      return { data: data.secure_url };
+    });
+
     const data = {
       ...employeeData,
       password: hashedPassword,
       token,
+      profile: profile ? cloudImg.data : undefined,
     };
+
     await this.employeeModel.create(data);
 
     const verifyLink = `http://localhost:3000/verify?token=${token}`;
@@ -75,10 +88,26 @@ export class EmployeeService {
   async updateEmployeeByID(
     id: string,
     employee: UpdateEmployeeRequestDto,
+    profile?: Express.Multer.File,
   ): Promise<employee> {
+    const user = await this.employeeModel.findOne({ _id: id });
+
+    if (!user) {
+      throw new NotFoundException('No user with this id! you cannot update');
+    }
+
+    const cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
+      return { data: data.secure_url };
+    });
+
+    const data = {
+      ...employee,
+      profile: profile ? cloudImg.data : undefined,
+    };
+
     const employeeUpdate = await this.employeeModel.findByIdAndUpdate(
       id,
-      employee,
+      data,
       {
         new: true,
       },
@@ -87,6 +116,11 @@ export class EmployeeService {
   }
 
   async dropEmployee(id: string): Promise<employee> {
+    const user = await this.employeeModel.findOne({ _id: id });
+
+    if (!user) {
+      throw new NotFoundException('No user with this id! you cannot delete');
+    }
     return await this.employeeModel.findByIdAndDelete(id);
   }
 }

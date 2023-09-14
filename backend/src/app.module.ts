@@ -5,15 +5,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongooseConfigFactory } from './config/database.config.service';
 import { EmployeeModule } from './modules/employee/employee.module';
-import { MailerModule } from '@nestjs-modules/mailer';
 import { ProjectModule } from './modules/project/project.module';
 import { TaskModule } from './modules/task/task.module';
-
-const configService = new ConfigService();
+import { AuthModule } from './modules/auth/auth.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
-    ProjectModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
@@ -22,15 +20,9 @@ const configService = new ConfigService();
       useFactory: mongooseConfigFactory,
       inject: [ConfigService],
     }),
-    MailerModule.forRoot({
-      transport: {
-        host: configService.get('MAIL_SERVICE'),
-        auth: {
-          user: configService.get('MAIL_USER'),
-          pass: configService.get('MAIL_PASS'),
-        },
-      },
-    }),
+    CloudinaryModule,
+    AuthModule,
+    ProjectModule,
     EmployeeModule,
     TaskModule,
   ],

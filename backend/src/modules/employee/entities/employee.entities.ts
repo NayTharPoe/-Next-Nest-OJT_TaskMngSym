@@ -29,9 +29,9 @@ export class employee {
   phone: string;
 
   @Prop()
-  DOB: string;
+  dob: string;
 
-  @Prop()
+  @Prop({ required: true })
   position: string;
 }
 
