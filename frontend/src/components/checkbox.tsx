@@ -46,7 +46,7 @@ export const BpCheckedIcon = styled(BpIcon)({
   },
 });
 
-function BpCheckbox(props: any) {
+const BpCheckbox = (props: any) => {
   return (
     <Checkbox
       sx={{
@@ -61,4 +61,6 @@ function BpCheckbox(props: any) {
     />
   );
 }
+
+export default BpCheckbox;
 

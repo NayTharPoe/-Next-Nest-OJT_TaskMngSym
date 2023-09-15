@@ -1,20 +1,25 @@
 import { Button, styled } from '@mui/material';
 import React from 'react';
+import palette from '@/theme/palette';
 
 const TableBtn = ({ tableBtnText } : {tableBtnText: string}) => {
   let colorCode
+  const primaryColor = palette.primary.main
+  const secondaryColor = palette.secondary.main
+  const errorColor = palette.error.main
+
   switch (tableBtnText) {
     case 'Edit':
-      colorCode = '#BDD2BD'
+      colorCode = secondaryColor
       break;
-    case 'Preview': 
-      colorCode = '#C9B7EB'
+    case 'Preview':
+      colorCode = primaryColor
       break;
-    case 'Remove': 
-      colorCode = '#fc8383'
+    case 'Remove':
+      colorCode = errorColor
       break;
     default:
-      colorCode = '#BDD2BD'
+      colorCode = secondaryColor
       break;
   }
 
@@ -26,18 +31,18 @@ const TableBtn = ({ tableBtnText } : {tableBtnText: string}) => {
     border: '1px solid',
     borderRadius: '20px',
     backgroundColor: colorCode,
-    color: '#222121',
-    borderColor: '#BDD2BD',
+    color: palette.text.primary,
+    borderColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
     marginRight: '10px',
     "&:hover": {
-      backgroundColor: tableBtnText === "Edit" ? "#a8c8a8" : "#bca4e6",
-      borderColor: tableBtnText === "Edit" ? "#a8c8a8" : "#bca4e6",
+      backgroundColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
+      borderColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
       boxShadow: "none",
     },
     "&:active": {
       boxShadow: "none",
-      backgroundColor: tableBtnText === "Edit" ? "#a8c8a8" : "#bca4e6",
-      borderColor: tableBtnText === "Edit" ? "#a8c8a8" : "#bca4e6",
+      backgroundColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
+      borderColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
     }
   });
 

@@ -13,7 +13,7 @@ import Header from '@/layouts/header';
 import RenderContent from '@/layouts/nav';
 
 const MainLayout = (props: any) => {
-  const drawerWidth = 280;
+  const drawerWidth = 290;
 
   const { window, children } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -32,7 +32,7 @@ const MainLayout = (props: any) => {
           width: { xl: `calc(100% - ${drawerWidth}px)` },
           ml: { xl: `${drawerWidth}px` },
           boxShadow: 'none',
-          backgroundColor: 'milky.base',
+          backgroundColor: (theme) => `${theme.palette.background.paper}`,
         }}
       >
         <Toolbar>
@@ -41,7 +41,7 @@ const MainLayout = (props: any) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' }, color: 'background.base' }}
+            sx={{ mr: 2, display: { md: 'none' }, color:(theme: any) => `${theme.palette.charcoal.main}` }}
           >
             <MenuIcon />
           </IconButton>
@@ -70,7 +70,7 @@ const MainLayout = (props: any) => {
           }}
           PaperProps={{
             sx: {
-              bgcolor: 'background.base',
+              backgroundColor:(theme: any) => `${theme.palette.charcoal.main}`
             },
           }}
         >
@@ -89,7 +89,7 @@ const MainLayout = (props: any) => {
           open
           PaperProps={{
             sx: {
-              bgcolor: 'bgColor.main',
+              backgroundColor:(theme: any) => `${theme.palette.charcoal.main}`
             },
           }}
         >
@@ -104,7 +104,7 @@ const MainLayout = (props: any) => {
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           height: '100vh',
-          // backgroundColor: (theme) => `${theme.palette.milky['500']}`,
+          backgroundColor: (theme) => `${theme.palette.background.paper}`,
         }}
       >
         <Toolbar />

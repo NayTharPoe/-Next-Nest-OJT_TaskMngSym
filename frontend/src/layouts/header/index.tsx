@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Box } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, Paper } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
@@ -11,8 +11,10 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import SwipeableViews from 'react-swipeable-views';
+// import SwipeableViews from 'react-swipeable-views';
 import { useTheme } from '@mui/material/styles';
+import palette from '@/theme/palette';
+import { useRouter } from 'next/router';
 
 
 interface TabPanelProps {
@@ -66,7 +68,7 @@ const Header = () => {
   const [anchorElMenu, setAnchorElMenu] = useState<null | HTMLElement>(null);
   const theme = useTheme();
   const [value, setValue] = useState(0);
-  
+
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -90,92 +92,117 @@ const Header = () => {
   const handleChangeIndex = (index: number) => {
     setValue(index);
   };
+
+  const router = useRouter();
+  const routePath = router.pathname.split('/')[1];
+  let pageTitle = ''
+  switch (routePath) {
+    case 'project':
+      pageTitle = 'Projects'
+      break;
+    case 'employee':
+      pageTitle = 'Employees'
+      break;
+    case 'task':
+      pageTitle = 'Tasks'
+      break;
+    case 'report':
+      pageTitle = 'Reports'
+      break;
+    default:
+      break;
+  }
   return (
-    <Box sx={{ display: { xs: 'none', md: 'flex', gap: 15 }, ml: 'auto' }}>
-      {/* notification item */}
+    <Box sx={{ width: '100%',display: { xs:'none', md: 'flex', gap: 15 }, mt:3, mb:3,justifyContent:'space-between', alignItems:'center' }}>
       <Box>
-        <IconButton aria-label={notificationsLabel(100)} onClick={handleOpenMessageMenu}>
-          <Badge badgeContent={100} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <Menu
-          sx={{ mt: '45px', boxShadow: 0 }}
-          id="noti-appbar"
-          anchorEl={anchorElMenu}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={Boolean(anchorElMenu)}
-          onClose={handleCloseMessageMenu}
-        >
-          <Box sx={{ bgcolor: 'background.paper', width: 370 }}>
-            <AppBar position="static" sx={{backgroundColor: 'transparent'}}>
-              <Tabs
-                value={value}
-                onChange={handleChange}
-                indicatorColor="secondary"
-                textColor="inherit"
-                variant="fullWidth"
-                sx={{
-                  backgroundColor: (theme: any) => `${theme.palette.background['100']}`,
-                }}
-              >
-                <Tab label="Reports" {...a11yProps(0)} />
-                <Tab label="Tasks" {...a11yProps(1)} />
-              </Tabs>
-            </AppBar>
-            <SwipeableViews
-              axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-              index={value}
-              onChangeIndex={handleChangeIndex}
-            >
-              <TabPanel value={value} index={0} dir={theme.direction}>
-                Reports Message
-              </TabPanel>
-              <TabPanel value={value} index={1} dir={theme.direction}>
-                Tasks Message
-              </TabPanel>
-            </SwipeableViews>
-          </Box>
-        </Menu>
+        <Typography variant='h2' sx={{color: palette.text.primary}}>{pageTitle}</Typography>
       </Box>
-      {/* profile item */}
-      <Box>
-        <Tooltip title="Account settings">
-          <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-            <Avatar alt='profile picture' src='https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg'/>
+      <Box sx={{width: 'max-content',display: 'flex', gap:3}}>
+        {/* notification item */}
+        <Box>
+          <IconButton aria-label={notificationsLabel(100)} onClick={handleOpenMessageMenu}>
+            <Badge badgeContent={100} color="error">
+              <NotificationsIcon />
+            </Badge>
           </IconButton>
-        </Tooltip>
-        <Menu
-          sx={{ mt: '45px' }}
-          id="menu-appbar"
-          anchorEl={anchorElUser}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={Boolean(anchorElUser)}
-          onClose={handleCloseUserMenu}
-        >
-          {settings.map((setting) => (
-            <MenuItem key={setting} onClick={handleCloseUserMenu}>
-              <Typography textAlign="center">{setting}</Typography>
-            </MenuItem>
-          ))}
-        </Menu>
-      </Box> 
+          <Menu
+            sx={{ mt: '45px', boxShadow: 0 }}
+            id="noti-appbar"
+            anchorEl={anchorElMenu}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(anchorElMenu)}
+            onClose={handleCloseMessageMenu}
+          >
+            <Box sx={{ width: 370 }}>
+              <AppBar position="static" sx={{backgroundColor: 'transparent'}}>
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  indicatorColor="secondary"
+                  textColor="inherit"
+                  variant="fullWidth"
+                  sx={{
+                    backgroundColor: (theme: any) => `${theme.palette.background['100']}`,
+                  }}
+                >
+                  <Tab label="Reports" {...a11yProps(0)} />
+                  <Tab label="Tasks" {...a11yProps(1)} />
+                </Tabs>
+              </AppBar>
+              {/* <SwipeableViews
+                axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+                index={value}
+                onChangeIndex={handleChangeIndex}
+              >
+                <TabPanel value={value} index={0} dir={theme.direction}>
+                  Reports Message
+                </TabPanel>
+                <TabPanel value={value} index={1} dir={theme.direction}>
+                  Tasks Message
+                </TabPanel>
+              </SwipeableViews> */}
+            </Box>
+          </Menu>
+        </Box>
+        {/* profile item */}
+        <Box>
+          <Tooltip title="Account settings">
+            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <Avatar alt='profile picture' src='https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg'/>
+            </IconButton>
+          </Tooltip>
+          <Menu
+            sx={{ mt: '45px' }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {settings.map((setting) => (
+              <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <Typography textAlign="center">{setting}</Typography>
+              </MenuItem>
+            ))}
+          </Menu>
+        </Box>
+      </Box>
     </Box>
   );
 };
