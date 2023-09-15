@@ -45,3 +45,8 @@ export class CreateReportRequestDto {
   @ApiProperty()
   problemFeeling: string;
 }
+
+export class CreateReportArrayRequestDto {
+  @ApiProperty({ type: [CreateReportRequestDto] })
+  readonly reports: CreateReportRequestDto[];
+}

@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Query } from 'express-serve-static-core';
+// import { Query } from 'express-serve-static-core';
 import { ProjectDocument } from '../entities/project.entity';
 import { CreateProjectRequestDto } from '../use-case/create/create.request.dto';
 import { UpdateProjectRequestDto } from '../use-case/update/update.request.dto';
-
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
 @Injectable()
 export class ProjectService {
   constructor(
@@ -22,19 +22,16 @@ export class ProjectService {
   }
 
   // find service
-  async findAll(
-    query: Query,
-  ): Promise<{ projects: ProjectDocument[]; totalProjects: number }> {
-    const resPerPage = Number(query.limit);
-    const currentPage = Number(query.page) || 1;
-    const skip = resPerPage * (currentPage - 1);
-
+  async findAll({ page, limit }: PaginationRequestDto): Promise<{
+    projects: ProjectDocument[];
+    totalProjects: number;
+  }> {
     const totalProjects = await this.projectModel.countDocuments();
 
-    const projects = await this.projectModel
+    const projects: any = await this.projectModel
       .find()
-      .limit(resPerPage)
-      .skip(skip)
+      .limit(limit)
+      .skip(limit * (page - 1))
       .sort({ createdAt: -1 })
       .select('-__v');
 

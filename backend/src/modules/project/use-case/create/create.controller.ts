@@ -2,7 +2,7 @@ import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import { ProjectService } from '../../service/project.service';
 import { CreateProjectRequestDto } from './create.request.dto';
 import { CreateProjectResponseDto } from './create.response.dto';
-import { ApiTags } from '@nestjs/swagger';
+import {  ApiTags } from '@nestjs/swagger';
 
 @Controller('project')
 @ApiTags('Project')

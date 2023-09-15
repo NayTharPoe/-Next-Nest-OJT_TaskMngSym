@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReportRequestDto } from '../use-case/create/create.request.dto';
-import { Query } from 'express-serve-static-core';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ReportDocument } from '../entities/report.entity';
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
 
 @Injectable()
 export class ReportService {
@@ -21,19 +21,16 @@ export class ReportService {
   }
 
   // find all service
-  async findAll(
-    query: Query,
-  ): Promise<{ reports: ReportDocument[]; totalReports: number }> {
-    const resPerPage = Number(query.limit);
-    const currentPage = Number(query.page) || 1;
-    const skip = resPerPage * (currentPage - 1);
-
+  async findAll({ limit, page }: PaginationRequestDto): Promise<{
+    reports: ReportDocument[];
+    totalReports: number;
+  }> {
     const totalReports = await this.reportModel.countDocuments();
 
     const reports = await this.reportModel
       .find()
-      .limit(resPerPage)
-      .skip(skip)
+      .limit(limit)
+      .skip(limit * (page - 1))
       .sort({ createdAt: -1 })
       .select('-__v');
 

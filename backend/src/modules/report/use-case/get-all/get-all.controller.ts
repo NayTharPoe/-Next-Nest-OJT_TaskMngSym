@@ -1,8 +1,8 @@
 import { Controller, Get, Res, HttpStatus, Query } from '@nestjs/common';
 import { ReportService } from '../../services/report.service';
 import { GetAllReportResponseDto } from './get-all.response.dto';
-import { Query as ExpressQuery } from 'express-serve-static-core';
 import { ApiTags, ApiQuery } from '@nestjs/swagger';
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
 
 @Controller('reports')
 @ApiTags('Report')
@@ -18,14 +18,15 @@ export class GetAllReportController {
   @ApiQuery({ name: 'page', type: Number, description: 'Page number' })
   async findAll(
     @Res() response,
-    @Query() query: ExpressQuery,
+    @Query() query: PaginationRequestDto,
   ): Promise<GetAllReportResponseDto[]> {
     try {
       const result = await this.reportService.findAll(query);
       return response.status(HttpStatus.OK).json({
         statusCode: 200,
         message: 'Retrieve all report successfully',
-        data: result,
+        data: result.reports,
+        count: result.totalReports
       });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({

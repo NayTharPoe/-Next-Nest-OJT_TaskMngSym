@@ -14,8 +14,8 @@ const configService = new ConfigService();
 
 @Module({
   imports: [
-    ProjectModule,
     EmployeeModule,
+    ProjectModule,
     TaskModule,
     ReportModule,
     ConfigModule.forRoot({

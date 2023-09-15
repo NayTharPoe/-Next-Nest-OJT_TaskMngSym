@@ -1,9 +1,8 @@
 import { Controller, Get, Res, Query, HttpStatus } from '@nestjs/common';
 import { ProjectService } from '../../service/project.service';
 import { GetAllProjectResponseDto } from './get-all.response.dto';
-import { Query as ExpressQuery } from 'express-serve-static-core';
 import { ApiTags, ApiQuery } from '@nestjs/swagger';
-
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
 @Controller('projects')
 @ApiTags('Project')
 export class GetAllProjectController {
@@ -18,14 +17,17 @@ export class GetAllProjectController {
   @ApiQuery({ name: 'page', type: Number, description: 'Page number' })
   async findAll(
     @Res() response,
-    @Query() query: ExpressQuery,
+    @Query() query: PaginationRequestDto,
   ): Promise<GetAllProjectResponseDto[]> {
     try {
+      console.log(query);
       const result = await this.projectService.findAll(query);
+
       return response.status(HttpStatus.OK).json({
         statusCode: HttpStatus.OK,
         message: 'Retrieve all project successfully',
-        data: result,
+        data: result.projects,
+        count: result.totalProjects,
       });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({
