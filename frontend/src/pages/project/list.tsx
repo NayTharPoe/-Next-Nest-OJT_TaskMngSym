@@ -21,11 +21,13 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import MainLayout from '@/layouts/MainLayout';
 import type { NextPageWithLayout } from '../_app';
-import { BpCheckedIcon } from '../../components/checkbox'
+import BpCheckbox, { BpCheckedIcon } from '../../components/checkbox'
 import { BpIcon } from '../../components/checkbox';
 import TableBtn from '../../components/tableBtn'
 import ProjectSearchBox from '../../components/project-search-input'
 import ConfirmDialog from '@/components/commonDialog';
+import AddNewBtn from '@/components/addNewBtn';
+import palette from '@/theme/palette';
 
 interface Data {
   projectName: string,
@@ -111,7 +113,6 @@ const headCells: readonly HeadCell[] = [
     numeric: false,
     disablePadding: true,
     label: 'Project Name',
-    
   },
   {
     id: 'language',
@@ -166,11 +167,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
-            disableRipple
-            color="default"
-            checkedIcon={<BpCheckedIcon />}
-            icon={<BpIcon />}
+          <BpCheckbox
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
@@ -184,9 +181,10 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{".MuiTableSortLabel-root": {fontSize: '1.02rem'}}}
           >
             {headCell.id === 'actions' ? (
-                <div>{headCell.label}</div>
+                <TableSortLabel sx={{".MuiSvgIcon-root": {display: 'none'}}}>{headCell.label}</TableSortLabel>
               ) : (
                 <TableSortLabel
                   active={orderBy === headCell.id}
@@ -237,8 +235,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+          bgcolor: (theme: any) =>
+            alpha(theme.palette.charcoal.main, theme.palette.action.activatedOpacity),
         }),
       }}
     >
@@ -262,7 +260,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         </Typography>
       )}
       {numSelected > 0 ? (
-         <>
+        <>
           <IconButton onClick={handleOpenDialog}>
             <DeleteIcon />
           </IconButton>
@@ -300,7 +298,7 @@ const ProjectListPage: NextPageWithLayout = () => {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) : void => {
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.projectName);
       setSelected(newSelected);
@@ -344,7 +342,7 @@ const ProjectListPage: NextPageWithLayout = () => {
   function filterRows(rows: Data[], searchText: string): Data[] {
     const filteredRows = rows.filter((row) => {
       const { projectName, language, description, startDate, endDate } = row;
-  
+
       return (
         projectName.toLowerCase().includes(searchText.toLowerCase().trim()) ||
         language.toLowerCase().includes(searchText.toLowerCase().trim()) ||
@@ -353,10 +351,10 @@ const ProjectListPage: NextPageWithLayout = () => {
         endDate.toLowerCase().includes(searchText.toLowerCase().trim())
       );
     });
-  
+
     return filteredRows;
   }
-  
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -373,17 +371,19 @@ const ProjectListPage: NextPageWithLayout = () => {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar 
-         numSelected={selected.length}
-         searchText={searchText}
-         onSearchChange={handleSearchChange}
-         />
+      <Box sx={{display: 'flex',justifyContent:'flex-end', mt:2}}>
+        <AddNewBtn AddNewBtnText='Add New Project' path={'/project/add'}/>
+      </Box>
+      <Paper sx={{ width: '100%', mb: 2, mt: 3,p: 2, background: palette.common.white }}>
+        <EnhancedTableToolbar
+        numSelected={selected.length}
+        searchText={searchText}
+        onSearchChange={handleSearchChange}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-           
           >
             <EnhancedTableHead
               numSelected={selected.length}
@@ -410,10 +410,7 @@ const ProjectListPage: NextPageWithLayout = () => {
                     sx={{ cursor: 'pointer' }}
                   >
                     <TableCell padding="checkbox">
-                      <Checkbox
-                        color="default"
-                        checkedIcon={<BpCheckedIcon />}
-                        icon={<BpIcon />}
+                      <BpCheckbox
                         checked={isItemSelected}
                         inputProps={{
                           'aria-labelledby': labelId,
@@ -425,13 +422,14 @@ const ProjectListPage: NextPageWithLayout = () => {
                       id={labelId}
                       scope="row"
                       padding="none"
+                      sx={{fontSize: '.9rem'}}
                     >
                       {row.projectName}
                     </TableCell>
-                    <TableCell>{row.language}</TableCell>
-                    <TableCell>{row.description}</TableCell>
-                    <TableCell>{row.startDate}</TableCell>
-                    <TableCell>{row.endDate}</TableCell>
+                    <TableCell sx={{fontSize: '.9rem'}}>{row.language}</TableCell>
+                    <TableCell sx={{fontSize: '.9rem'}}>{row.description}</TableCell>
+                    <TableCell sx={{fontSize: '.9rem'}}>{row.startDate}</TableCell>
+                    <TableCell sx={{fontSize: '.9rem'}}>{row.endDate}</TableCell>
                     <TableCell>
                       <TableBtn tableBtnText='Edit'/>
                     </TableCell>

@@ -1,402 +1,345 @@
 {
 	"primitives": {
 		"colors": {
-			"Text": {
+			"accent": {
 				"50": {
-					"id": "1731ffb8-1bf7-4f90-a1b3-96b3ca53c75f",
-					"value": "#9c9da2",
+					"id": "de77de28-117d-4873-a4b9-08574d939a04",
+					"value": "#c7ced0",
 					"type": "color"
 				},
 				"100": {
-					"id": "91484a5c-7c5f-4d02-9e3f-e55b726c189b",
-					"value": "#898b91",
+					"id": "73aa4351-a15b-4931-bf4b-d59aa9b03d27",
+					"value": "#b3bdc0",
 					"type": "color"
 				},
 				"200": {
-					"id": "58c369f1-39d4-49a7-bebf-d0689c3fb0a0",
-					"value": "#777980",
+					"id": "e607cf04-d651-41d5-ab15-d588e4af1394",
+					"value": "#a0acaf",
 					"type": "color"
 				},
 				"300": {
-					"id": "80e66693-f87d-46bd-95b5-8703c606dfb1",
-					"value": "#66676d",
+					"id": "f719f7b9-04dc-4b70-acfc-34f221416595",
+					"value": "#8c9b9f",
 					"type": "color"
 				},
 				"400": {
-					"id": "300b2e28-8156-4819-9f92-f5382924da35",
-					"value": "#58595e",
+					"id": "c0d4cce6-ad10-4951-b25b-9b5606455927",
+					"value": "#7d8d92",
 					"type": "color"
 				},
 				"500": {
-					"id": "8fffc856-9558-465a-a083-1ff6f15efaed",
-					"value": "#47484c",
+					"id": "02b3b02f-414a-4769-8f8b-f8160da25011",
+					"value": "#6b7b80",
 					"type": "color"
 				},
 				"600": {
-					"id": "dd0b8f9d-a70c-48bd-b908-69938a4445d1",
-					"value": "#36373a",
+					"id": "7b2dfb33-ae96-4e48-8a6f-f65e8ec2ad50",
+					"value": "#5b686d",
 					"type": "color"
 				},
 				"700": {
-					"id": "c39dc1d6-173c-4e31-babf-82d57660834e",
-					"value": "#171718",
+					"id": "a27a7727-dbf8-4f9e-9dfc-94eb8d65a60e",
+					"value": "#3d474a",
 					"type": "color"
 				},
 				"800": {
-					"id": "f2a88651-b7f6-45ab-b106-6145016923cc",
-					"value": "#050606",
+					"id": "7e344a20-9009-4aa6-a906-6188c7f93f09",
+					"value": "#2d3436",
 					"type": "color"
 				},
 				"900": {
-					"id": "09dc319b-0ce8-4cf3-9442-5ba9e30e5922",
-					"value": "#000000",
+					"id": "4b5e63e9-7485-4754-b839-9cc48b3d8f28",
+					"value": "#1d2123",
 					"type": "color"
 				},
 				"base": {
-					"id": "60e608ed-223f-4f97-b193-01d0a82093b8",
-					"value": "#47484c",
+					"id": "d122422c-27e7-4d9d-a805-f1818a7ca565",
+					"value": "#6b7b80",
 					"type": "color"
 				}
 			},
-			"Error": {
+			"error": {
 				"50": {
-					"id": "dcc641e1-9482-42aa-b227-32dcc91fc785",
-					"value": "#ffffff",
+					"id": "91acbe91-16f2-4e73-8176-d15bb940c93d",
+					"value": "#ffeeed",
 					"type": "color"
 				},
 				"100": {
-					"id": "e6cef0d3-3a02-4265-bf16-68667f2d28f9",
-					"value": "#fee4e4",
+					"id": "e006e2a0-1987-4e35-ac5d-8ac2a1eec937",
+					"value": "#ffcbca",
 					"type": "color"
 				},
 				"200": {
-					"id": "b7ecec73-8f0a-4b45-b85d-5fbff105e2cf",
-					"value": "#fdc1c1",
+					"id": "3d72d135-ddc4-4195-ba68-4f32cc7d73ef",
+					"value": "#ffa9a6",
 					"type": "color"
 				},
 				"300": {
-					"id": "21008fd9-9605-4bba-9c5d-a8237be6eadd",
-					"value": "#fd9f9f",
+					"id": "d093b81a-706c-49af-8781-fb015ed38972",
+					"value": "#ff8682",
 					"type": "color"
 				},
 				"400": {
-					"id": "28714c38-38e2-4cb7-9d60-fb7bc151fd37",
-					"value": "#fc8383",
+					"id": "9c182bbd-4047-4b58-9c3a-c1bf795bf20c",
+					"value": "#ff6b66",
 					"type": "color"
 				},
 				"500": {
-					"id": "1a3d1b35-c65d-4885-abba-dd5b3808ce52",
-					"value": "#fb6060",
+					"id": "b8f8ae60-704a-4cec-8fc7-a2e98f350abc",
+					"value": "#ff4842",
 					"type": "color"
 				},
 				"600": {
-					"id": "b3887307-6fe7-40e3-96fc-6a66582f8851",
-					"value": "#fa3d3d",
+					"id": "ffcb72c8-2d86-48cb-bc8e-0b478b61abbf",
+					"value": "#ff251e",
 					"type": "color"
 				},
 				"700": {
-					"id": "a3e4b981-6731-40c9-ada7-3322bf77c8f0",
-					"value": "#f10606",
+					"id": "adf26624-37b1-41d7-91c7-906ab2a4fabe",
+					"value": "#dd0700",
 					"type": "color"
 				},
 				"800": {
-					"id": "7224e957-e113-4b28-bdf0-fde5916c1ce8",
-					"value": "#ce0505",
+					"id": "b3123ab3-fbab-4103-aada-7ad1180386dc",
+					"value": "#b90600",
 					"type": "color"
 				},
 				"900": {
-					"id": "0225fc89-98df-468c-9ac5-c75e9a6e35a4",
-					"value": "#ab0404",
+					"id": "0862cb39-523d-43cc-8358-839da1b26f90",
+					"value": "#960500",
 					"type": "color"
 				},
 				"base": {
-					"id": "9a5986c2-a589-4f88-936a-d98a286ea506",
-					"value": "#fb6060",
+					"id": "9874ba0f-c92f-4ff5-a452-b01428346a47",
+					"value": "#FF4842",
 					"type": "color"
 				}
 			},
-			"Success": {
+			"charcoal": {
 				"50": {
-					"id": "093a777c-7abe-4d35-adf0-e9d0bef605f2",
-					"value": "#59e3ff",
-					"type": "color"
-				},
-				"100": {
-					"id": "54682daf-1d52-463a-9eb4-b0ee63393bed",
-					"value": "#36ddff",
-					"type": "color"
-				},
-				"200": {
-					"id": "0778fbe9-fd59-42dc-9cbe-716c1aa6da29",
-					"value": "#12d7ff",
-					"type": "color"
-				},
-				"300": {
-					"id": "20d14020-0bde-4e5a-8fe6-69a70103ca1e",
-					"value": "#00c5ed",
-					"type": "color"
-				},
-				"400": {
-					"id": "728266e2-2f5b-4b7a-8483-d015fa2192f4",
-					"value": "#00aed1",
-					"type": "color"
-				},
-				"500": {
-					"id": "4b54f637-0c37-4c32-bfeb-01f94279b5c0",
-					"value": "#0090ad",
-					"type": "color"
-				},
-				"600": {
-					"id": "92cccc2a-69d6-426b-8055-2fdfd7dfbdb9",
-					"value": "#007289",
-					"type": "color"
-				},
-				"700": {
-					"id": "470fe129-bd8f-4e79-8944-0c4325de50e0",
-					"value": "#003d49",
-					"type": "color"
-				},
-				"800": {
-					"id": "2abc6328-f1b2-4271-bfe6-f6b2bd535202",
-					"value": "#001f25",
-					"type": "color"
-				},
-				"900": {
-					"id": "7aad4121-7215-4764-a6a2-183eeec61fb7",
-					"value": "#000102",
-					"type": "color"
-				},
-				"base": {
-					"id": "4b850eff-1160-43e2-9bf2-ab6af7617ffd",
-					"value": "#0090ad",
-					"type": "color"
-				}
-			},
-			"Background": {
-				"50": {
-					"id": "4131d9d7-455a-464c-a3d7-4f7e22bcdcbc",
+					"id": "01f921cf-b2e4-4a82-bbaf-a38b5eec3788",
 					"value": "#737373",
 					"type": "color"
 				},
 				"100": {
-					"id": "13e1d2c6-9811-4321-af7a-0262e9297d34",
+					"id": "e51f69b7-77ad-40a1-88c3-77f3006acbb3",
 					"value": "#616161",
 					"type": "color"
 				},
 				"200": {
-					"id": "b473475f-4765-4b98-ac1d-df8985212582",
+					"id": "70579e63-135d-488a-a29a-260c2d0abae9",
 					"value": "#4f4f4f",
 					"type": "color"
 				},
 				"300": {
-					"id": "3dd4bb3f-5fb9-4bd5-8959-70047ec1d4db",
+					"id": "a91e2493-f117-4600-9fdf-9e380ca8c89c",
 					"value": "#3d3d3d",
 					"type": "color"
 				},
 				"400": {
-					"id": "e5ad4551-28ac-4c36-bfb7-22dbe11eb37c",
+					"id": "1857238f-5f01-443e-b6d5-8fd6cf28acad",
 					"value": "#2f2f2f",
 					"type": "color"
 				},
 				"500": {
-					"id": "ba600cff-ec51-4288-be9f-df1564ed0ac0",
+					"id": "f715d48e-1a62-4744-bafb-d90aa769b959",
 					"value": "#1d1d1d",
 					"type": "color"
 				},
 				"600": {
-					"id": "63d699d2-c919-46e9-9b8e-eae47e9c5e40",
+					"id": "631fe35f-7305-40e3-9919-786645822e41",
 					"value": "#0b0b0b",
 					"type": "color"
 				},
 				"700": {
-					"id": "66de6c35-d149-4adb-a1ae-3a2b9b185267",
+					"id": "34dbd42f-011d-4cfd-9639-f030fb761e8e",
 					"value": "#000000",
 					"type": "color"
 				},
 				"800": {
-					"id": "d8bcbf16-9015-4fc3-a096-d9aa6103be3e",
+					"id": "885e5040-84cd-4a79-ae2f-0487796c760c",
 					"value": "#000000",
 					"type": "color"
 				},
 				"900": {
-					"id": "9d72df58-3fbe-4d74-a77b-81d5ec9c2818",
+					"id": "bcc67432-be76-4f27-82eb-9e8ca4d9c156",
 					"value": "#000000",
 					"type": "color"
 				},
 				"base": {
-					"id": "871302ef-98b2-484a-9c23-da4085407cd0",
+					"id": "f76ce4cd-8096-499e-856a-db0d275061cb",
 					"value": "#1d1d1d",
 					"type": "color"
 				}
 			},
-			"Grey": {
+			"ash": {
 				"50": {
-					"id": "fdd1d8a7-3839-411b-9f42-da403993ba43",
-					"value": "#8c8c8c",
+					"id": "0e0c5470-e5a3-4738-9bb0-ec1e2a912e82",
+					"value": "#ffffff",
 					"type": "color"
 				},
 				"100": {
-					"id": "8a81abdd-33fe-4e95-8cf4-2a8f4721c0db",
-					"value": "#7a7a7a",
+					"id": "8622e9a7-9ccd-4dce-8f58-6b01c6edf48f",
+					"value": "#ffffff",
 					"type": "color"
 				},
 				"200": {
-					"id": "9185459c-4fa8-4a80-81e1-df316800a11d",
-					"value": "#686868",
+					"id": "a35b841d-737b-4c45-89d8-fc73b5dd64e7",
+					"value": "#ffffff",
 					"type": "color"
 				},
 				"300": {
-					"id": "74e85c39-9918-44a2-aca2-cebd1d80f264",
-					"value": "#565656",
+					"id": "4f4707ff-2515-46da-b05e-84063b8a26b1",
+					"value": "#fbfbfc",
 					"type": "color"
 				},
 				"400": {
-					"id": "b4518423-2b5a-4824-8378-3318bd11c470",
-					"value": "#484848",
+					"id": "3667395b-ee67-4122-95d8-76ea9da7f287",
+					"value": "#ececef",
 					"type": "color"
 				},
 				"500": {
-					"id": "670a23f4-d024-4222-80f2-2dacb316ad5c",
-					"value": "#363636",
+					"id": "7cb8e58b-e192-46ca-b854-433a81b9e09b",
+					"value": "#d9d8df",
 					"type": "color"
 				},
 				"600": {
-					"id": "2c11727a-e861-4c2e-b552-1929316eecfc",
-					"value": "#242424",
+					"id": "419c9c17-3618-41f3-9478-18429779d9a1",
+					"value": "#c6c4cf",
 					"type": "color"
 				},
 				"700": {
-					"id": "71aa4296-dcbe-4fae-ada2-26db3b3662cb",
-					"value": "#040404",
+					"id": "b43514e5-83d3-4082-81e4-bce08b8f120a",
+					"value": "#a3a1b2",
 					"type": "color"
 				},
 				"800": {
-					"id": "781da1f3-5388-4faa-b7a3-ef9a1dfbd2e1",
-					"value": "#000000",
+					"id": "dbabf8d3-f695-401c-8b50-bcb1774c9954",
+					"value": "#908da2",
 					"type": "color"
 				},
 				"900": {
-					"id": "317980f5-172d-4f14-975c-f99af9059aed",
-					"value": "#000000",
+					"id": "3563cd11-7f29-4c5e-aa23-6abdd9ca37fa",
+					"value": "#7d7a92",
 					"type": "color"
 				},
 				"base": {
-					"id": "78d5661c-671c-4722-83df-d4b7d97d7045",
-					"value": "#363636",
+					"id": "61d34ea1-9f8c-4143-9e25-d2471863182d",
+					"value": "#d9d8df",
 					"type": "color"
 				}
 			},
-			"Skyblue": {
+			"purple": {
 				"50": {
-					"id": "7cf97381-9f41-45d5-b865-7a40381e8f55",
-					"value": "#abdeff",
+					"id": "5577d330-1b45-490e-ae74-fab686d5607c",
+					"value": "#ffffff",
 					"type": "color"
 				},
 				"100": {
-					"id": "2aded592-0068-495c-8e5a-ee2dfbb7097f",
-					"value": "#88cfff",
+					"id": "d2df91b3-0c13-4455-bb87-1c23d4cc6f30",
+					"value": "#ffffff",
 					"type": "color"
 				},
 				"200": {
-					"id": "2ac4ee74-c853-41a6-acb6-a306a2a88deb",
-					"value": "#64c1ff",
+					"id": "5253b856-3375-48cf-9e17-e45608b9a1aa",
+					"value": "#f6f2fc",
 					"type": "color"
 				},
 				"300": {
-					"id": "fe76ffe0-ada2-4051-bbd8-74f7ce0b1f70",
-					"value": "#40b3ff",
+					"id": "0e2cf2bc-4f47-4657-a6df-940773cc975f",
+					"value": "#e1d6f4",
 					"type": "color"
 				},
 				"400": {
-					"id": "afb306e6-1f73-469e-a2ce-d7c1d2bad071",
-					"value": "#24a7ff",
+					"id": "c80d9d05-011d-4d5e-bc2b-fb1a5e5b34d0",
+					"value": "#d1c0ee",
 					"type": "color"
 				},
 				"500": {
-					"id": "1eb4b126-9d62-48f9-9990-c0dfc7b93d25",
-					"value": "#0099ff",
+					"id": "fe87b435-9a04-4896-a4a3-6bdce5c2193d",
+					"value": "#bca4e6",
 					"type": "color"
 				},
 				"600": {
-					"id": "a674169e-88af-4d1e-a964-a1763ccf2a2a",
-					"value": "#0084db",
+					"id": "b6c6e029-9101-4947-8cfc-7b78f0c23198",
+					"value": "#a788de",
 					"type": "color"
 				},
 				"700": {
-					"id": "6a45c27e-8ffb-47b2-b4dd-b48787976302",
-					"value": "#005d9b",
+					"id": "c8a4e1f9-097f-4b7b-85b1-9854a644ad62",
+					"value": "#8256d0",
 					"type": "color"
 				},
 				"800": {
-					"id": "93bff40c-2a73-4ceb-9f92-5ee162a5c561",
-					"value": "#004877",
+					"id": "2a21db84-6bc2-45ac-8cd8-1ea9e329d0e6",
+					"value": "#6e3ac9",
 					"type": "color"
 				},
 				"900": {
-					"id": "364ed4f2-2f17-447e-a4f0-2b1bb877ede7",
-					"value": "#003254",
+					"id": "8e75d2cf-da9e-495f-a017-d21323c3796c",
+					"value": "#5e30af",
 					"type": "color"
 				},
 				"base": {
-					"id": "1293964a-9471-4cbe-88b6-4ac17f679bce",
-					"value": "#0099ff",
+					"id": "973f538d-8f10-4f11-ad59-736183d1f862",
+					"value": "#bca4e6",
 					"type": "color"
 				}
 			},
-			"Milky": {
+			"algae": {
 				"50": {
-					"id": "8fdc5ff6-e800-4898-b7a5-ff3ac30cd8ec",
+					"id": "289af76b-75f4-49da-9210-43b1d4d149a9",
 					"value": "#ffffff",
 					"type": "color"
 				},
 				"100": {
-					"id": "e023d3fc-b543-4c44-b820-52085efb3322",
+					"id": "501fd472-6ce2-4b6d-8212-7145cf88cc57",
 					"value": "#ffffff",
 					"type": "color"
 				},
 				"200": {
-					"id": "3c1b4016-df8d-4d31-bd5a-729db4d227fd",
-					"value": "#ffffff",
+					"id": "e17400e5-712d-442e-bd71-d18ddb8074d6",
+					"value": "#f8fbf8",
 					"type": "color"
 				},
 				"300": {
-					"id": "12793df6-d99d-4b46-8db9-895b9afd2f66",
-					"value": "#ffffff",
+					"id": "5e8f61b1-2596-4227-8ea6-7d8a22131f2c",
+					"value": "#e3ece3",
 					"type": "color"
 				},
 				"400": {
-					"id": "506a8011-13de-4c0f-9595-39cecc060180",
-					"value": "#ffffff",
+					"id": "8a952a69-fba8-4433-9115-8bfa6b675d18",
+					"value": "#d2e0d2",
 					"type": "color"
 				},
 				"500": {
-					"id": "71cd1b87-d252-47d9-94cc-3d99f24c5032",
-					"value": "#f9f9f9",
+					"id": "bfbf7665-727b-4915-93b3-cf9a838a2d14",
+					"value": "#bdd2bd",
 					"type": "color"
 				},
 				"600": {
-					"id": "05c6cf72-a591-475e-883f-bcf817804437",
-					"value": "#e7e7e7",
+					"id": "ee6d48c7-87f0-491c-8487-159caa3cac48",
+					"value": "#a8c4a8",
 					"type": "color"
 				},
 				"700": {
-					"id": "25a6ff20-0100-49b4-a8a8-911288f93449",
-					"value": "#c7c7c7",
+					"id": "5fa1943a-3648-4cda-bb94-9435bedec228",
+					"value": "#82a982",
 					"type": "color"
 				},
 				"800": {
-					"id": "6adff1ce-e6b0-4ac9-bd0c-b4040779e62b",
-					"value": "#b5b5b5",
+					"id": "b5ba6621-ef0c-478f-8082-557c35475f8e",
+					"value": "#6c9b6c",
 					"type": "color"
 				},
 				"900": {
-					"id": "5fe0ae5d-f7dc-44fc-b1fa-78b7fbbc8b2b",
-					"value": "#a3a3a3",
+					"id": "fde32234-19c4-4460-8f3d-b8e19d9948cc",
+					"value": "#5c875c",
 					"type": "color"
 				},
 				"base": {
-					"id": "e495cc38-4702-4444-b5cd-3433db4b974f",
-					"value": "#f9f9f9",
+					"id": "d45c9c5c-d8f6-4af2-87ef-e06aba34c618",
+					"value": "#BDD2BD",
 					"type": "color"
 				}
 			}

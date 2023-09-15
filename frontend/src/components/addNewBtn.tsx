@@ -1,7 +1,8 @@
 import { Button, styled } from '@mui/material';
 import React from 'react';
 import AddIcon from '@mui/icons-material/Add';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation'
+import palette from '@/theme/palette';
 
 type AddNewBtnIF = {
   AddNewBtnText: string
@@ -17,19 +18,19 @@ const AddNewBtn = ({ AddNewBtnText, path } : AddNewBtnIF) => {
     padding: '10px 20px',
     border: '1px solid',
     borderRadius: '26px',
-    backgroundColor: '#C9B7EB',
-    color: '#222121',
-    borderColor: '#C9B7EB',
+    backgroundColor: palette.primary.main,
+    color: palette.text.primary,
+    borderColor:palette.primary.border,
     marginRight: '10px',
     '&:hover': {
-      backgroundColor: '#bca4e6',
-      borderColor: '#bca4e6',
+      backgroundColor: palette.primary.main,
+      borderColor: palette.primary.border,
       boxShadow: 'none',
     },
     '&:active': {
       boxShadow: 'none',
-      backgroundColor: '#bca4e6',
-      borderColor: '#bca4e6',
+      backgroundColor: palette.primary.main,
+      borderColor: palette.primary.border
     },
   });
 
@@ -44,7 +45,7 @@ const AddNewBtn = ({ AddNewBtnText, path } : AddNewBtnIF) => {
         changePath();
       }}
     >
-      <AddIcon fontSize="small" />
+      <AddIcon fontSize="small" sx={{mr: 1}}/>
       {AddNewBtnText}
     </AddNewBtn>
   );

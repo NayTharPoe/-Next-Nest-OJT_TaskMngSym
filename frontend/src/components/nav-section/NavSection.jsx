@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { Box, List, ListItemText } from '@mui/material';
 import { StyledNavItem, StyledNavItemIcon } from './styles';
 import { useRouter } from 'next/router';
+import palette from '@/theme/palette';
 
 const NavSection = ({ data = [], ...other }) => {
   return (
@@ -28,12 +29,11 @@ const NavItem = ({ item }) => {
       sx={{
         borderRadius: '7.5px',
         '&.active': {
-          color: 'milky.base',
-          bgcolor: 'text.base',
+          color: palette.common.white,
+          bgcolor: palette.charcoal.light,
         },
         '&:hover': {
-          color: 'milky.base',
-          bgcolor: (theme) => `${theme.palette.background['300']}`,
+          color: palette.common.white,
         },
       }}
       onClick={() => {
@@ -41,7 +41,6 @@ const NavItem = ({ item }) => {
       }}
     >
       <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
-
       <ListItemText disableTypography primary={title} />
     </StyledNavItem>
   );

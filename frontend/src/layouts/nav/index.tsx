@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import { navConfig } from './config';
 import NavSection from '@/components/nav-section/NavSection';
-import { theme } from '@/theme/theme';
 
 const StyledAccount = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -36,7 +35,7 @@ const RenderContent = () => {
           display: 'inline-flex',
           fontSize: '22px',
           fontWeight: '600',
-          color: 'milky.base'
+          color:(theme) => `${theme.palette.grey[300]}`
         }}>
         TaskSphere
       </Box>
@@ -45,7 +44,7 @@ const RenderContent = () => {
         sx={{
           mb: 5,
           mx: 2.5,
-          backgroundColor: 'text.base',
+          backgroundColor: (theme: any) => `${theme.palette.charcoal.light}`,
           borderRadius: '10px',
         }}>
         <Link underline="none">
@@ -53,7 +52,7 @@ const RenderContent = () => {
             <Avatar src={account.photoURL} alt="photoURL" />
 
             <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" color={(theme: any) => `${theme.palette.text['100']}`}>
+              <Typography variant="subtitle1" color={(theme: any) => `${theme.palette.common.white}`}>
                 {account.displayName}
               </Typography>
             </Box>
