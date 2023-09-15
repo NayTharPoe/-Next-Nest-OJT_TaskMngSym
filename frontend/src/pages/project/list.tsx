@@ -23,10 +23,10 @@ import MainLayout from '@/layouts/MainLayout';
 import type { NextPageWithLayout } from '../_app';
 import BpCheckbox, { BpCheckedIcon } from '../../components/checkbox'
 import { BpIcon } from '../../components/checkbox';
-import TableBtn from '../../components/tableBtn'
+import TableBtn from '../../components/button/tableBtn'
 import ProjectSearchBox from '../../components/project-search-input'
 import ConfirmDialog from '@/components/commonDialog';
-import AddNewBtn from '@/components/addNewBtn';
+import AddNewBtn from '@/components/button/addNewBtn';
 import palette from '@/theme/palette';
 
 interface Data {

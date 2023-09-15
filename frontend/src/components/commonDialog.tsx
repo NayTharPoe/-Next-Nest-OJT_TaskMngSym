@@ -1,12 +1,14 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import Typography from '@mui/material/Typography'
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
+import palette from '@/theme/palette';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -26,20 +28,25 @@ export default function ConfirmDialog({open, onClose} : any) {
         TransitionComponent={Transition}
         onClose={onClose}
         aria-labelledby="responsive-dialog-title"
+        sx={{
+          ".MuiPaper-root": {
+            borderRadius: '10px'
+          }
+        }}
       >
-        <DialogTitle id="responsive-dialog-title">
-          {"Confirmation?"}
+        <DialogTitle id="responsive-dialog-title" sx={{backgroundColor: palette.grey[300]}}>
+          <Typography variant='h4' sx={{color: palette.grey[600]}}>Confirmation?</Typography>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Are you sure you want to proceed with this action.
+          <DialogContentText sx={{pt: 3}}>
+            <Typography variant='h5'>Are you sure you want to proceed with this action.</Typography>
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={onClose}>
+        <DialogActions sx={{pb: 3}}>
+          <Button onClick={onClose} autoFocus sx={{color: palette.primary.dark, fontSize: '0.95rem'}}>
             Cancel
           </Button>
-          <Button onClick={onClose} autoFocus>
+          <Button onClick={onClose} autoFocus sx={{color: palette.primary.dark, fontSize:'0.95rem'}}>
             Delete
           </Button>
         </DialogActions>
