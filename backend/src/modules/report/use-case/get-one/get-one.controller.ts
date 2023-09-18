@@ -22,8 +22,8 @@ export class GetDetailReportController {
       });
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({
-        statusCode: error.status,
-        message: error.response.message,
+        statusCode: error?.status,
+        message: error.response?.message,
       });
     }
   }

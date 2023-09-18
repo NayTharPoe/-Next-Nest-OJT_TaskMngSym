@@ -14,8 +14,8 @@ import { DeleteProjectController } from './use-case/delete/delete.controller';
   ],
   controllers: [
     GetAllProjectController,
-    GetDetailProjectController,
     CreateProjectController,
+    GetDetailProjectController,
     UpdateProjectController,
     DeleteProjectController,
   ],

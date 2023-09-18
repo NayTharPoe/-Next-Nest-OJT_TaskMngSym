@@ -24,7 +24,6 @@ export class CreateController {
         .status(200)
         .json({ message: 'Employee Created Successfully', data });
     } catch (err) {
-      console.log(err);
       throw new NotFoundException(err.message);
     }
   }

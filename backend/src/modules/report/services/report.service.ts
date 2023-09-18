@@ -3,8 +3,7 @@ import { CreateReportRequestDto } from '../use-case/create/create.request.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ReportDocument } from '../entities/report.entity';
-import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
-
+import { ReportPaginationRequestDto } from 'src/common/dtos/request/reportPagination.req.dto';
 @Injectable()
 export class ReportService {
   constructor(
@@ -21,14 +20,47 @@ export class ReportService {
   }
 
   // find all service
-  async findAll({ limit, page }: PaginationRequestDto): Promise<{
+  async findAll({
+    limit,
+    page,
+    date,
+    reportBy,
+    reportTo,
+  }: ReportPaginationRequestDto): Promise<{
     reports: ReportDocument[];
     totalReports: number;
   }> {
-    const totalReports = await this.reportModel.countDocuments();
+    const query: any = {};
+
+    if (date) {
+      query.createdAt = {
+        $gte: new Date(date + 'T00:00:00Z'),
+        $lte: new Date(date + 'T23:59:59Z'),
+      };
+    }
+
+    if (reportBy) {
+      query.reportBy = {
+        $regex: new RegExp(reportBy, 'i')
+      }
+    }
+
+    if (reportTo) {
+      query.reportTo = {
+        $regex: new RegExp(reportTo, 'i'),
+      };
+    }
+
+    const totalReports = await this.reportModel.countDocuments(query);
 
     const reports = await this.reportModel
-      .find()
+      .find(query)
+      .populate([
+        {
+          path: 'reportTo',
+          select: '-password -__v -token',
+        },
+      ])
       .limit(limit)
       .skip(limit * (page - 1))
       .sort({ createdAt: -1 })
@@ -39,7 +71,12 @@ export class ReportService {
 
   // find one service
   async findOne(id: string): Promise<ReportDocument> {
-    const report = await this.reportModel.findById(id);
+    const report = (await this.reportModel.findById(id)).populate([
+      {
+        path: 'reportTo',
+        select: '-password -__v -token',
+      },
+    ]);
     if (!report) {
       throw new NotFoundException(
         'There is no report with this id to retrieve',

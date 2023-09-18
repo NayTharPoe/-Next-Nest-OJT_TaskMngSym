@@ -29,6 +29,9 @@ export class ReportEntity extends Document {
   @Prop({ required: true })
   hour: number;
 
+  @Prop({ required: true })
+  reportBy: string;
+
   @Prop()
   problemFeeling: string;
 }

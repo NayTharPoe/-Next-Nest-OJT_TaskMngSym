@@ -20,7 +20,6 @@ export class GetAllProjectController {
     @Query() query: PaginationRequestDto,
   ): Promise<GetAllProjectResponseDto[]> {
     try {
-      console.log(query);
       const result = await this.projectService.findAll(query);
 
       return response.status(HttpStatus.OK).json({

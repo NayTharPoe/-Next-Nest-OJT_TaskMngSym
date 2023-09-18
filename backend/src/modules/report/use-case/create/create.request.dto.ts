@@ -43,6 +43,11 @@ export class CreateReportRequestDto {
   readonly hour: number;
 
   @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  readonly reportBy: string;
+
+  @ApiProperty()
   problemFeeling: string;
 }
 

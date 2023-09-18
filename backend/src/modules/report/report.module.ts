@@ -16,8 +16,8 @@ import { GetDetailReportController } from './use-case/get-one/get-one.controller
   ],
   controllers: [
     GetAllReportController,
-    GetDetailReportController,
     CreateReportController,
+    GetDetailReportController,
     UpdateReportController,
     DeleteReportController,
   ],
