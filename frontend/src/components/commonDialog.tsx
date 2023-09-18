@@ -34,8 +34,8 @@ export default function ConfirmDialog({open, onClose} : any) {
           }
         }}
       >
-        <DialogTitle id="responsive-dialog-title" sx={{backgroundColor: palette.grey[300]}}>
-          <Typography variant='h4' sx={{color: palette.grey[600]}}>Confirmation?</Typography>
+        <DialogTitle id="responsive-dialog-title" sx={{backgroundColor: palette.primary.main}}>
+          <Typography variant='h4' sx={{fontWeight: '400'}}>Confirmation?</Typography>
         </DialogTitle>
         <DialogContent>
           <DialogContentText sx={{pt: 3}}>

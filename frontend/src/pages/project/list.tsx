@@ -21,10 +21,9 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import MainLayout from '@/layouts/MainLayout';
 import type { NextPageWithLayout } from '../_app';
-import BpCheckbox, { BpCheckedIcon } from '../../components/checkbox'
-import { BpIcon } from '../../components/checkbox';
-import TableBtn from '../../components/button/tableBtn'
-import ProjectSearchBox from '../../components/project-search-input'
+import BpCheckbox from '@/components/checkbox';
+import TableBtn from '../../components/button/tableBtn';
+import ProjectSearchBox from '../../components/ProjectSearchBox';
 import ConfirmDialog from '@/components/commonDialog';
 import AddNewBtn from '@/components/button/addNewBtn';
 import palette from '@/theme/palette';
@@ -374,7 +373,7 @@ const ProjectListPage: NextPageWithLayout = () => {
       <Box sx={{display: 'flex',justifyContent:'flex-end', mt:2}}>
         <AddNewBtn AddNewBtnText='Add New Project' path={'/project/add'}/>
       </Box>
-      <Paper sx={{ width: '100%', mb: 2, mt: 3,p: 2, background: palette.common.white }}>
+      <Paper sx={{ width: '100%', mb: 2, mt: 3,p: 2, background: palette.common.white, borderRadius: '1.1rem' }}>
         <EnhancedTableToolbar
         numSelected={selected.length}
         searchText={searchText}
