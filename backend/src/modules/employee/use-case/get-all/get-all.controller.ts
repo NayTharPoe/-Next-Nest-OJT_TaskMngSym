@@ -1,8 +1,9 @@
-import { Controller, Get, Response, UseGuards } from '@nestjs/common';
+import { Controller, Get, Response, UseGuards, Query } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { GetAllEmployeeResponseDto } from './getAll.response.dto';
 import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.request.dto';
 
 @Controller('employees')
 @ApiTags('Employee')
@@ -12,8 +13,29 @@ export class GetAllController {
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   @Get('list')
-  async getEmployee(@Response() res): Promise<GetAllEmployeeResponseDto> {
-    const data = await this.employeeService.getAllEmployee();
-    return res.status(200).json({ message: 'Get All Employee List', data });
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    description: 'Number of items per page',
+  })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    description: 'Page Number',
+  })
+  @ApiQuery({
+    name: 'keyword',
+    type: String,
+    description: 'Search by employeeName and position',
+  })
+  async getEmployee(
+    @Response() res,
+    @Query() query: PaginationRequestDto,
+  ): Promise<GetAllEmployeeResponseDto> {
+    const { data, totalEmployee } =
+      await this.employeeService.getAllEmployee(query);
+    return res
+      .status(200)
+      .json({ message: 'Get All Employee List', data, totalEmployee });
   }
 }

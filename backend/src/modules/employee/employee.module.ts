@@ -13,10 +13,13 @@ import { VerifyEmailService } from 'src/template/verifyEmail';
 import { SECRET_KEY } from 'src/common/constants/constant';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { ConfigService } from '@nestjs/config';
+import { TokenService } from '../auth/tokens/service/token.service';
+import { tokenSchema } from '../auth/tokens/entities/token.entities';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'employee', schema: employeeSchema }]),
+    MongooseModule.forFeature([{ name: 'token', schema: tokenSchema }]),
     JwtModule.register({
       secret: SECRET_KEY,
       signOptions: { expiresIn: '1D' },
@@ -35,6 +38,7 @@ import { ConfigService } from '@nestjs/config';
     VerifyEmailService,
     CloudinaryService,
     ConfigService,
+    TokenService,
   ],
 })
 export class EmployeeModule {}

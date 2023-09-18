@@ -8,10 +8,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { taskSchema } from './entities/task.entities';
 import { JwtModule } from '@nestjs/jwt';
 import { SECRET_KEY } from 'src/common/constants/constant';
+import { TokenService } from '../auth/tokens/service/token.service';
+import { tokenSchema } from '../auth/tokens/entities/token.entities';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'task', schema: taskSchema }]),
+    MongooseModule.forFeature([{ name: 'token', schema: tokenSchema }]),
     JwtModule.register({
       secret: SECRET_KEY,
       signOptions: { expiresIn: '1D' },
@@ -23,6 +26,6 @@ import { SECRET_KEY } from 'src/common/constants/constant';
     GetOneController,
     UpdateController,
   ],
-  providers: [TaskService],
+  providers: [TaskService, TokenService],
 })
 export class TaskModule {}

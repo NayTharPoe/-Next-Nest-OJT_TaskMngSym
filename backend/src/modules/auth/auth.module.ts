@@ -12,6 +12,9 @@ import { ForgetEmailService } from 'src/template/forgetEmail';
 import { EmailService } from 'src/utils/sendMail';
 import { VerifyAccountController } from './use-case/verify-account/verify-account.controller';
 import { ConfigService } from '@nestjs/config';
+import { tokenSchema } from './tokens/entities/token.entities';
+import { LogoutController } from './use-case/logout/logout.controller';
+import { TokenService } from './tokens/service/token.service';
 
 @Module({
   imports: [
@@ -20,14 +23,22 @@ import { ConfigService } from '@nestjs/config';
       signOptions: { expiresIn: '1D' },
     }),
     MongooseModule.forFeature([{ name: 'employee', schema: employeeSchema }]),
+    MongooseModule.forFeature([{ name: 'token', schema: tokenSchema }]),
   ],
-  providers: [AuthService, ForgetEmailService, EmailService, ConfigService],
+  providers: [
+    AuthService,
+    ForgetEmailService,
+    EmailService,
+    ConfigService,
+    TokenService,
+  ],
   controllers: [
     LoginController,
     ForgetPasswordController,
     ResetPasswordController,
     ChangePasswordController,
     VerifyAccountController,
+    LogoutController,
   ],
 })
 export class AuthModule {}

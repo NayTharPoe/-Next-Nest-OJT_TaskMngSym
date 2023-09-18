@@ -10,19 +10,44 @@ import { VerifyEmailService } from 'src/template/verifyEmail';
 import { EmailService } from 'src/utils/sendMail';
 import { UpdateEmployeeRequestDto } from '../use-case/update/update.request.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { ConfigService } from '@nestjs/config';
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.request.dto';
 
 @Injectable()
 export class EmployeeService {
   constructor(
     @InjectModel(employee.name) private employeeModel: Model<employee>,
     private readonly emailService: EmailService,
+    private readonly configService: ConfigService,
     private readonly verifyEmailService: VerifyEmailService,
     private readonly jwtService: JwtService,
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async getAllEmployee(): Promise<any> {
-    return await this.employeeModel.find().select('-password -token');
+  async getAllEmployee({
+    page,
+    limit,
+    keyword,
+  }: PaginationRequestDto): Promise<any> {
+    let options = {};
+    if (keyword) {
+      options = {
+        $or: [
+          { employeeName: new RegExp(keyword.toString(), 'i') },
+          { position: new RegExp(keyword.toString(), 'i') },
+        ],
+      };
+    }
+
+    const totalEmployee = await this.employeeModel.countDocuments();
+
+    const data = await this.employeeModel
+      .find(options)
+      .select('-password -token')
+      .limit(limit)
+      .skip(limit * (page - 1));
+
+    return { data, totalEmployee };
   }
 
   async getEmployeeById(id: string): Promise<employee> {
@@ -72,7 +97,9 @@ export class EmployeeService {
 
     await this.employeeModel.create(data);
 
-    const verifyLink = `http://localhost:3000/verify?token=${token}`;
+    const verifyLink = `${this.configService.get(
+      'CLIENT_DOMAIN',
+    )}/verify?token=${token}`;
 
     const template = this.verifyEmailService.verifyTemplate(
       employeeData.email,

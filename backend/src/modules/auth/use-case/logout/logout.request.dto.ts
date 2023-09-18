@@ -1,14 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class ResetRequestDto {
+export class LogoutRequestDto {
   @IsNotEmpty()
-  @IsString()
   @ApiProperty()
-  newPassword: string;
-
-  @IsNotEmpty()
   @IsString()
-  @ApiProperty()
-  confirmPassword: string;
+  token: string;
 }

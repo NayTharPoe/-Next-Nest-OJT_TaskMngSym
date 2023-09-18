@@ -17,10 +17,10 @@ export class task {
   description: string;
 
   @Prop({ required: true })
-  estimateHour: string;
+  estimateHour: number;
 
   @Prop({ default: true })
-  actualHour: string;
+  actualHour: number;
 
   @Prop({ required: true })
   status: string;

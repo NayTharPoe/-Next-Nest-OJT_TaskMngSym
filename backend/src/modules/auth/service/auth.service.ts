@@ -14,13 +14,18 @@ import { EmailService } from 'src/utils/sendMail';
 import { ResetRequestDto } from '../use-case/reset-password/reset.request.dto';
 import { ForgetRequestDto } from '../use-case/forget-password/forget.request.dto';
 import { ChangeRequestDto } from '../use-case/change-password/change.request.dto';
+import { ConfigService } from '@nestjs/config';
+// import { token } from '../tokens/entities/token.entities';
+import { TokenService } from '../tokens/service/token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(employee.name) private employeeModel: Model<employee>,
+    private readonly tokenService: TokenService,
     private readonly jwtService: JwtService,
     private forgetEmailService: ForgetEmailService,
+    private configService: ConfigService,
     private emailService: EmailService,
   ) {}
 
@@ -41,6 +46,8 @@ export class AuthService {
     };
 
     const token = this.jwtService.sign(data);
+
+    this.tokenService.createToken(user.email, token);
 
     const result = {
       _id: user._id,
@@ -63,7 +70,9 @@ export class AuthService {
       throw new NotFoundException('This user does not exist!');
     }
 
-    const resetLink = `http://localhost:3000/reset-password/${user._id}`;
+    const resetLink = `${this.configService.get(
+      'CLIENT_DOMAIN',
+    )}/reset-password/${user._id}`;
 
     const content = this.forgetEmailService.forgetTemplate(email, resetLink);
 
@@ -138,5 +147,11 @@ export class AuthService {
         },
       );
     }
+  }
+
+  // -------- Logout ---------------
+  async logout(token: string): Promise<any> {
+    await this.tokenService.findToken(token);
+    await this.tokenService.deleteToken(token);
   }
 }

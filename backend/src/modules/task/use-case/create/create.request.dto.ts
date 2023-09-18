@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateTaskRequestDto {
   @IsNotEmpty()
@@ -22,11 +22,12 @@ export class CreateTaskRequestDto {
   @IsNotEmpty()
   description: string;
 
-  @IsString()
+  @IsNumber()
+  @ApiProperty()
   @IsNotEmpty()
   estimateHour: number;
 
-  @IsString()
+  @IsNumber()
   @ApiProperty()
   @IsNotEmpty()
   actualHour: number;

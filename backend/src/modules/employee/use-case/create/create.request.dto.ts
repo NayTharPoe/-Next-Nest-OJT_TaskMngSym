@@ -13,7 +13,7 @@ export class CreateEmployeeRequestDto {
   email: string;
 
   @ApiProperty()
-  profile?: string;
+  profile: string;
 
   @ApiProperty()
   address: string;

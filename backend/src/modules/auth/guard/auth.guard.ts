@@ -7,10 +7,16 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { SECRET_KEY } from 'src/common/constants/constant';
+import { TokenService } from '../tokens/service/token.service';
+// import { token } from '../tokens/entities/token.entities';
+// import { Model } from 'mongoose';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private tokenService: TokenService,
+    private jwtService: JwtService, // private tokenModel: Model<token>,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -18,6 +24,11 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException();
     }
+    // const isExistToken = await this.tokenModel.findOne({ token });
+    // if (!isExistToken) {
+    //   throw new UnauthorizedException('Invalid Token');
+    // }
+    await this.tokenService.findToken(token);
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: SECRET_KEY,

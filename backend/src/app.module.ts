@@ -9,6 +9,7 @@ import { ProjectModule } from './modules/project/project.module';
 import { TaskModule } from './modules/task/task.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+// import { TokenModule } from './modules/auth/tokens/token.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     ProjectModule,
     EmployeeModule,
     TaskModule,
+    // TokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],
