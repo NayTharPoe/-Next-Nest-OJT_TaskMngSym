@@ -5,7 +5,7 @@ import toStream = require('buffer-to-stream');
 @Injectable()
 export class CloudinaryService {
   async uploadImage(
-    profile: Express.Multer.File,
+    profile?: Express.Multer.File,
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
       v2.config({

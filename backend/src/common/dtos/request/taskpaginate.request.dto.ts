@@ -6,7 +6,7 @@ import { paginate } from 'src/common/constants/constant';
 const defaultPageNumber = paginate.DEFAULT_PAGE_NUMBER;
 const defaultLimit = paginate.DEFAULT_LIMIT;
 
-export class PaginationRequestDto {
+export class taskPaginateRequestDto {
   @ApiProperty({ required: false, default: 1 })
   @IsNumber()
   @Transform((params) =>
@@ -22,8 +22,4 @@ export class PaginationRequestDto {
   )
   @IsOptional()
   limit?: number = defaultLimit;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  keyword?: string;
 }

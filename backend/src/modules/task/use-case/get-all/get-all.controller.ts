@@ -9,8 +9,8 @@ import {
 import { TaskService } from '../../service/task.service';
 import { GetAllTaskResponseDto } from './getAll.response.dto';
 import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { PaginationRequestDto } from 'src/common/dtos/request/pagination.request.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { taskPaginateRequestDto } from 'src/common/dtos/request/taskpaginate.request.dto';
 
 @Controller('tasks')
 @ApiTags('Task')
@@ -20,19 +20,9 @@ export class GetAllController {
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   @Get('list')
-  @ApiQuery({
-    name: 'limit',
-    type: Number,
-    description: 'Number of items per page',
-  })
-  @ApiQuery({
-    name: 'page',
-    type: Number,
-    description: 'Page Number',
-  })
   async getAllTask(
     @Response() res,
-    @Query() query: PaginationRequestDto,
+    @Query() query: taskPaginateRequestDto,
   ): Promise<GetAllTaskResponseDto> {
     try {
       const { data, totalTasks } = await this.taskService.getAllTaskList(query);

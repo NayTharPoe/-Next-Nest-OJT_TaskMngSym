@@ -25,6 +25,7 @@ export class GetAllController {
   })
   @ApiQuery({
     name: 'keyword',
+    required: false,
     type: String,
     description: 'Search by employeeName and position',
   })

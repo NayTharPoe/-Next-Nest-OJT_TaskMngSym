@@ -6,9 +6,7 @@ import {
   NotFoundException,
   UseGuards,
   UseInterceptors,
-  UploadedFile,
-  ParseFilePipe,
-  FileTypeValidator,
+  UploadedFile
 } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { CreateEmployeeRequestDto } from './create.request.dto';
@@ -59,11 +57,7 @@ export class CreateController {
   async create(
     @Response() res,
     @Body() employee: CreateEmployeeRequestDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' })],
-      }),
-    )
+    @UploadedFile()
     profile?: Express.Multer.File,
   ): Promise<CreateEmployeeResponseDto> {
     try {

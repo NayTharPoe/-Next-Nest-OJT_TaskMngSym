@@ -39,13 +39,17 @@ export class EmployeeService {
       };
     }
 
-    const totalEmployee = await this.employeeModel.countDocuments();
+    const totalEmployee = await this.employeeModel.countDocuments(options);
 
     const data = await this.employeeModel
       .find(options)
       .select('-password -token')
       .limit(limit)
       .skip(limit * (page - 1));
+
+    if (data.length === 0) {
+      throw new NotFoundException(`No item with this ${keyword}`);
+    }
 
     return { data, totalEmployee };
   }
@@ -84,9 +88,12 @@ export class EmployeeService {
 
     const token = this.jwtService.sign({ email: employeeData.email });
 
-    const cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
-      return { data: data.secure_url };
-    });
+    let cloudImg;
+    if (profile) {
+      cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
+        return { data: data.secure_url };
+      });
+    }
 
     const data = {
       ...employeeData,
@@ -123,9 +130,12 @@ export class EmployeeService {
       throw new NotFoundException('No user with this id! you cannot update');
     }
 
-    const cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
-      return { data: data.secure_url };
-    });
+    let cloudImg;
+    if (profile) {
+      cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
+        return { data: data.secure_url };
+      });
+    }
 
     const data = {
       ...employee,
