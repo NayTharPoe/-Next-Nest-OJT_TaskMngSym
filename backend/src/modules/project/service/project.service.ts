@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-// import { Query } from 'express-serve-static-core';
 import { ProjectDocument } from '../entities/project.entity';
 import { CreateProjectRequestDto } from '../use-case/create/create.request.dto';
 import { UpdateProjectRequestDto } from '../use-case/update/update.request.dto';

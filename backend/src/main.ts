@@ -10,8 +10,8 @@ const logger = new Logger('Main');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
   setupSwagger(app);
+
   app.enableCors({
     allowedHeaders: '*',
     origin: '*',

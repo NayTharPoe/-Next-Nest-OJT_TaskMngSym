@@ -6,27 +6,39 @@ import { DeleteController } from './use-case/delete/delete.controller';
 import { UpdateController } from './use-case/update/update.controller';
 import { GetAllController } from './use-case/get-all/get-all.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { employeeSchema } from './entities/employee.entities';
+import { EmployeeEntity, employeeSchema } from './entities/employee.entities';
 import { JwtModule } from '@nestjs/jwt';
 import { EmailService } from 'src/utils/sendMail';
 import { VerifyEmailService } from 'src/template/verifyEmail';
 import { SECRET_KEY } from 'src/common/constants/constant';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { ConfigService } from '@nestjs/config';
+import { TokenService } from '../auth/tokens/service/token.service';
+import { TokenEntity, tokenSchema } from '../auth/tokens/entities/token.entities';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'employee', schema: employeeSchema }]),
+    MongooseModule.forFeature([{ name: EmployeeEntity.name, schema: employeeSchema }]),
+    MongooseModule.forFeature([{ name: TokenEntity.name, schema: tokenSchema }]),
     JwtModule.register({
       secret: SECRET_KEY,
       signOptions: { expiresIn: '1D' },
     }),
   ],
   controllers: [
-    CreateController,
     GetAllController,
+    CreateController,
+    GetOneController,
     UpdateController,
     DeleteController,
-    GetOneController,
   ],
-  providers: [EmployeeService, EmailService, VerifyEmailService],
+  providers: [
+    EmployeeService,
+    EmailService,
+    VerifyEmailService,
+    CloudinaryService,
+    ConfigService,
+    TokenService,
+  ],
 })
 export class EmployeeModule {}

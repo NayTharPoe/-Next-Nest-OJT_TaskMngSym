@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema({
-  timestamps: true,
-})
-export class task {
+export type TaskDocument = TaskEntity & Document;
+
+@Schema({ collection: 'tasks', timestamps: true })
+export class TaskEntity {
   @Prop({ ref: 'project', required: true })
   project: string;
 
@@ -17,10 +17,10 @@ export class task {
   description: string;
 
   @Prop({ required: true })
-  estimateHour: string;
+  estimateHour: number;
 
   @Prop({ default: true })
-  actualHour: string;
+  actualHour: number;
 
   @Prop({ required: true })
   status: string;
@@ -38,4 +38,4 @@ export class task {
   actual_finish_date: string;
 }
 
-export const taskSchema = SchemaFactory.createForClass(task);
+export const taskSchema = SchemaFactory.createForClass(TaskEntity);

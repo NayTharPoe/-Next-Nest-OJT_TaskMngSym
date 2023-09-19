@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { employee } from '../entities/employee.entities';
+import { EmployeeDocument, EmployeeEntity } from '../entities/employee.entities';
 import { Model } from 'mongoose';
 import * as randomstring from 'randomstring';
 import * as bcrypt from 'bcrypt';
@@ -9,35 +9,71 @@ import { CreateEmployeeRequestDto } from '../use-case/create/create.request.dto'
 import { VerifyEmailService } from 'src/template/verifyEmail';
 import { EmailService } from 'src/utils/sendMail';
 import { UpdateEmployeeRequestDto } from '../use-case/update/update.request.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { ConfigService } from '@nestjs/config';
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.request.dto';
 
 @Injectable()
 export class EmployeeService {
   constructor(
-    @InjectModel(employee.name) private employeeModel: Model<employee>,
+    @InjectModel(EmployeeEntity.name) private employeeModel: Model<EmployeeDocument>,
     private readonly emailService: EmailService,
+    private readonly configService: ConfigService,
     private readonly verifyEmailService: VerifyEmailService,
     private readonly jwtService: JwtService,
+    private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async getAllEmployee(): Promise<employee[]> {
-    return await this.employeeModel.find();
+  async getAllEmployee({
+    page,
+    limit,
+    keyword,
+  }: PaginationRequestDto): Promise<any> {
+    let options = {};
+    if (keyword) {
+      options = {
+        $or: [
+          { employeeName: new RegExp(keyword.toString(), 'i') },
+          { position: new RegExp(keyword.toString(), 'i') },
+        ],
+      };
+    }
+
+    const totalEmployee = await this.employeeModel.countDocuments(options);
+
+    const data = await this.employeeModel
+      .find(options)
+      .select('-password -token')
+      .limit(limit)
+      .skip(limit * (page - 1));
+
+    if (data.length === 0) {
+      throw new NotFoundException(`No item with this ${keyword}`);
+    }
+
+    return { data, totalEmployee };
   }
 
-  async getEmployeeById(id: string): Promise<employee> {
-    const employee = await this.employeeModel.findById(id);
+  async getEmployeeById(id: string): Promise<EmployeeDocument> {
+    const employee = await this.employeeModel
+      .findById(id)
+      .select('-password -token');
     if (!employee) {
       throw new NotFoundException('No User with this id');
     }
     return employee;
   }
 
-  async createEmployee(payload: CreateEmployeeRequestDto): Promise<any> {
+  async createEmployee(
+    payload: CreateEmployeeRequestDto,
+    profile?: Express.Multer.File,
+  ): Promise<any> {
     const employeeData = {
       employeeName: payload.employeeName,
       email: payload.email,
       address: payload.address,
       phone: payload.phone,
-      DOB: payload.DOB,
+      dob: payload.dob,
       position: payload.position,
     };
 
@@ -52,14 +88,25 @@ export class EmployeeService {
 
     const token = this.jwtService.sign({ email: employeeData.email });
 
+    let cloudImg;
+    if (profile) {
+      cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
+        return { data: data.secure_url };
+      });
+    }
+
     const data = {
       ...employeeData,
       password: hashedPassword,
       token,
+      profile: profile ? cloudImg.data : undefined,
     };
+
     await this.employeeModel.create(data);
 
-    const verifyLink = `http://localhost:3000/verify?token=${token}`;
+    const verifyLink = `${this.configService.get(
+      'CLIENT_DOMAIN',
+    )}/verify?token=${token}`;
 
     const template = this.verifyEmailService.verifyTemplate(
       employeeData.email,
@@ -75,10 +122,29 @@ export class EmployeeService {
   async updateEmployeeByID(
     id: string,
     employee: UpdateEmployeeRequestDto,
-  ): Promise<employee> {
+    profile?: Express.Multer.File,
+  ): Promise<EmployeeDocument> {
+    const user = await this.employeeModel.findOne({ _id: id });
+
+    if (!user) {
+      throw new NotFoundException('No user with this id! you cannot update');
+    }
+
+    let cloudImg;
+    if (profile) {
+      cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
+        return { data: data.secure_url };
+      });
+    }
+
+    const data = {
+      ...employee,
+      profile: profile ? cloudImg.data : undefined,
+    };
+
     const employeeUpdate = await this.employeeModel.findByIdAndUpdate(
       id,
-      employee,
+      data,
       {
         new: true,
       },
@@ -86,7 +152,12 @@ export class EmployeeService {
     return employeeUpdate;
   }
 
-  async dropEmployee(id: string): Promise<employee> {
+  async dropEmployee(id: string): Promise<EmployeeDocument> {
+    const user = await this.employeeModel.findOne({ _id: id });
+
+    if (!user) {
+      throw new NotFoundException('No user with this id! you cannot delete');
+    }
     return await this.employeeModel.findByIdAndDelete(id);
   }
 }

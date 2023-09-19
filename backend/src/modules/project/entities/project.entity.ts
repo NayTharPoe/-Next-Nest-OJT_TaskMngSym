@@ -3,8 +3,8 @@ import { Document } from 'mongoose';
 
 export type ProjectDocument = ProjectEntity & Document;
 
-@Schema({ timestamps: true })
-export class ProjectEntity extends Document {
+@Schema({ collection:'projects', timestamps: true })
+export class ProjectEntity {
   @Prop({ required: true, unique: true })
   projectName: string;
 

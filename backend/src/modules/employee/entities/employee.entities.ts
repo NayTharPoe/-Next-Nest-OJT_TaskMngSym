@@ -1,9 +1,9 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-@Schema({
-  timestamps: true,
-})
-export class employee {
+export type EmployeeDocument = EmployeeEntity & Document;
+@Schema({ collection: 'employees', timestamps: true })
+export class EmployeeEntity {
   @Prop({ required: true })
   employeeName: string;
 
@@ -29,10 +29,10 @@ export class employee {
   phone: string;
 
   @Prop()
-  DOB: string;
+  dob: string;
 
-  @Prop()
+  @Prop({ required: true })
   position: string;
 }
 
-export const employeeSchema = SchemaFactory.createForClass(employee);
+export const employeeSchema = SchemaFactory.createForClass(EmployeeEntity);
