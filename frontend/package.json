@@ -11,7 +11,9 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@hookform/resolvers": "^3.3.1",
     "@mui/icons-material": "^5.14.8",
+    "@mui/lab": "^5.0.0-alpha.145",
     "@mui/material": "^5.14.8",
     "@mui/x-data-grid": "^6.13.0",
     "@mui/x-data-grid-generator": "^6.13.0",
@@ -26,7 +28,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.46.1",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "mirrorful": "^6.1.15"

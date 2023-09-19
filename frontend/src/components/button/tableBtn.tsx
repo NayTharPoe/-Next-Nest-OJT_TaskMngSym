@@ -2,24 +2,20 @@ import { Button, styled } from '@mui/material';
 import React from 'react';
 import palette from '@/theme/palette';
 
-const TableBtn = ({ tableBtnText } : {tableBtnText: string}) => {
-  let colorCode
-  const primaryColor = palette.primary.main
-  const secondaryColor = palette.secondary.main
-  const errorColor = palette.error.main
+const TableBtn = (props: any) => {
+  let colorCode;
+  const secondaryColor = palette.secondary.main;
+  const errorColor = palette.error.light;
 
-  switch (tableBtnText) {
+  switch (props.children) {
     case 'Edit':
-      colorCode = secondaryColor
-      break;
-    case 'Preview':
-      colorCode = primaryColor
+      colorCode = secondaryColor;
       break;
     case 'Remove':
-      colorCode = errorColor
+      colorCode = errorColor;
       break;
     default:
-      colorCode = secondaryColor
+      colorCode = secondaryColor;
       break;
   }
 
@@ -32,29 +28,23 @@ const TableBtn = ({ tableBtnText } : {tableBtnText: string}) => {
     borderRadius: '20px',
     backgroundColor: colorCode,
     color: palette.text.primary,
-    borderColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
+    borderColor: props.children === 'Edit' ? secondaryColor : errorColor,
     marginRight: '10px',
-    "&:hover": {
-      backgroundColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
-      borderColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
-      boxShadow: "none",
+    '&:hover': {
+      backgroundColor: props.children === 'Edit' ? secondaryColor : errorColor,
+      borderColor: props.children === 'Edit' ? secondaryColor : errorColor,
+      boxShadow: 'none',
     },
-    "&:active": {
-      boxShadow: "none",
-      backgroundColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
-      borderColor: tableBtnText === "Edit" ? secondaryColor : primaryColor,
-    }
+    '&:active': {
+      boxShadow: 'none',
+      backgroundColor: props.children === 'Edit' ? secondaryColor : errorColor,
+      borderColor: props.children === 'Edit' ? secondaryColor : errorColor,
+    },
   });
 
   return (
-    <TableButton
-      variant="contained"
-      onClick={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-      }}
-    >
-      {tableBtnText}
+    <TableButton variant="contained" {...props}>
+      {props.children}
     </TableButton>
   );
 };

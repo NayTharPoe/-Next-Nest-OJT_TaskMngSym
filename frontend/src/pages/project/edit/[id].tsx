@@ -1,16 +1,16 @@
 import React from 'react';
+import type { NextPageWithLayout } from '@/pages/_app';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import MainLayout from '@/layouts/MainLayout';
 import { ReactElement } from 'react';
-import type { NextPageWithLayout } from '../_app';
 import { Grid, TextField, Button, Paper, FormLabel, Stack } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import palette from '@/theme/palette';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
 
-const CreateFormButton = (props: any) => {
+const UpdateFormButton = (props: any) => {
   return (
     <Button
       fullWidth
@@ -262,7 +262,7 @@ const AddNewProjectPage: NextPageWithLayout = () => {
             <CancelFormButton onClick={() => router.back()}>Cancel</CancelFormButton>
           </Grid>
           <Grid item xs={12} sm={6} sx={{ mt: 1 }}>
-            <CreateFormButton>Create</CreateFormButton>
+            <UpdateFormButton>Update</UpdateFormButton>
           </Grid>
         </Grid>
       </form>

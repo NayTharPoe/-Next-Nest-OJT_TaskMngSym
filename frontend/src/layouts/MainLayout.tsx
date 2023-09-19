@@ -32,7 +32,7 @@ const MainLayout = (props: any) => {
           width: { xl: `calc(100% - ${drawerWidth}px)` },
           ml: { xl: `${drawerWidth}px` },
           boxShadow: 'none',
-          backgroundColor: (theme) => `${theme.palette.background.paper}`,
+          background: (theme) => `${theme.palette.background.paper}`,
         }}
       >
         <Toolbar>
@@ -41,7 +41,7 @@ const MainLayout = (props: any) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' }, color:(theme: any) => `${theme.palette.charcoal.main}` }}
+            sx={{ mr: 2, display: { md: 'none' }, color: (theme: any) => `${theme.palette.charcoal.main}` }}
           >
             <MenuIcon />
           </IconButton>
@@ -70,7 +70,7 @@ const MainLayout = (props: any) => {
           }}
           PaperProps={{
             sx: {
-              backgroundColor:(theme: any) => `${theme.palette.charcoal.main}`
+              backgroundColor: (theme: any) => `${theme.palette.charcoal.main}`,
             },
           }}
         >
@@ -89,7 +89,7 @@ const MainLayout = (props: any) => {
           open
           PaperProps={{
             sx: {
-              backgroundColor:(theme: any) => `${theme.palette.charcoal.main}`
+              backgroundColor: (theme: any) => `${theme.palette.charcoal.main}`,
             },
           }}
         >
@@ -103,7 +103,7 @@ const MainLayout = (props: any) => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          height: '100vh',
+          minHeight: '100vh',
           backgroundColor: (theme) => `${theme.palette.background.paper}`,
         }}
       >

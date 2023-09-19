@@ -11,11 +11,9 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-// import SwipeableViews from 'react-swipeable-views';
 import { useTheme } from '@mui/material/styles';
 import palette from '@/theme/palette';
 import { useRouter } from 'next/router';
-
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -36,7 +34,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 2}}>
+        <Box sx={{ p: 2 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -78,8 +76,8 @@ const Header = () => {
   };
 
   const handleOpenMessageMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElMenu(event?.currentTarget)
-  }
+    setAnchorElMenu(event?.currentTarget);
+  };
 
   const handleCloseMessageMenu = () => {
     setAnchorElMenu(null);
@@ -95,29 +93,40 @@ const Header = () => {
 
   const router = useRouter();
   const routePath = router.pathname.split('/')[1];
-  let pageTitle = ''
+  let pageTitle = '';
   switch (routePath) {
     case 'project':
-      pageTitle = 'Projects'
+      pageTitle = 'Projects';
       break;
     case 'employee':
-      pageTitle = 'Employees'
+      pageTitle = 'Employees';
       break;
     case 'task':
-      pageTitle = 'Tasks'
+      pageTitle = 'Tasks';
       break;
     case 'report':
-      pageTitle = 'Reports'
+      pageTitle = 'Reports';
       break;
     default:
       break;
   }
   return (
-    <Box sx={{ width: '100%',display: { xs:'none', md: 'flex', gap: 15 }, mt:3, mb:3,justifyContent:'space-between', alignItems:'center' }}>
+    <Box
+      sx={{
+        width: '100%',
+        display: { xs: 'none', md: 'flex', gap: 15 },
+        mt: 3,
+        mb: 3,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
       <Box>
-        <Typography variant='h2' sx={{color: palette.text.primary}}>{pageTitle}</Typography>
+        <Typography variant="h2" sx={{ color: palette.text.primary }}>
+          {pageTitle}
+        </Typography>
       </Box>
-      <Box sx={{width: 'max-content',display: 'flex', gap:3}}>
+      <Box sx={{ width: 'max-content', display: 'flex', gap: 3 }}>
         {/* notification item */}
         <Box>
           <IconButton aria-label={notificationsLabel(100)} onClick={handleOpenMessageMenu}>
@@ -142,7 +151,7 @@ const Header = () => {
             onClose={handleCloseMessageMenu}
           >
             <Box sx={{ width: 370 }}>
-              <AppBar position="static" sx={{backgroundColor: 'transparent'}}>
+              <AppBar position="static" sx={{ backgroundColor: 'transparent' }}>
                 <Tabs
                   value={value}
                   onChange={handleChange}
@@ -176,7 +185,10 @@ const Header = () => {
         <Box>
           <Tooltip title="Account settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar alt='profile picture' src='https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg'/>
+              <Avatar
+                alt="profile picture"
+                src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
+              />
             </IconButton>
           </Tooltip>
           <Menu

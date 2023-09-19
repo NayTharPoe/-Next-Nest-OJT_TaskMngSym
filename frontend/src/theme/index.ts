@@ -15,18 +15,6 @@ const themeOptions: any = {
       xl: 1536,
     },
   },
-  components: {
-    MuiPaper: {
-      defaultProps: {
-        elevation: 0,
-      },
-      styleOverrides: {
-        root: {
-          backgroundImage: 'none',
-        },
-      },
-    },
-  },
 };
 
 export const theme = createTheme(themeOptions);

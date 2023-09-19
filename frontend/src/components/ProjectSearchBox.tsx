@@ -19,7 +19,7 @@ export const StyledIconButton = styled(ButtonBase)(({ theme }) => ({
   },
 }));
 
-export const Search = styled('div')(({ theme } : any) => ({
+export const Search = styled('div')(({ theme }: any) => ({
   position: 'relative',
   borderRadius: '.6rem',
   border: `1px solid ${theme.palette.grey[400]}`,
@@ -32,7 +32,7 @@ export const Search = styled('div')(({ theme } : any) => ({
   [theme.breakpoints.up('sm')]: {
     width: 'auto',
   },
-  overflow:'hidden',
+  overflow: 'hidden',
 }));
 
 export const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -77,25 +77,14 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function ProjectSearchBox({
-  value,
-  inputSearch,
-}: {
-  value: string;
-  inputSearch: any;
-}) {
-
+export default function ProjectSearchBox({ value, inputSearch }: { value: string; inputSearch: any }) {
   return (
     <Stack direction="row">
       <Search>
         <SearchIconWrapper>
           <SearchIcon />
         </SearchIconWrapper>
-        <StyledInputBase
-          value={value}
-          onChange={inputSearch}
-          placeholder="Search…"
-        />
+        <StyledInputBase value={value} onChange={inputSearch} placeholder="Search…" />
       </Search>
     </Stack>
   );
