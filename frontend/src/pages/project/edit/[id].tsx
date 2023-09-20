@@ -1,6 +1,5 @@
 import React from 'react';
 import type { NextPageWithLayout } from '@/pages/_app';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import MainLayout from '@/layouts/MainLayout';
 import { ReactElement } from 'react';
@@ -9,6 +8,7 @@ import { useForm, Controller } from 'react-hook-form';
 import palette from '@/theme/palette';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
+import { ProjectSchema } from '@/lib/validation/projectSchema';
 
 const UpdateFormButton = (props: any) => {
   return (
@@ -52,14 +52,6 @@ const CancelFormButton = (props: any) => {
   );
 };
 
-const schema = yup.object().shape({
-  projectName: yup.string().required('Project Name is required'),
-  language: yup.string().required('Language is required'),
-  description: yup.string(),
-  startDate: yup.date().required('Start Date is required'),
-  endDate: yup.date().required('End Date is required'),
-});
-
 const AddNewProjectPage: NextPageWithLayout = () => {
   const router = useRouter();
   const {
@@ -67,7 +59,7 @@ const AddNewProjectPage: NextPageWithLayout = () => {
     control,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(ProjectSchema),
     defaultValues: {
       projectName: '',
       language: '',

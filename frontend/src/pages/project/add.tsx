@@ -1,5 +1,4 @@
 import React from 'react';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import MainLayout from '@/layouts/MainLayout';
 import { ReactElement } from 'react';
@@ -9,6 +8,8 @@ import { useForm, Controller } from 'react-hook-form';
 import palette from '@/theme/palette';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
+import { ProjectSchema } from '@/lib/validation/projectSchema';
+import dayjs, { Dayjs } from 'dayjs';
 
 const CreateFormButton = (props: any) => {
   return (
@@ -52,14 +53,6 @@ const CancelFormButton = (props: any) => {
   );
 };
 
-const schema = yup.object().shape({
-  projectName: yup.string().required('Project Name is required'),
-  language: yup.string().required('Language is required'),
-  description: yup.string(),
-  startDate: yup.date().required('Start Date is required'),
-  endDate: yup.date().required('End Date is required'),
-});
-
 const AddNewProjectPage: NextPageWithLayout = () => {
   const router = useRouter();
   const {
@@ -67,7 +60,7 @@ const AddNewProjectPage: NextPageWithLayout = () => {
     control,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(ProjectSchema),
     defaultValues: {
       projectName: '',
       language: '',
@@ -81,11 +74,16 @@ const AddNewProjectPage: NextPageWithLayout = () => {
     console.log(data);
   };
 
+  const isWeekend = (date: Dayjs) => {
+    const day = date.day();
+    return day === 0 || day === 6;
+  };
+
   return (
     <Paper
       elevation={0}
       sx={{
-        maxWidth: '760px',
+        maxWidth: '780px',
         m: '0 auto',
         mt: 10,
         p: 5,
@@ -191,7 +189,8 @@ const AddNewProjectPage: NextPageWithLayout = () => {
                 render={({ field }) => (
                   <DatePicker
                     {...field}
-                    value={field.value}
+                    value={field.value ? dayjs(field.value) : null}
+                    shouldDisableDate={isWeekend}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -200,8 +199,8 @@ const AddNewProjectPage: NextPageWithLayout = () => {
                         helperText: errors.startDate?.message,
                       },
                     }}
-                    onChange={(value) => {
-                      field.onChange(value);
+                    onChange={(date) => {
+                      field.onChange(date?.toDate());
                     }}
                     sx={{
                       'MuiDateCalendar-root': {
@@ -230,7 +229,8 @@ const AddNewProjectPage: NextPageWithLayout = () => {
                 render={({ field }) => (
                   <DatePicker
                     {...field}
-                    value={field.value}
+                    value={field.value ? dayjs(field.value) : null}
+                    shouldDisableDate={isWeekend}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -239,8 +239,8 @@ const AddNewProjectPage: NextPageWithLayout = () => {
                         helperText: errors.endDate?.message,
                       },
                     }}
-                    onChange={(value) => {
-                      field.onChange(value);
+                    onChange={(date) => {
+                      field.onChange(date?.toDate());
                     }}
                     sx={{
                       'MuiDateCalendar-root': {
