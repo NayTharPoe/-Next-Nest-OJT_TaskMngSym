@@ -5,7 +5,10 @@ import { ForgetPasswordController } from './use-case/forget-password/forget-pass
 import { ChangePasswordController } from './use-case/change-password/change-password.controller';
 import { ResetPasswordController } from './use-case/reset-password/reset-password.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { EmployeeEntity, employeeSchema } from '../employee/entities/employee.entities';
+import {
+  EmployeeEntity,
+  employeeSchema,
+} from '../employee/entities/employee.entities';
 import { JwtModule } from '@nestjs/jwt';
 import { SECRET_KEY } from 'src/common/constants/constant';
 import { ForgetEmailService } from 'src/template/forgetEmail';
@@ -22,15 +25,19 @@ import { TokenService } from './tokens/service/token.service';
       secret: SECRET_KEY,
       signOptions: { expiresIn: '1D' },
     }),
-    MongooseModule.forFeature([{ name: EmployeeEntity.name, schema: employeeSchema }]),
-    MongooseModule.forFeature([{ name: TokenEntity.name, schema: tokenSchema }]),
+    MongooseModule.forFeature([
+      { name: EmployeeEntity.name, schema: employeeSchema },
+    ]),
+    MongooseModule.forFeature([
+      { name: TokenEntity.name, schema: tokenSchema },
+    ]),
   ],
   providers: [
     AuthService,
     ForgetEmailService,
     EmailService,
     ConfigService,
-    TokenService
+    TokenService,
   ],
   controllers: [
     LoginController,

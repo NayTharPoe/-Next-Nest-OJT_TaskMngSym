@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type ReportDocument = ReportEntity & Document;
 
-@Schema({ collection:'reports', timestamps: true })
+@Schema({ collection: 'reports', timestamps: true })
 export class ReportEntity extends Document {
   @Prop({ required: true })
   reportTo: string;

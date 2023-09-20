@@ -10,7 +10,7 @@ import { TaskService } from '../../service/task.service';
 import { GetAllTaskResponseDto } from './getAll.response.dto';
 import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { taskPaginateRequestDto } from 'src/common/dtos/request/taskpaginate.request.dto';
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
 
 @Controller('tasks')
 @ApiTags('Task')
@@ -22,13 +22,13 @@ export class GetAllController {
   @Get('list')
   async getAllTask(
     @Response() res,
-    @Query() query: taskPaginateRequestDto,
+    @Query() query: PaginationRequestDto,
   ): Promise<GetAllTaskResponseDto> {
     try {
       const { data, totalTasks } = await this.taskService.getAllTaskList(query);
       return res
         .status(200)
-        .json({ messag: 'Get All Task Lists', data, totalTasks });
+        .json({ message: 'Get All Task Lists', data, totalTasks });
     } catch (err) {
       throw new NotFoundException(err.message);
     }

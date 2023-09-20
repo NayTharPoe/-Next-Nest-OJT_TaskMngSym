@@ -7,6 +7,7 @@ import { mongooseConfigFactory } from './infra/database/database.config.service'
 import { EmployeeModule } from './modules/employee/employee.module';
 import { ProjectModule } from './modules/project/project.module';
 import { TaskModule } from './modules/task/task.module';
+import { NotificationModule } from './modules/notification/notification.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ReportModule } from './modules/report/report.module';
@@ -18,6 +19,7 @@ import { ReportModule } from './modules/report/report.module';
     ProjectModule,
     TaskModule,
     ReportModule,
+    NotificationModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
@@ -27,7 +29,6 @@ import { ReportModule } from './modules/report/report.module';
       inject: [ConfigService],
     }),
     CloudinaryModule,
-    // TokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

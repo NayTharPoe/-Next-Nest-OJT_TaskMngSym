@@ -1,13 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { EmployeeEntity } from 'src/modules/employee/entities/employee.entities';
+import { ProjectEntity } from 'src/modules/project/entities/project.entity';
 
 export type TaskDocument = TaskEntity & Document;
 
 @Schema({ collection: 'tasks', timestamps: true })
 export class TaskEntity {
-  @Prop({ ref: 'project', required: true })
+  @Prop({ ref: ProjectEntity.name, required: true })
   project: string;
 
-  @Prop({ ref: 'employee', required: true })
+  @Prop({ ref: EmployeeEntity.name, required: true })
   assignedEmployee: string;
 
   @Prop({ required: true })

@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { EmployeeDocument, EmployeeEntity } from '../entities/employee.entities';
+import {
+  EmployeeDocument,
+  EmployeeEntity,
+} from '../entities/employee.entities';
 import { Model } from 'mongoose';
 import * as randomstring from 'randomstring';
 import * as bcrypt from 'bcrypt';
@@ -11,12 +14,13 @@ import { EmailService } from 'src/utils/sendMail';
 import { UpdateEmployeeRequestDto } from '../use-case/update/update.request.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { ConfigService } from '@nestjs/config';
-import { PaginationRequestDto } from 'src/common/dtos/request/pagination.request.dto';
+import { EmployeePaginationRequestDto } from 'src/common/dtos/request/employeePagination.req.dto';
 
 @Injectable()
 export class EmployeeService {
   constructor(
-    @InjectModel(EmployeeEntity.name) private employeeModel: Model<EmployeeDocument>,
+    @InjectModel(EmployeeEntity.name)
+    private employeeModel: Model<EmployeeDocument>,
     private readonly emailService: EmailService,
     private readonly configService: ConfigService,
     private readonly verifyEmailService: VerifyEmailService,
@@ -28,7 +32,7 @@ export class EmployeeService {
     page,
     limit,
     keyword,
-  }: PaginationRequestDto): Promise<any> {
+  }: EmployeePaginationRequestDto): Promise<any> {
     let options = {};
     if (keyword) {
       options = {

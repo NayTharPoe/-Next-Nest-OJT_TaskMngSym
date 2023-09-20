@@ -1,14 +1,24 @@
-import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { ProjectService } from '../../service/project.service';
 import { CreateProjectRequestDto } from './create.request.dto';
 import { CreateProjectResponseDto } from './create.response.dto';
-import {  ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 
 @Controller('project')
 @ApiTags('Project')
 export class CreateProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   @Post('add')
   async create(
     @Res() response,

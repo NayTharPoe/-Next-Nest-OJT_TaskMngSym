@@ -1,13 +1,23 @@
-import { Controller, Get, Res, Query, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Res,
+  Query,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { ProjectService } from '../../service/project.service';
 import { GetAllProjectResponseDto } from './get-all.response.dto';
-import { ApiTags, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
+import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 @Controller('projects')
 @ApiTags('Project')
 export class GetAllProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   @Get('/list')
   @ApiQuery({
     name: 'limit',

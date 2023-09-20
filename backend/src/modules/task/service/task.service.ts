@@ -4,13 +4,15 @@ import { TaskDocument, TaskEntity } from '../entities/task.entities';
 import { Model } from 'mongoose';
 import { CreateTaskRequestDto } from '../use-case/create/create.request.dto';
 import { UpdateTaskRequestDto } from '../use-case/update/update.request.dto';
-import { taskPaginateRequestDto } from 'src/common/dtos/request/taskpaginate.request.dto';
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
 
 @Injectable()
 export class TaskService {
-  constructor(@InjectModel(TaskEntity.name) private taskModel: Model<TaskDocument>) {}
+  constructor(
+    @InjectModel(TaskEntity.name) private taskModel: Model<TaskDocument>,
+  ) {}
 
-  async getAllTaskList({ page, limit }: taskPaginateRequestDto): Promise<any> {
+  async getAllTaskList({ page, limit }: PaginationRequestDto): Promise<any> {
     const totalTasks = await this.taskModel.countDocuments();
     const data = await this.taskModel
       .find()
@@ -51,7 +53,10 @@ export class TaskService {
     return data;
   }
 
-  async updateTask(id: string, payload: UpdateTaskRequestDto): Promise<TaskDocument> {
+  async updateTask(
+    id: string,
+    payload: UpdateTaskRequestDto,
+  ): Promise<TaskDocument> {
     const task = await this.taskModel.findOne({ _id: id });
 
     if (!task) {

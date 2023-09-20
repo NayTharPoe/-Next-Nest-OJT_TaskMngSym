@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { ProjectDocument } from '../entities/project.entity';
+import { ProjectDocument, ProjectEntity } from '../entities/project.entity';
 import { CreateProjectRequestDto } from '../use-case/create/create.request.dto';
 import { UpdateProjectRequestDto } from '../use-case/update/update.request.dto';
 import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectModel('project')
+    @InjectModel(ProjectEntity.name)
     private readonly projectModel: Model<ProjectDocument>,
   ) {}
 

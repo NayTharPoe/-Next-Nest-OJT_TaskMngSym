@@ -2,12 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReportRequestDto } from '../use-case/create/create.request.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { ReportDocument } from '../entities/report.entity';
+import { ReportDocument, ReportEntity } from '../entities/report.entity';
 import { ReportPaginationRequestDto } from 'src/common/dtos/request/reportPagination.req.dto';
 @Injectable()
 export class ReportService {
   constructor(
-    @InjectModel('report')
+    @InjectModel(ReportEntity.name)
     private readonly reportModel: Model<ReportDocument>,
   ) {}
 
@@ -41,8 +41,8 @@ export class ReportService {
 
     if (reportBy) {
       query.reportBy = {
-        $regex: new RegExp(reportBy, 'i')
-      }
+        $regex: new RegExp(reportBy, 'i'),
+      };
     }
 
     if (reportTo) {

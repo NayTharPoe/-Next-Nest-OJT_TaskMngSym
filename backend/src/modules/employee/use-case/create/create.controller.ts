@@ -6,7 +6,7 @@ import {
   NotFoundException,
   UseGuards,
   UseInterceptors,
-  UploadedFile
+  UploadedFile,
 } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { CreateEmployeeRequestDto } from './create.request.dto';
@@ -20,8 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class CreateController {
   constructor(private employeeService: EmployeeService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth(/
   @Post('add')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
