@@ -1,0 +1,368 @@
+import MainLayout from "@/layouts/MainLayout";
+import {
+  Box,
+  Grid,
+  InputLabel,
+  Stack,
+  TextField,
+  Typography,
+  CardMedia,
+  Select,
+  MenuItem,
+  Button,
+} from "@mui/material";
+import React, { ReactElement, useState } from "react";
+import BackupIcon from "@mui/icons-material/Backup";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useForm, Controller } from "react-hook-form";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import palette from "@/theme/palette";
+import { DatePicker } from "@mui/x-date-pickers";
+import { useRouter } from "next/router";
+
+const EmployeeCreate = () => {
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data: any): void => {
+    const result = {
+      employeeName: data.employeeName,
+      email: data.email,
+      address: data.address,
+      phone: data.phone,
+      dob: data.dob,
+      position: data.position,
+      profile: uploadedImage ? uploadedImage : undefined,
+    };
+  };
+
+  const handleDragOver = (e: any) => {
+    e.preventDefault();
+    // Add any additional styling for drag over state
+  };
+
+  const handleDragLeave = () => {
+    // Remove any additional styling for drag over state
+  };
+
+  const handleDrop = (e: any) => {
+    e.preventDefault();
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.match("image.*")) {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          setUploadedImage(reader.result as string);
+        };
+
+        reader.readAsDataURL(file);
+      } else {
+        alert("Please select an image file (jpg, jpeg, png)");
+      }
+    }
+  };
+
+  const handleFileInputChange = (e: any) => {
+    const file = e.target.files[0];
+    if (file.type.match("image.*")) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        setUploadedImage(reader.result as string);
+      };
+
+      reader.readAsDataURL(file);
+    } else {
+      alert("Please select an image file (jpg, jpeg, png)");
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setUploadedImage(null);
+  };
+
+  const CommonButton = (props: any) => {
+    return (
+      <Button
+        fullWidth
+        type={props.text === "save" ? "submit" : "button"}
+        variant="contained"
+        sx={{
+          padding: "10px",
+          borderRadius: ".5rem",
+          boxShadow: "none",
+          background: `${
+            props.text === "save"
+              ? palette.primary.main
+              : palette.secondary.main
+          }`,
+          color: palette.text.primary,
+          "&:hover": {
+            backgroundColor: `${
+              props.text === "save"
+                ? palette.primary.main
+                : palette.secondary.main
+            }`,
+            borderColor: palette.primary.border,
+            boxShadow: "none",
+          },
+        }}
+        {...props}
+      >
+        {props.children}
+      </Button>
+    );
+  };
+
+  return (
+    <>
+      <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container spacing={4}>
+            <Grid item md={6} sm={6} xs={12}>
+              <InputLabel>
+                Name <span style={{ color: "red" }}>*</span>
+              </InputLabel>
+              <Controller
+                name="employeeName"
+                rules={{ required: "Employee name is required" }}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    id="employeeName"
+                    value={field.value || ""}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                    }}
+                    error={!!errors.employeeName}
+                    helperText={errors.employeeName?.message as string}
+                    placeholder="Employee Name..."
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item md={6} sm={6} xs={12}>
+              <InputLabel>
+                Email <span style={{ color: "red" }}>*</span>
+              </InputLabel>
+              <Controller
+                name="email"
+                rules={{ required: "Email is required" }}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    id="email"
+                    value={field.value || ""}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                    }}
+                    error={!!errors.email}
+                    helperText={errors.email?.message as string}
+                    placeholder="Email..."
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  position: "relative",
+                  width: "48%",
+                  "@media (max-width: 600px)": { width: "65%" },
+                }}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                {uploadedImage && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <CardMedia
+                      component="img"
+                      alt="img-upload"
+                      src={uploadedImage}
+                      sx={{
+                        width: "100%",
+                        height: "170px",
+                        display: "flex",
+                        borderRadius: "5px",
+                        justifyContent: "center",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <DeleteIcon
+                      onClick={handleDeleteImage}
+                      sx={{
+                        position: "absolute",
+                        top: "0",
+                        right: "0",
+                        cursor: "pointer",
+                        color: "#c33953",
+                        background: "#e6dadaf0",
+                        fontSize: "30px",
+                      }}
+                    />
+                  </Box>
+                )}
+                {!uploadedImage && (
+                  <input
+                    id="file-input"
+                    style={{ display: "none" }}
+                    name="profile"
+                    type="file"
+                    accept=".jpg,.jpeg,.png"
+                    onChange={handleFileInputChange}
+                  />
+                )}
+                <label
+                  style={{
+                    height: "170px",
+                    width: "100%",
+                    padding: "10px 15px",
+                    borderRadius: "6px",
+                    border: "1px solid #b0afaf",
+                    display: "inline-block",
+                    cursor: "pointer",
+                  }}
+                  htmlFor="file-input"
+                >
+                  <Box
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      fontSize: "20px",
+                    }}
+                  >
+                    <BackupIcon sx={{ fontSize: "60px" }} />
+                    <Typography>Choose a file or drag it here?</Typography>
+                  </Box>
+                </label>
+              </Box>
+            </Grid>
+            <Grid item sm={6} xs={12}>
+              <InputLabel>Address</InputLabel>
+              <Controller
+                name="address"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id="address"
+                    value={field.value || ""}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                    }}
+                    fullWidth
+                    placeholder="Address..."
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item sm={6} xs={12}>
+              <InputLabel>Phone</InputLabel>
+              <Controller
+                name="phone"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id="phone"
+                    value={field.value || ""}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                    }}
+                    fullWidth
+                    placeholder="Phone..."
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item sm={6} xs={12}>
+              <InputLabel>DOB</InputLabel>
+              <Controller
+                name="dob"
+                control={control}
+                render={({ field }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      sx={{ width: "100%" }}
+                      {...field}
+                      value={field.value || null}
+                      onChange={(date) => {
+                        field.onChange(date);
+                      }}
+                    />
+                  </LocalizationProvider>
+                )}
+              />
+            </Grid>
+            <Grid item sm={6} xs={12}>
+              <InputLabel>
+                Position <span style={{ color: "red" }}>*</span>
+              </InputLabel>
+              <Controller
+                name="position"
+                control={control}
+                defaultValue="0"
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    id="position"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    fullWidth
+                  >
+                    <MenuItem value="0">Member</MenuItem>
+                    <MenuItem value="1">Admin</MenuItem>
+                  </Select>
+                )}
+              />
+            </Grid>
+          </Grid>
+          <Stack
+            mt={3}
+            direction={{ xs: "column", sm: "row" }}
+            spacing={{ xs: 2, sm: 4 }}
+          >
+            <CommonButton onClick={() => router.push("/employee/list")}>
+              Cancel
+            </CommonButton>
+            <CommonButton text="save">Save</CommonButton>
+          </Stack>
+        </form>
+      </Box>
+    </>
+  );
+};
+
+EmployeeCreate.getLayout = function getLayout(page: ReactElement) {
+  return <MainLayout>{page}</MainLayout>;
+};
+
+export default EmployeeCreate;
