@@ -20,6 +20,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import palette from "@/theme/palette";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useRouter } from "next/router";
+import dayjs from "dayjs";
 
 const EmployeeCreate = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -31,6 +32,12 @@ const EmployeeCreate = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const disabledDate = (current: any) => {
+    const todayDate = dayjs().startOf("day");
+    const currentDate = dayjs(current).startOf("day");
+    return currentDate.isAfter(todayDate);
+  };
 
   const onSubmit = (data: any): void => {
     const result = {
@@ -179,6 +186,7 @@ const EmployeeCreate = () => {
               />
             </Grid>
             <Grid item xs={12}>
+              <InputLabel>Profile Photo</InputLabel>
               <Box
                 sx={{
                   position: "relative",
@@ -314,6 +322,7 @@ const EmployeeCreate = () => {
                       sx={{ width: "100%" }}
                       {...field}
                       value={field.value || null}
+                      shouldDisableDate={disabledDate}
                       onChange={(date) => {
                         field.onChange(date);
                       }}

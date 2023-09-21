@@ -14,6 +14,7 @@ import {
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import AddNewBtn from "@/components/addNewBtn";
 import CardBtn from "@/components/cardBtn";
 import palette from "@/theme/palette";
@@ -75,6 +76,31 @@ const EmployeeList = () => {
     );
   });
 
+  const AddButton = (props: any) => {
+    return (
+      <Button
+        fullWidth
+        variant="contained"
+        sx={{
+          padding: "10px 15px",
+          // borderRadius: ".5rem",
+          borderRadius: "25px",
+          boxShadow: "none",
+          background: palette.primary.main,
+          color: palette.text.primary,
+          "&:hover": {
+            background: palette.primary.main,
+            borderColor: palette.primary.border,
+            boxShadow: "none",
+          },
+        }}
+        {...props}
+      >
+        {props.children}
+      </Button>
+    );
+  };
+
   return (
     <>
       <Stack
@@ -91,7 +117,7 @@ const EmployeeList = () => {
           },
         }}
       >
-        <Box sx={{ width: { xs: "60%" }, marginTop: { xs: "20px" } }}>
+        <Box sx={{ marginTop: { xs: "20px" } }}>
           <EmployeeSearchBox
             value={searchText}
             inputSearch={handleInputChange}
@@ -101,10 +127,13 @@ const EmployeeList = () => {
           sx={{
             display: "flex",
             justifyContent: "flex-end",
+            width: { xs: "100%", sm: "auto" },
             mt: 2,
           }}
         >
-          <AddNewBtn AddNewBtnText="Add New Employee" path={"/employee/add"} />
+          <AddButton onClick={() => router.push("/employee/add")}>
+            <AddIcon fontSize="small" sx={{ mr: 1 }} /> New Employee
+          </AddButton>
         </Box>
       </Stack>
       <Grid
@@ -121,9 +150,6 @@ const EmployeeList = () => {
             <Grid key={row.id} item>
               <Card
                 sx={{
-                  "&:hover .del-icon": {
-                    opacity: 1,
-                  },
                   background: "#fbfbfb",
                   width: "250px",
                   borderRadius: "20px",
@@ -144,7 +170,6 @@ const EmployeeList = () => {
                       sx={{
                         color: (theme) => `${theme.palette.text.secondary}`,
                       }}
-                      className="del-icon"
                     />
                   </IconButton>
                 </div>
