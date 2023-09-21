@@ -14,7 +14,7 @@ const VerifyAccount = () => {
           }}
         >
           <img
-            className="verify-img"
+            style={{ width: "320px" }}
             src="/auth-img/verify.png"
             alt="verify-img"
           />

@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import AuthButton from "@/components/authBtn";
-import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Box, Card, Grid, Stack, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 
 const ForgetPasswrod = () => {
@@ -21,7 +21,7 @@ const ForgetPasswrod = () => {
             md={6}
           >
             <img
-              className="auth-img forget-img"
+              style={{ width: "65%", height: "auto", objectFit: "cover" }}
               src="/auth-img/forget.png"
               alt="forget-img"
             />
@@ -32,16 +32,31 @@ const ForgetPasswrod = () => {
             justifyContent="center"
             alignItems="center"
             item
-            sx={{ background: "#efeee3" }}
+            sx={{
+              backgroundImage: {
+                xs: `url('/auth-img/forget.png')`,
+                md: "none",
+              },
+              backgroundSize: "450px",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+            }}
             md={6}
             xs={12}
           >
-            <Box>
+            <Card
+              sx={{
+                background: "#fff",
+                opacity: "95%",
+                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                padding: "20px",
+              }}
+            >
               <Typography textAlign="center" variant="h5">
                 Forget Password
               </Typography>
               <Stack
-                sx={{ width: { xs: "290px", sm: "400px" } }}
+                sx={{ width: { xs: "270px", sm: "380px" } }}
                 mt={4}
                 spacing={3}
               >
@@ -54,7 +69,7 @@ const ForgetPasswrod = () => {
                 ></TextField>
               </Stack>
               <AuthButton btnText={"Reset your password"} />
-            </Box>
+            </Card>
           </Grid>
         </Grid>
       </Box>

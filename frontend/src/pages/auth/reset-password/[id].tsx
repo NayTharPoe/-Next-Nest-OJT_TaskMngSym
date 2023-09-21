@@ -3,6 +3,7 @@ import AuthButton from "@/components/authBtn";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
+  Card,
   Grid,
   IconButton,
   InputAdornment,
@@ -33,7 +34,7 @@ const ResetPassword = () => {
             md={6}
           >
             <img
-              className="auth-img"
+              style={{ width: "70%", height: "auto", objectFit: "cover" }}
               src="/auth-img/reset.png"
               alt="reset-img"
             />
@@ -44,16 +45,28 @@ const ResetPassword = () => {
             justifyContent="center"
             alignItems="center"
             item
-            sx={{ background: "#efeee3" }}
+            sx={{
+              backgroundImage: { xs: `url('/auth-img/reset.png')`, md: "none" },
+              backgroundSize: "670px",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+            }}
             md={6}
             xs={12}
           >
-            <Box>
+            <Card
+              sx={{
+                background: "#fff",
+                opacity: "95%",
+                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                padding: "20px",
+              }}
+            >
               <Typography textAlign="center" variant="h5">
                 Reset Password
               </Typography>
               <Stack
-                sx={{ width: { xs: "290px", sm: "400px" } }}
+                sx={{ width: { xs: "270px", sm: "380px" } }}
                 mt={4}
                 spacing={3}
               >
@@ -93,7 +106,7 @@ const ResetPassword = () => {
                 ></TextField>
               </Stack>
               <AuthButton btnText={"Change Password"} />
-            </Box>
+            </Card>
           </Grid>
         </Grid>
       </Box>

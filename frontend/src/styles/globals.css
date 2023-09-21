@@ -47,23 +47,3 @@
   padding: 0;
   box-sizing: border-box;
 }
-
-.auth-img {
-  width: 70%;
-  height: auto;
-  object-fit: cover;
-}
-
-.forget-img {
-  width: 65%;
-}
-
-.verify-img {
-  width: 350px;
-}
-
-@media only screen and (max-width: 400px) {
-  .verify-img {
-    width: 300px;
-  }
-}

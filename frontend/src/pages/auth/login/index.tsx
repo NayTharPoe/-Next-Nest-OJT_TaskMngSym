@@ -3,6 +3,7 @@ import AuthButton from "@/components/authBtn";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
+  Card,
   Grid,
   IconButton,
   InputAdornment,
@@ -30,7 +31,11 @@ const Login = () => {
             alignItems: "center",
           }}
         >
-          <img className="auth-img" src="/auth-img/login.png" alt="login-img" />
+          <img
+            style={{ width: "70%", height: "auto", objectFit: "cover" }}
+            src="/auth-img/login.png"
+            alt="login-img"
+          />
         </Grid>
         <Grid
           height="100vh"
@@ -38,17 +43,28 @@ const Login = () => {
           justifyContent="center"
           alignItems="center"
           item
-          sx={{ background: "#efeeec" }}
+          sx={{
+            backgroundImage: { xs: `url('/auth-img/login.png')`, md: "none" },
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
           md={6}
           xs={12}
         >
-          <Box>
+          <Card
+            sx={{
+              background: "#fff",
+              opacity: "95%",
+              boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+              padding: "20px",
+            }}
+          >
             <Typography textAlign="center" variant="h5">
               LogIn to TaskSphere
             </Typography>
             <Stack
               sx={{
-                width: { xs: "290px", sm: "400px" },
+                width: { xs: "270px", sm: "380px" },
               }}
               mt={4}
               spacing={3}
@@ -79,12 +95,17 @@ const Login = () => {
               ></TextField>
             </Stack>
             <Stack mt={2}>
-              <Link textAlign="end" underline="none" href="/forget-password">
+              <Link
+                style={{ color: "#2f3136" }}
+                textAlign="end"
+                underline="none"
+                href="/auth/forget-password"
+              >
                 {"Forget Password?"}
               </Link>
             </Stack>
-            <AuthButton btnText={"Log in"} />
-          </Box>
+            <AuthButton btnText={"LogIn"} />
+          </Card>
         </Grid>
       </Grid>
     </Box>
