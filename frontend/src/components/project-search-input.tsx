@@ -4,25 +4,25 @@ import { styled, alpha } from '@mui/material/styles';
 import { InputBase, ButtonBase } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
-import { theme } from '@/theme/theme';
+import palette from '@/theme/palette';
 
 export const StyledIconButton = styled(ButtonBase)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
   padding: '4px',
-  background: theme.palette.primary.main,
+  background: palette.charcoal.main,
   color: theme.palette.common.white,
   transition: '0.3s',
   overflow: 'hidden',
   '&:hover': {
-    background: alpha(theme.palette.primary.main, 0.7),
-    color: theme.palette.primary.dark,
+    background: alpha(palette.charcoal.main, 0.7),
+    color: palette.charcoal.dark,
   },
 }));
 
 export const Search = styled('div')(({ theme } : any) => ({
   position: 'relative',
   borderRadius: '.4rem',
-  border: `1px solid ${theme.palette.milky['600']}`,
+  border: `1px solid ${theme.palette.grey[400]}`,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
@@ -43,7 +43,7 @@ export const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: theme.palette.grey[500],
+  color: theme.palette.grey['500'],
 }));
 
 export const ClearIconWrapper = styled('div')(({ theme }) => ({
@@ -56,9 +56,9 @@ export const ClearIconWrapper = styled('div')(({ theme }) => ({
   justifyContent: 'center',
   zIndex: 20,
   cursor: 'pointer',
-  color: theme.palette.grey[500],
+  color: theme.palette.grey['500'],
   '&:hover': {
-    color: theme.palette.grey[700],
+    color: theme.palette.grey['700'],
   },
 }));
 

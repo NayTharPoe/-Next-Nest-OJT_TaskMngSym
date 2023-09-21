@@ -3,8 +3,8 @@ import '@/styles/globals.css';
 import type { ReactElement, ReactNode } from 'react';
 import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
-import { theme } from '@/theme/theme';
 import { ThemeProvider } from '@mui/material/styles';
+import { theme } from '@/theme';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;

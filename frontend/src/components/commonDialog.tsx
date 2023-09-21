@@ -18,7 +18,6 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export default function ConfirmDialog({open, onClose} : any) {
-  
 
   return (
     <div>
