@@ -1,36 +1,33 @@
 import * as React from "react";
 import { ReactElement, useState } from "react";
 import { alpha } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Typography,
+  Paper,
+  Button,
+} from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import MainLayout from "@/layouts/MainLayout";
+import AddIcon from "@mui/icons-material/Add";
 import type { NextPageWithLayout } from "../_app";
 import TableBtn from "@/components/tableBtn";
 import ProjectSearchBox from "@/components/project-search-input";
 import ConfirmDialog from "@/components/commonDialog";
-import AddNewBtn from "@/components/addNewBtn";
 import palette from "@/theme/palette";
 import { useRouter } from "next/navigation";
-import { MenuItem, Select } from "@mui/material";
 
 interface Data {
-  id: number;
+  id: string;
   title: string;
   description: string;
   projectName: string;
@@ -45,7 +42,7 @@ interface Data {
 }
 
 function createData(
-  id: number,
+  id: string,
   title: string,
   description: string,
   projectName: string,
@@ -76,112 +73,112 @@ function createData(
 
 const rows = [
   createData(
-    1,
+    "1",
     "this is title 1",
     "this is description 1",
     "React",
     "alinn",
     3,
     2,
-    "0",
+    "Opened",
     "2023-02-12",
     "2023-03-15",
     "2023-02-12",
     "2023-03-15"
   ),
   createData(
-    2,
+    "2",
     "this is title 2",
     "this is description 2",
     "Vue",
     "mgmg",
     3,
     2,
-    "1",
+    "In progress",
     "2023-02-12",
     "2023-03-15",
     "2023-02-12",
     "2023-03-15"
   ),
   createData(
-    3,
+    "3",
     "this is title 3",
     "this is description 3",
     "Next",
     "james",
     3,
     2,
-    "3",
+    "Finished",
     "2023-02-12",
     "2023-03-15",
     "2023-02-12",
     "2023-03-15"
   ),
   createData(
-    4,
+    "4",
     "this is title 4",
     "this is description 4",
     "Nest",
     "mac",
     3,
     2,
-    "0",
+    "Closed",
     "2023-02-12",
     "2023-03-15",
     "2023-02-12",
     "2023-03-15"
   ),
   createData(
-    5,
+    "5",
     "this is title 5",
     "this is description 5",
     "Php",
     "ayeaye",
     3,
     2,
-    "1",
+    "In progress",
     "2023-02-12",
     "2023-03-15",
     "2023-02-12",
     "2023-03-15"
   ),
   createData(
-    6,
+    "6",
     "this is title 6",
     "this is description 6",
     "Angular",
     "john",
     3,
     2,
-    "0",
+    "Finished",
     "2023-02-12",
     "2023-03-15",
     "2023-02-12",
     "2023-03-15"
   ),
   createData(
-    7,
+    "7",
     "this is title 7",
     "this is description 7",
     "ruby",
     "aruther",
     3,
     2,
-    "3",
+    "In progress",
     "2023-02-12",
     "2023-03-15",
     "2023-02-12",
     "2023-03-15"
   ),
   createData(
-    8,
+    "8",
     "this is title 8",
     "this is description 8",
     "React",
     "zaw zaw",
     3,
     2,
-    "0",
+    "Finished",
     "2023-02-12",
     "2023-03-15",
     "2023-02-12",
@@ -281,14 +278,12 @@ const headCells: readonly HeadCell[] = [
   {
     id: "actualHour",
     numeric: false,
-    // minWidth: 170,
     disablePadding: false,
     label: "Actual Hour",
   },
   {
     id: "status",
     numeric: false,
-    // minWidth: 170,
     disablePadding: false,
     label: "Status",
   },
@@ -323,7 +318,6 @@ const headCells: readonly HeadCell[] = [
   {
     id: "action",
     numeric: false,
-    minWidth: 140,
     disablePadding: false,
     label: "Action",
   },
@@ -341,7 +335,7 @@ interface EnhancedTableProps {
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { order, orderBy, onRequestSort } = props;
   const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+    (property: any) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
 
@@ -391,25 +385,13 @@ interface EnhancedTableToolbarProps {
   numSelected: number;
   searchText: string;
   onSearchChange: (newSearchText: string) => void;
-  setSelectStatus: string;
-  selectStatus: string;
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const {
-    numSelected,
-    searchText,
-    onSearchChange,
-    setSelectStatus,
-    selectStatus,
-  } = props;
+  const { numSelected, searchText, onSearchChange } = props;
   const handleSearchInputChange = (event: { target: { value: any } }) => {
     const newSearchText = event.target.value;
     onSearchChange(newSearchText);
-  };
-  const handleChange = (event: { target: { value: any } }) => {
-    const newSelectValue = event.target.value;
-    setSelectStatus(newSelectValue);
   };
 
   return (
@@ -437,7 +419,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           value={searchText}
           inputSearch={handleSearchInputChange}
         />
-        <Select
+        {/* <Select
           size="small"
           sx={{ marginLeft: "15px", width: "30%" }}
           value={selectStatus}
@@ -448,13 +430,36 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           <MenuItem value="2">Finished</MenuItem>
           <MenuItem value="3">Closed</MenuItem>
           <MenuItem value="4">All</MenuItem>
-        </Select>
+        </Select> */}
       </Typography>
     </Toolbar>
   );
 }
 
-const ProjectListPage: NextPageWithLayout = () => {
+const AddButton = (props: any) => {
+  return (
+    <Button
+      variant="contained"
+      sx={{
+        padding: "10px 15px",
+        borderRadius: "25px",
+        boxShadow: "none",
+        background: palette.primary.main,
+        color: palette.text.primary,
+        "&:hover": {
+          background: palette.primary.main,
+          borderColor: palette.primary.border,
+          boxShadow: "none",
+        },
+      }}
+      {...props}
+    >
+      {props.children}
+    </Button>
+  );
+};
+
+const TaskList: NextPageWithLayout = () => {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("projectName");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -463,10 +468,7 @@ const ProjectListPage: NextPageWithLayout = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [IdToDelete, setIdToDelete] = useState(null);
-  const [selectStatus, setSelectStatus] = useState<string>("4");
   const router = useRouter();
-
-  console.log(selectStatus);
 
   const handleSearchChange = (newSearchText: string) => {
     setSearchText(newSearchText);
@@ -493,24 +495,18 @@ const ProjectListPage: NextPageWithLayout = () => {
     setPage(0);
   };
 
-  function filterRows(
-    rows: Data[],
-    searchText: string,
-    selectStatus: string
-  ): Data[] {
+  function filterRows(rows: Data[], searchText: string): Data[] {
     const filteredRows = rows.filter((row) => {
       const { title, projectName, assignedEmployee, status } = row;
 
       return (
-        // projectName.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        // title.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        // assignedEmployee
-        //   .toLowerCase()
-        //   .includes(searchText.toLowerCase().trim()) ||
-        status === selectStatus
+        title.toLowerCase().includes(searchText.toLowerCase().trim()) ||
+        projectName.toLowerCase().includes(searchText.toLowerCase().trim()) ||
+        assignedEmployee
+          .toLowerCase()
+          .includes(searchText.toLowerCase().trim()) ||
+        status.toLocaleLowerCase().includes(searchText.toLowerCase().trim())
       );
-      // startDate.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-      // endDate.toLowerCase().includes(searchText.toLowerCase().trim())
     });
 
     return filteredRows;
@@ -523,18 +519,15 @@ const ProjectListPage: NextPageWithLayout = () => {
   const visibleRows = React.useMemo(
     () =>
       stableSort(
-        filterRows(rows, searchText, selectStatus),
+        filterRows(rows, searchText),
         getComparator(order, orderBy)
       ).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [order, orderBy, page, rowsPerPage, rows, searchText]
   );
 
-  const handleEditProject = (e: any, id: number) => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    router.push(`/project/edit/${id}`);
+  const handleEditProject = (e: any, id: string) => {
+    router.push(`/task/edit/${id}`);
   };
 
   const handleOpenDialog = (id: any) => {
@@ -547,13 +540,15 @@ const ProjectListPage: NextPageWithLayout = () => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-        <AddNewBtn AddNewBtnText="Add New Project" path={"/project/add"} />
+        <AddButton onClick={() => router.push("/task/add")}>
+          <AddIcon fontSize="small" sx={{ mr: 1 }} /> New Task
+        </AddButton>
       </Box>
       <Paper
         sx={{
-          width: "100%",
+          "media (min-width : 300px)": { width: "calc(100% - 290px)" },
           mb: 2,
           mt: 3,
           p: 2,
@@ -564,13 +559,10 @@ const ProjectListPage: NextPageWithLayout = () => {
         <EnhancedTableToolbar
           numSelected={selected.length}
           searchText={searchText}
-          selectStatus={selectStatus}
-          ons
-          setSelectStatus={setSelectStatus}
           onSearchChange={handleSearchChange}
         />
         <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+          <Table sx={{}} aria-labelledby="tableTitle">
             <EnhancedTableHead
               order={order}
               orderBy={orderBy}
@@ -627,9 +619,6 @@ const ProjectListPage: NextPageWithLayout = () => {
                       >
                         Edit
                       </TableBtn>
-                      <TableBtn onClick={() => handleOpenDialog(row.id)}>
-                        Remove
-                      </TableBtn>
                       <ConfirmDialog
                         open={dialogOpen}
                         onClose={handleCloseDialog}
@@ -661,8 +650,8 @@ const ProjectListPage: NextPageWithLayout = () => {
   );
 };
 
-ProjectListPage.getLayout = function getLayout(page: ReactElement) {
+TaskList.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export default ProjectListPage;
+export default TaskList;
