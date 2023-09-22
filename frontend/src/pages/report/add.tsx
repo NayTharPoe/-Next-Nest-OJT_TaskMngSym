@@ -1,157 +1,244 @@
-import React, { ReactElement, useState } from 'react';
-import MainLayout from '@/layouts/MainLayout';
-import {
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
-  FormControl,
-  Select,
-  MenuItem,
-  InputLabel,
-} from '@mui/material';
+import React, { useState } from 'react';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Button, Paper, TextField, Select, MenuItem, Typography, FormHelperText } from '@mui/material';
+import palette from '@/theme/palette';
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-interface Task {
+const typesOptions = [
+  { value: 'review', label: 'Review' },
+  { value: 'coding', label: 'Coding' },
+  { value: 'learning', label: 'Learning' },
+];
+
+interface RowData {
+  id: number;
   taskId: string;
   taskTitle: string;
   project: string;
   percentage: string;
-  type: string;
   status: string;
+  types: string;
   hour: string;
 }
 
-const ReportAddPage: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [newTask, setNewTask] = useState<Task>({
-    taskId: '',
-    taskTitle: '',
-    project: '',
-    percentage: '',
-    type: '',
-    status: '',
-    hour: '',
+const ReportAddPage = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm({
+    resolver: yupResolver(validationSchema),
   });
 
-  const handleAddTask = () => {
-    setTasks([...tasks, newTask]);
-    setNewTask({
+  const [rows, setRows] = useState<RowData[]>([]);
+
+  const addNewRow = () => {
+    const newRow = {
+      id: rows.length + 1,
       taskId: '',
       taskTitle: '',
       project: '',
       percentage: '',
-      type: '',
       status: '',
+      types: '',
       hour: '',
-    });
+    };
+
+    setRows([...rows, newRow]);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewTask({
-      ...newTask,
-      [name]: value,
-    });
+  const removeRow = (id: any) => {
+    const updatedRows = rows.filter((row) => row.id !== id);
+    setRows(updatedRows);
   };
 
-  const handleSelectChange = (e: React.ChangeEvent<{ name?: string | undefined; value: unknown }>) => {
-    const { name, value } = e.target;
-    setNewTask({
-      ...newTask,
-      [name as string]: value as string,
-    });
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'ID', width: 70, sortable: false, disableColumnMenu: true },
+    {
+      field: 'taskId',
+      headerName: 'Task ID',
+      width: 130,
+      renderCell: (params) => (
+        <form>
+          <Controller
+            name={`${params.row.id}.taskId`}
+            control={control}
+            defaultValue={params.row.taskId}
+            render={({ field }) => (
+              <>
+                <TextField {...field} variant="outlined" fullWidth />
+              </>
+            )}
+          />
+        </form>
+      ),
+    },
+    {
+      field: 'taskTitle',
+      headerName: 'Task Title',
+      width: 130,
+      renderCell: (params) => (
+        <form>
+          <Controller
+            name={`${params.row.id}.taskTitle`}
+            control={control}
+            defaultValue={params.row.taskTitle}
+            render={({ field }) => (
+              <>
+                <TextField {...field} variant="outlined" fullWidth />
+              </>
+            )}
+          />
+        </form>
+      ),
+    },
+    {
+      field: 'project',
+      headerName: 'Project',
+      width: 90,
+      renderCell: (params) => (
+        <form>
+          <Controller
+            name={`${params.row.id}.project`}
+            control={control}
+            defaultValue={params.row.project}
+            render={({ field }) => (
+              <>
+                <TextField {...field} variant="outlined" fullWidth />
+              </>
+            )}
+          />
+        </form>
+      ),
+    },
+    {
+      field: 'percentage',
+      headerName: 'Percentage',
+      type: 'number',
+      width: 90,
+      renderCell: (params) => (
+        <form>
+          <Controller
+            name={`${params.row.id}.percentage`}
+            control={control}
+            defaultValue={params.row.percentage}
+            render={({ field }) => (
+              <>
+                <TextField {...field} type="number" variant="outlined" fullWidth />
+              </>
+            )}
+          />
+        </form>
+      ),
+    },
+    {
+      field: 'types',
+      headerName: 'Types',
+      width: 90,
+      renderCell: (params) => (
+        <form>
+          <Controller
+            name={`${params.row.id}.types`}
+            control={control}
+            defaultValue={params.row.types}
+            render={({ field }) => (
+              <>
+                <Select {...field}>
+                  {typesOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </>
+            )}
+          />
+        </form>
+      ),
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 90,
+      renderCell: (params) => (
+        <form>
+          <Controller
+            name={`${params.row.id}.status` as keyof RowData}
+            control={control}
+            defaultValue={params.row.status}
+            render={({ field }) => (
+              <>
+                <TextField {...field} variant="outlined" fullWidth />
+              </>
+            )}
+          />
+        </form>
+      ),
+    },
+    {
+      field: 'hour',
+      headerName: 'Hour',
+      type: 'number',
+      sortable: false,
+      width: 90,
+      renderCell: (params) => (
+        <form>
+          <Controller
+            name={`${params.row.id}.hour`}
+            control={control}
+            defaultValue={params.row.hour}
+            render={({ field }) => (
+              <>
+                <TextField {...field} type="number" variant="outlined" fullWidth />
+              </>
+            )}
+          />
+        </form>
+      ),
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 120,
+      sortable: false,
+      renderCell: (params) => (
+        <Button variant="outlined" color="error" onClick={() => removeRow(params.row.id)}>
+          Remove
+        </Button>
+      ),
+    },
+  ];
+
+  const onSubmit = () => {
+    console.log(rows);
   };
 
   return (
-    <div>
-      <Button onClick={handleAddTask} variant="contained" color="primary">
-        Add Task
+    <Paper sx={{ height: 400, width: '100%', backgroundColor: palette.common.white }}>
+      <Button onClick={addNewRow} variant="contained" color="primary">
+        Add Row
       </Button>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Task ID</TableCell>
-              <TableCell>Task Title</TableCell>
-              <TableCell>Project</TableCell>
-              <TableCell>Percentage</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Hour</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tasks.map((task, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <FormControl>
-                    <TextField name="taskId" value={task.taskId} onChange={handleInputChange} />
-                  </FormControl>
-                </TableCell>
-                <TableCell>
-                  <FormControl>
-                    <TextField name="taskTitle" value={task.taskTitle} onChange={handleInputChange} />
-                  </FormControl>
-                </TableCell>
-                <TableCell>
-                  <FormControl>
-                    <TextField name="project" value={task.project} onChange={handleInputChange} />
-                  </FormControl>
-                </TableCell>
-                <TableCell>
-                  <FormControl>
-                    <TextField name="percentage" value={task.percentage} onChange={handleInputChange} />
-                  </FormControl>
-                </TableCell>
-                <TableCell>
-                  <FormControl>
-                    <InputLabel>Type</InputLabel>
-                    <Select
-                      name="type"
-                      value={task.type}
-                      onChange={(e, child) => handleSelectChange(e, child)}
-                    >
-                      <MenuItem value="Type 1">Type 1</MenuItem>
-                      <MenuItem value="Type 2">Type 2</MenuItem>
-                      <MenuItem value="Type 3">Type 3</MenuItem>
-                    </Select>
-                  </FormControl>
-                </TableCell>
-                <TableCell>
-                  <FormControl>
-                    <InputLabel>Status</InputLabel>
-                    <Select
-                      name="status"
-                      value={task.status}
-                      onChange={(e, child) => handleSelectChange(e, child)}
-                    >
-                      <MenuItem value="Status 1">Status 1</MenuItem>
-                      <MenuItem value="Status 2">Status 2</MenuItem>
-                      <MenuItem value="Status 3">Status 3</MenuItem>
-                    </Select>
-                  </FormControl>
-                </TableCell>
-                <TableCell>
-                  <FormControl>
-                    <TextField name="hour" value={task.hour} onChange={handleInputChange} />
-                  </FormControl>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          checkboxSelection={false}
+        />
+        <Button type="submit" variant="contained" color="primary" onClick={onSubmit}>
+          Submit
+        </Button>
+      </form>
+    </Paper>
   );
 };
 
 export default ReportAddPage;
-
-ReportAddPage.getLayout = function getLayout(page: ReactElement) {
-  return <MainLayout>{page}</MainLayout>;
-};
