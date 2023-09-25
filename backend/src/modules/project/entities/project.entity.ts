@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-// import { Document } from 'mongoose';
+import { Document } from 'mongoose';
 
-// export type ProjectDocument = ProjectEntity & Document;
+export type ProjectDocument = ProjectEntity & Document;
 
-@Schema({ timestamps: true })
-export class project {
+@Schema({ collection:'projects', timestamps: true })
+export class ProjectEntity {
   @Prop({ required: true, unique: true })
   projectName: string;
 
@@ -14,9 +14,6 @@ export class project {
   @Prop()
   description: string;
 
-  @Prop()
-  stack: string;
-
   @Prop({ required: true })
   startDate: string;
 
@@ -24,4 +21,4 @@ export class project {
   endDate: string;
 }
 
-export const ProjectSchema = SchemaFactory.createForClass(project);
+export const ProjectSchema = SchemaFactory.createForClass(ProjectEntity);

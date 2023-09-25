@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TaskService } from '../../service/task.service';
-import { GetOneResponseDto } from 'src/modules/project/use-case/get-one/get-one.response.dto';
+import { GetOneTaskResponseDto } from './getOne.response.dto';
 import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
@@ -22,7 +22,7 @@ export class GetOneController {
   async getById(
     @Param('id') id: string,
     @Response() res,
-  ): Promise<GetOneResponseDto> {
+  ): Promise<GetOneTaskResponseDto> {
     try {
       const data = await this.taskService.getTaskById(id);
       return res.status(200).json({ message: 'Get Task By id', data });

@@ -3,7 +3,7 @@ import { EmployeeService } from '../../service/employee.service';
 import { GetAllEmployeeResponseDto } from './getAll.response.dto';
 import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { PaginationRequestDto } from 'src/common/dtos/request/pagination.request.dto';
+import { EmployeePaginationRequestDto } from 'src/common/dtos/request/employeePagination.req.dto';
 
 @Controller('employees')
 @ApiTags('Employee')
@@ -25,12 +25,13 @@ export class GetAllController {
   })
   @ApiQuery({
     name: 'keyword',
+    required: false,
     type: String,
     description: 'Search by employeeName and position',
   })
   async getEmployee(
     @Response() res,
-    @Query() query: PaginationRequestDto,
+    @Query() query: EmployeePaginationRequestDto,
   ): Promise<GetAllEmployeeResponseDto> {
     const { data, totalEmployee } =
       await this.employeeService.getAllEmployee(query);

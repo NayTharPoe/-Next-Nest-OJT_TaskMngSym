@@ -7,8 +7,6 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
-  ParseFilePipe,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { CreateEmployeeRequestDto } from './create.request.dto';
@@ -22,8 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class CreateController {
   constructor(private employeeService: EmployeeService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth(/
   @Post('add')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -59,11 +56,7 @@ export class CreateController {
   async create(
     @Response() res,
     @Body() employee: CreateEmployeeRequestDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' })],
-      }),
-    )
+    @UploadedFile()
     profile?: Express.Multer.File,
   ): Promise<CreateEmployeeResponseDto> {
     try {

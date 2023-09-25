@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { employee } from '../entities/employee.entities';
+import {
+  EmployeeDocument,
+  EmployeeEntity,
+} from '../entities/employee.entities';
 import { Model } from 'mongoose';
 import * as randomstring from 'randomstring';
 import * as bcrypt from 'bcrypt';
@@ -11,12 +14,13 @@ import { EmailService } from 'src/utils/sendMail';
 import { UpdateEmployeeRequestDto } from '../use-case/update/update.request.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { ConfigService } from '@nestjs/config';
-import { PaginationRequestDto } from 'src/common/dtos/request/pagination.request.dto';
+import { EmployeePaginationRequestDto } from 'src/common/dtos/request/employeePagination.req.dto';
 
 @Injectable()
 export class EmployeeService {
   constructor(
-    @InjectModel(employee.name) private employeeModel: Model<employee>,
+    @InjectModel(EmployeeEntity.name)
+    private employeeModel: Model<EmployeeDocument>,
     private readonly emailService: EmailService,
     private readonly configService: ConfigService,
     private readonly verifyEmailService: VerifyEmailService,
@@ -28,7 +32,7 @@ export class EmployeeService {
     page,
     limit,
     keyword,
-  }: PaginationRequestDto): Promise<any> {
+  }: EmployeePaginationRequestDto): Promise<any> {
     let options = {};
     if (keyword) {
       options = {
@@ -39,7 +43,7 @@ export class EmployeeService {
       };
     }
 
-    const totalEmployee = await this.employeeModel.countDocuments();
+    const totalEmployee = await this.employeeModel.countDocuments(options);
 
     const data = await this.employeeModel
       .find(options)
@@ -47,10 +51,14 @@ export class EmployeeService {
       .limit(limit)
       .skip(limit * (page - 1));
 
+    if (data.length === 0) {
+      throw new NotFoundException(`No item with this ${keyword}`);
+    }
+
     return { data, totalEmployee };
   }
 
-  async getEmployeeById(id: string): Promise<employee> {
+  async getEmployeeById(id: string): Promise<EmployeeDocument> {
     const employee = await this.employeeModel
       .findById(id)
       .select('-password -token');
@@ -84,9 +92,12 @@ export class EmployeeService {
 
     const token = this.jwtService.sign({ email: employeeData.email });
 
-    const cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
-      return { data: data.secure_url };
-    });
+    let cloudImg;
+    if (profile) {
+      cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
+        return { data: data.secure_url };
+      });
+    }
 
     const data = {
       ...employeeData,
@@ -116,16 +127,19 @@ export class EmployeeService {
     id: string,
     employee: UpdateEmployeeRequestDto,
     profile?: Express.Multer.File,
-  ): Promise<employee> {
+  ): Promise<EmployeeDocument> {
     const user = await this.employeeModel.findOne({ _id: id });
 
     if (!user) {
       throw new NotFoundException('No user with this id! you cannot update');
     }
 
-    const cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
-      return { data: data.secure_url };
-    });
+    let cloudImg;
+    if (profile) {
+      cloudImg = await this.cloudinary.uploadImage(profile).then((data) => {
+        return { data: data.secure_url };
+      });
+    }
 
     const data = {
       ...employee,
@@ -142,7 +156,7 @@ export class EmployeeService {
     return employeeUpdate;
   }
 
-  async dropEmployee(id: string): Promise<employee> {
+  async dropEmployee(id: string): Promise<EmployeeDocument> {
     const user = await this.employeeModel.findOne({ _id: id });
 
     if (!user) {

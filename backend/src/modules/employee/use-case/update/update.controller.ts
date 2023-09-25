@@ -61,11 +61,7 @@ export class UpdateController {
     @Response() res,
     @Param('id') id: string,
     @Body() employee: UpdateEmployeeRequestDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' })],
-      }),
-    )
+    @UploadedFile()
     profile?: Express.Multer.File,
   ): Promise<UpdateEmployeeResponseDto> {
     try {

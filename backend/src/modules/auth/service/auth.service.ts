@@ -6,7 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { employee } from 'src/modules/employee/entities/employee.entities';
+import { EmployeeDocument, EmployeeEntity } from 'src/modules/employee/entities/employee.entities';
 import { LoginRequestDto } from '../use-case/login/login.request.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ForgetEmailService } from 'src/template/forgetEmail';
@@ -15,13 +15,12 @@ import { ResetRequestDto } from '../use-case/reset-password/reset.request.dto';
 import { ForgetRequestDto } from '../use-case/forget-password/forget.request.dto';
 import { ChangeRequestDto } from '../use-case/change-password/change.request.dto';
 import { ConfigService } from '@nestjs/config';
-// import { token } from '../tokens/entities/token.entities';
 import { TokenService } from '../tokens/service/token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(employee.name) private employeeModel: Model<employee>,
+    @InjectModel(EmployeeEntity.name) private employeeModel: Model<EmployeeDocument>,
     private readonly tokenService: TokenService,
     private readonly jwtService: JwtService,
     private forgetEmailService: ForgetEmailService,

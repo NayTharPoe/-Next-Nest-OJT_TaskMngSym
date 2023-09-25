@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-@Schema({ timestamps: true })
-export class token {
+export type TokenDocument = TokenEntity & Document;
+@Schema({ collection:'tokens', timestamps: true })
+export class TokenEntity {
   @Prop({ required: true })
   email: string;
 
@@ -9,4 +11,4 @@ export class token {
   token: string;
 }
 
-export const tokenSchema = SchemaFactory.createForClass(token);
+export const tokenSchema = SchemaFactory.createForClass(TokenEntity);

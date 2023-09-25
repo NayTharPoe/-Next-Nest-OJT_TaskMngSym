@@ -9,8 +9,8 @@ import {
 import { TaskService } from '../../service/task.service';
 import { GetAllTaskResponseDto } from './getAll.response.dto';
 import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { PaginationRequestDto } from 'src/common/dtos/request/pagination.request.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
 
 @Controller('tasks')
 @ApiTags('Task')
@@ -20,16 +20,6 @@ export class GetAllController {
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   @Get('list')
-  @ApiQuery({
-    name: 'limit',
-    type: Number,
-    description: 'Number of items per page',
-  })
-  @ApiQuery({
-    name: 'page',
-    type: Number,
-    description: 'Page Number',
-  })
   async getAllTask(
     @Response() res,
     @Query() query: PaginationRequestDto,
@@ -38,7 +28,7 @@ export class GetAllController {
       const { data, totalTasks } = await this.taskService.getAllTaskList(query);
       return res
         .status(200)
-        .json({ messag: 'Get All Task Lists', data, totalTasks });
+        .json({ message: 'Get All Task Lists', data, totalTasks });
     } catch (err) {
       throw new NotFoundException(err.message);
     }
