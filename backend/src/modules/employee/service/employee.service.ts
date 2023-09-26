@@ -103,7 +103,7 @@ export class EmployeeService {
       ...employeeData,
       password: hashedPassword,
       token,
-      profile: profile ? cloudImg.data : undefined,
+      profile: profile ? cloudImg.data : '',
     };
 
     await this.employeeModel.create(data);
@@ -143,7 +143,7 @@ export class EmployeeService {
 
     const data = {
       ...employee,
-      profile: profile ? cloudImg.data : undefined,
+      profile: profile ? cloudImg.data : '',
     };
 
     const employeeUpdate = await this.employeeModel.findByIdAndUpdate(

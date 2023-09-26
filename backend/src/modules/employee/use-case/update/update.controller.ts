@@ -23,8 +23,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class UpdateController {
   constructor(private employeeService: EmployeeService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Put('edit/:id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({

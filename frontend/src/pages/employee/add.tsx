@@ -21,9 +21,11 @@ import palette from "@/theme/palette";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
+import axios from "axios";
 
 const EmployeeCreate = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedPhoto, setuploadedPhoto] = useState<any>(null);
 
   const router = useRouter();
 
@@ -40,15 +42,21 @@ const EmployeeCreate = () => {
   };
 
   const onSubmit = (data: any): void => {
-    const result = {
-      employeeName: data.employeeName,
-      email: data.email,
-      address: data.address,
-      phone: data.phone,
-      dob: data.dob,
-      position: data.position,
-      profile: uploadedImage ? uploadedImage : undefined,
-    };
+    const formData = new FormData();
+    formData.append("employeeName", data.employeeName);
+    formData.append("email", data.email);
+    formData.append("address", data.address ? data.address : "");
+    formData.append("phone", data.phone ? data.phone : "");
+    formData.append(
+      "dob",
+      data.dob ? dayjs(data.dob).format("MM/DD/YYYY") : ""
+    );
+    formData.append("position", data.position);
+    formData.append("profile", uploadedPhoto);
+    axios.post("http://localhost:8080/employee/add", formData).then((res) => {
+      console.log(res);
+      router.push("/employee/list");
+    });
   };
 
   const handleDragOver = (e: any) => {
@@ -87,6 +95,7 @@ const EmployeeCreate = () => {
 
       reader.onload = () => {
         setUploadedImage(reader.result as string);
+        setuploadedPhoto(file);
       };
 
       reader.readAsDataURL(file);

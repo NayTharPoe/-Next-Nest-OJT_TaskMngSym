@@ -15,8 +15,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class DeleteController {
   constructor(private employeeService: EmployeeService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Delete(':id')
   async delEmployee(@Response() res, @Param('id') id: string) {
     try {

@@ -21,58 +21,47 @@ import palette from "@/theme/palette";
 import EmployeeSearchBox from "@/components/employee-search-input";
 import { useRouter } from "next/router";
 import { theme } from "@/theme";
+import axios from "axios";
+import useSWR from "swr";
+import ConfirmDialog from "@/components/commonDialog";
 
 const EmployeeList = () => {
   const [searchText, setSearchText] = useState("");
+  const [open, setOpen] = useState(false);
+  const [onClose, setOnClose] = useState(false);
+  const [employeeList, setEmployeeList] = useState<any>([]);
+
+  const fetcher = async () => {
+    const res = await axios.get("http://localhost:8080/employees/list");
+    setEmployeeList(res.data.data);
+    return res;
+  };
+
+  const { data, error, isLoading } = useSWR("/employees/list", fetcher);
 
   const router = useRouter();
+
+  const handleDelete = (id: string) => {
+    axios.delete(`http://localhost:8080/employee/${id}`);
+    setEmployeeList((prevList: any) =>
+      prevList?.filter((row: any) => row._id !== id)
+    );
+    setOpen(false);
+  };
 
   const handleInputChange = (event: any) => {
     setSearchText(event.target.value);
   };
 
-  const employee = [
-    {
-      id: 1,
-      email: "mtm.linnaunghtet@gmail.com",
-      phone: "09800900700",
-      birthDate: "2023-56-90",
-      verified: true,
-      appliedOn: "2023-09-89",
-    },
-    {
-      id: 2,
-      email: "james@gmail.com",
-      phone: "09800900700",
-      birthDate: "2023-56-90",
-      verified: false,
-      appliedOn: "2023-09-89",
-    },
-    {
-      id: 3,
-      email: "james@gmail.com",
-      phone: "09800900700",
-      birthDate: "2023-56-90",
-      verified: true,
-      appliedOn: "2023-09-89",
-    },
-    {
-      id: 4,
-      email: "james@gmail.com",
-      phone: "09800900700",
-      birthDate: "2023-56-90",
-      verified: false,
-      appliedOn: "2023-09-89",
-    },
-  ];
-
-  const filterEmployeeData = employee.filter((row) => {
-    const { email, phone } = row;
+  const filterEmployeeData = employeeList?.filter((row: any) => {
+    const { email, employeeName } = row;
     return (
       email
         .toLocaleLowerCase()
         .includes(searchText.toLocaleLowerCase().trim()) ||
-      phone.toLocaleLowerCase().includes(searchText.toLocaleLowerCase().trim())
+      employeeName
+        .toLocaleLowerCase()
+        .includes(searchText.toLocaleLowerCase().trim())
     );
   });
 
@@ -145,9 +134,9 @@ const EmployeeList = () => {
           justifyContent: "center",
         }}
       >
-        {filterEmployeeData.map((row) => {
+        {filterEmployeeData?.map((row: any) => {
           return (
-            <Grid key={row.id} item>
+            <Grid key={row._id} item>
               <Card
                 sx={{
                   background: "#fbfbfb",
@@ -165,13 +154,20 @@ const EmployeeList = () => {
                     padding: "5px 8px 0",
                   }}
                 >
-                  <IconButton>
+                  <IconButton onClick={() => setOpen(true)}>
                     <DeleteIcon
                       sx={{
                         color: (theme) => `${theme.palette.text.secondary}`,
                       }}
                     />
                   </IconButton>
+                  <ConfirmDialog
+                    open={open}
+                    onClose={onClose}
+                    onClick={() => handleDelete(row._id)}
+                    onCancel={() => setOpen(false)}
+                    id={row._id}
+                  />
                 </div>
                 <Avatar
                   sx={{
@@ -180,7 +176,7 @@ const EmployeeList = () => {
                     margin: "0 auto",
                   }}
                   alt="img"
-                  src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
+                  src={row.profile}
                 />
                 <Box
                   mt={1}
@@ -189,13 +185,13 @@ const EmployeeList = () => {
                     color: (theme) => `${theme.palette.text.secondary}`,
                   }}
                 >
-                  <Typography>Linn Aung Htet</Typography>
+                  <Typography>{row.employeeName}</Typography>
                   <Typography
                     sx={{
                       fontSize: "14px",
                     }}
                   >
-                    Admin
+                    {row.position === "0" ? "Member" : "Admin"}
                   </Typography>
                   <Button
                     sx={{
@@ -255,7 +251,7 @@ const EmployeeList = () => {
                       <PhoneIcon
                         style={{ fontSize: "20px", marginRight: "5px" }}
                       />{" "}
-                      {row.phone}
+                      {row.phone ? row.phone : "..."}
                     </Typography>
                   </Stack>
                   <Stack
@@ -268,13 +264,13 @@ const EmployeeList = () => {
                     mt={2}
                   >
                     <CardBtn
-                      onClick={() => router.push(`/employee/edit/${row.id}`)}
+                      onClick={() => router.push(`/employee/edit/${row._id}`)}
                       text="Edit"
                     >
                       Edit
                     </CardBtn>
                     <CardBtn
-                      onClick={() => router.push(`/employee/detail/${row.id}`)}
+                      onClick={() => router.push(`/employee/detail/${row._id}`)}
                       text="View"
                     >
                       View

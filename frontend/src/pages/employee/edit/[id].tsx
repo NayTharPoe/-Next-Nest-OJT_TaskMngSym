@@ -11,7 +11,7 @@ import {
   Button,
   MenuItem,
 } from "@mui/material";
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import BackupIcon from "@mui/icons-material/Backup";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useForm, Controller } from "react-hook-form";
@@ -20,17 +20,37 @@ import palette from "@/theme/palette";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import axios from "axios";
 
 const EmployeeEdit = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedPhoto, setUploadedPhoto] = useState<any>(null);
 
   const router = useRouter();
+  const {
+    query: { id },
+  } = router;
 
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    axios.get(`http://localhost:8080/employee/detail/${id}`).then((res) => {
+      // const dob = new Date(res.data.data.dob);
+      // const formatDate = dayjs(dob).format("MM-DD-YYYY");
+      setValue("employeeName", res.data.data.employeeName);
+      setValue("email", res.data.data.email);
+      setValue("address", res.data.data.address);
+      setValue("phone", res.data.data.phone);
+      setUploadedImage(res.data.data.profile);
+      setValue("dob", res.data.data.dob);
+      setValue("position", res.data.data.position);
+    });
+  }, []);
 
   const disabledDate = (current: any) => {
     const todayDate = dayjs().startOf("day");
@@ -39,15 +59,23 @@ const EmployeeEdit = () => {
   };
 
   const onSubmit = (data: any): void => {
-    const result = {
-      employeeName: data.employeeName,
-      email: data.email,
-      address: data.address,
-      phone: data.phone,
-      dob: data.dob,
-      position: data.position,
-      profile: uploadedImage ? uploadedImage : undefined,
-    };
+    const formData = new FormData();
+    formData.append("employeeName", data.employeeName);
+    formData.append("email", data.email);
+    formData.append("address", data.address ? data.address : "");
+    formData.append("phone", data.phone ? data.phone : "");
+    formData.append(
+      "dob",
+      data.dob ? dayjs(data.dob).format("MM/DD/YYYY") : ""
+    );
+    formData.append("position", data.position);
+    formData.append("profile", uploadedPhoto ? uploadedPhoto : "");
+    axios
+      .put(`http://localhost:8080/employee/edit/${router.query.id}`, formData)
+      .then((res) => {
+        console.log(res);
+        router.push("/employee/list");
+      });
   };
 
   const handleDragOver = (e: any) => {
@@ -86,6 +114,7 @@ const EmployeeEdit = () => {
 
       reader.onload = () => {
         setUploadedImage(reader.result as string);
+        setUploadedPhoto(file);
       };
 
       reader.readAsDataURL(file);
@@ -96,6 +125,7 @@ const EmployeeEdit = () => {
 
   const handleDeleteImage = () => {
     setUploadedImage(null);
+    setUploadedPhoto("");
   };
 
   const CommonButton = (props: any) => {
@@ -320,10 +350,12 @@ const EmployeeEdit = () => {
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value || null}
+                      value={field.value ? dayjs(field.value).toDate() : null}
                       shouldDisableDate={disabledDate}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(
+                          date ? dayjs(date).format("MM/DD/YYYY") : null
+                        );
                       }}
                     />
                   </LocalizationProvider>
