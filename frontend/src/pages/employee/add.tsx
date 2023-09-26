@@ -54,7 +54,6 @@ const EmployeeCreate = () => {
     formData.append("position", data.position);
     formData.append("profile", uploadedPhoto);
     axios.post("http://localhost:8080/employee/add", formData).then((res) => {
-      console.log(res);
       router.push("/employee/list");
     });
   };

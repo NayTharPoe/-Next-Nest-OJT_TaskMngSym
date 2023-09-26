@@ -39,18 +39,20 @@ const EmployeeEdit = () => {
   } = useForm();
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/employee/detail/${id}`).then((res) => {
-      // const dob = new Date(res.data.data.dob);
-      // const formatDate = dayjs(dob).format("MM-DD-YYYY");
-      setValue("employeeName", res.data.data.employeeName);
-      setValue("email", res.data.data.email);
-      setValue("address", res.data.data.address);
-      setValue("phone", res.data.data.phone);
-      setUploadedImage(res.data.data.profile);
-      setValue("dob", res.data.data.dob);
-      setValue("position", res.data.data.position);
-    });
-  }, []);
+    if (router.query?.id) {
+      axios.get(`http://localhost:8080/employee/detail/${id}`).then((res) => {
+        // const dob = new Date(res.data.data.dob);
+        // const formatDate = dayjs(dob).format("MM-DD-YYYY");
+        setValue("employeeName", res.data.data.employeeName);
+        setValue("email", res.data.data.email);
+        setValue("address", res.data.data.address);
+        setValue("phone", res.data.data.phone);
+        setUploadedImage(res.data.data.profile);
+        setValue("dob", res.data.data.dob);
+        setValue("position", res.data.data.position);
+      });
+    }
+  }, [router.query.id]);
 
   const disabledDate = (current: any) => {
     const todayDate = dayjs().startOf("day");
@@ -73,7 +75,6 @@ const EmployeeEdit = () => {
     axios
       .put(`http://localhost:8080/employee/edit/${router.query.id}`, formData)
       .then((res) => {
-        console.log(res);
         router.push("/employee/list");
       });
   };

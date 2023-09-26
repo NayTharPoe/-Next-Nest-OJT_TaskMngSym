@@ -19,21 +19,22 @@ import palette from "@/theme/palette";
 import HomeIcon from "@mui/icons-material/Home";
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { theme } from "@/theme";
 import axios from "axios";
 
 const EmployeeList = () => {
   const router = useRouter();
 
-  // console.log(`http://localhost:8080/employee/detail/${router.query.id}`);
-
   const [employeeData, setEmployeeData] = useState<any>("");
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/employee/detail/${router.query.id}`)
-      .then((res) => setEmployeeData(res.data.data));
-  }, []);
+    if (router.query?.id) {
+      axios
+        .get(`http://localhost:8080/employee/detail/${router.query.id}`)
+        .then((res) => setEmployeeData(res.data.data));
+    }
+  }, [router.query.id]);
 
   return (
     <>
