@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ReactElement, useState } from "react";
+import { ReactElement, useState, useEffect } from "react";
 import { alpha } from "@mui/material/styles";
 import {
   Box,
@@ -25,166 +25,56 @@ import ProjectSearchBox from "@/components/project-search-input";
 import ConfirmDialog from "@/components/commonDialog";
 import palette from "@/theme/palette";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import dayjs from "dayjs";
 
 interface Data {
-  id: string;
+  _id: string;
+  num: string;
   title: string;
   description: string;
-  projectName: string;
+  project: string;
   assignedEmployee: string;
   estimateHour: number;
   actualHour: number;
   status: string;
-  estimateStartDate: string;
-  estimateFinishDate: string;
-  actualStartDate: string;
-  actualFinishDate: string;
+  estimate_start_date: string;
+  estimate_finish_date: string;
+  actual_start_date: string;
+  actual_finish_date: string;
 }
 
 function createData(
-  id: string,
+  _id: string,
+  num: string,
   title: string,
   description: string,
-  projectName: string,
+  project: string,
   assignedEmployee: string,
   estimateHour: number,
   actualHour: number,
   status: string,
-  estimateStartDate: string,
-  estimateFinishDate: string,
-  actualStartDate: string,
-  actualFinishDate: string
+  estimate_start_date: string,
+  estimate_finish_date: string,
+  actual_start_date: string,
+  actual_finish_date: string
 ): Data {
   return {
-    id,
+    _id,
+    num,
     title,
     description,
-    projectName,
+    project,
     assignedEmployee,
     estimateHour,
     actualHour,
     status,
-    estimateStartDate,
-    estimateFinishDate,
-    actualStartDate,
-    actualFinishDate,
+    estimate_start_date,
+    estimate_finish_date,
+    actual_start_date,
+    actual_finish_date,
   };
 }
-
-const rows = [
-  createData(
-    "1",
-    "this is title 1",
-    "this is description 1",
-    "React",
-    "alinn",
-    3,
-    2,
-    "Opened",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
-  ),
-  createData(
-    "2",
-    "this is title 2",
-    "this is description 2",
-    "Vue",
-    "mgmg",
-    3,
-    2,
-    "In progress",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
-  ),
-  createData(
-    "3",
-    "this is title 3",
-    "this is description 3",
-    "Next",
-    "james",
-    3,
-    2,
-    "Finished",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
-  ),
-  createData(
-    "4",
-    "this is title 4",
-    "this is description 4",
-    "Nest",
-    "mac",
-    3,
-    2,
-    "Closed",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
-  ),
-  createData(
-    "5",
-    "this is title 5",
-    "this is description 5",
-    "Php",
-    "ayeaye",
-    3,
-    2,
-    "In progress",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
-  ),
-  createData(
-    "6",
-    "this is title 6",
-    "this is description 6",
-    "Angular",
-    "john",
-    3,
-    2,
-    "Finished",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
-  ),
-  createData(
-    "7",
-    "this is title 7",
-    "this is description 7",
-    "ruby",
-    "aruther",
-    3,
-    2,
-    "In progress",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
-  ),
-  createData(
-    "8",
-    "this is title 8",
-    "this is description 8",
-    "React",
-    "zaw zaw",
-    3,
-    2,
-    "Finished",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
-  ),
-];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -235,7 +125,7 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: "id",
+    id: "_id",
     numeric: false,
     disablePadding: false,
     label: "ID",
@@ -255,14 +145,14 @@ const headCells: readonly HeadCell[] = [
     label: "Description",
   },
   {
-    id: "projectName",
+    id: "project",
     numeric: false,
     minWidth: 140,
     disablePadding: false,
     label: "Project Name",
   },
   {
-    id: "assignEmployee",
+    id: "assignedEmployee",
     numeric: false,
     minWidth: 140,
     disablePadding: false,
@@ -288,28 +178,28 @@ const headCells: readonly HeadCell[] = [
     label: "Status",
   },
   {
-    id: "estimateStartDate",
+    id: "estimate_start_date",
     numeric: false,
     minWidth: 150,
     disablePadding: false,
     label: "Estimate Start Date",
   },
   {
-    id: "estimateFinishDate",
+    id: "estimate_finish_date",
     numeric: false,
     minWidth: 150,
     disablePadding: false,
     label: "Estimate Finish Date",
   },
   {
-    id: "actualStartDate",
+    id: "actual_start_date",
     numeric: false,
     minWidth: 150,
     disablePadding: false,
     label: "Actual Start Date",
   },
   {
-    id: "actualFinishDate",
+    id: "actual_finish_date",
     numeric: false,
     minWidth: 150,
     disablePadding: false,
@@ -461,14 +351,67 @@ const AddButton = (props: any) => {
 
 const TaskList: NextPageWithLayout = () => {
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("projectName");
+  const [orderBy, setOrderBy] = React.useState<keyof Data>("project");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchText, setSearchText] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [IdToDelete, setIdToDelete] = useState(null);
+  const [taskList, setTaskList] = useState([]);
   const router = useRouter();
+
+  const statusOption = [
+    { value: "0", label: "Opened" },
+    { value: "1", label: "In progress" },
+    { value: "2", label: "Finished" },
+    { value: "3", label: "Closed" },
+  ];
+
+  useEffect(() => {
+    const taskApi = async () => {
+      const taskApi = await axios.get(
+        "http://localhost:8080/tasks/list?limit=30"
+      );
+      const projectApi = await axios.get(
+        "http://localhost:8080/projects/list?limit=30"
+      );
+      const employeeApi = await axios.get(
+        "http://localhost:8080/employees/list?limit=30"
+      );
+      const taskData = taskApi.data.data.map((task: any, index: any) => {
+        const statusValue = statusOption.find(
+          (option) => option.value === task.status
+        )?.label;
+        return {
+          ...task,
+          num: task._id.length + index - 23,
+          project: projectApi.data.data.filter(
+            (projectData: any) => projectData._id === task.project._id
+          )[0].projectName,
+          assignedEmployee: employeeApi.data.data.filter(
+            (employee: any) => employee._id === task.assignedEmployee._id
+          )[0].employeeName,
+          status: statusValue ? statusValue : "Open",
+          actualHour: task.actualHour ? task.actualHour : "-",
+          estimate_start_date: task.estimate_start_date
+            ? dayjs(task.estimate_start_date).format("MM-DD-YYYY")
+            : "-",
+          estimate_finish_date: task.estimate_finish_date
+            ? dayjs(task.estimate_finish_date).format("MM-DD-YYYY")
+            : "-",
+          actual_start_date: task.actual_start_date
+            ? dayjs(task.actual_start_date).format("MM-DD-YYYY")
+            : "-",
+          actual_finish_date: task.actual_finish_date
+            ? dayjs(task.actual_finish_date).format("MM-DD-YYYY")
+            : "-",
+        };
+      });
+      setTaskList(taskData);
+    };
+    taskApi();
+  }, []);
 
   const handleSearchChange = (newSearchText: string) => {
     setSearchText(newSearchText);
@@ -497,11 +440,11 @@ const TaskList: NextPageWithLayout = () => {
 
   function filterRows(rows: Data[], searchText: string): Data[] {
     const filteredRows = rows.filter((row) => {
-      const { title, projectName, assignedEmployee, status } = row;
+      const { title, project, assignedEmployee, status } = row;
 
       return (
         title.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        projectName.toLowerCase().includes(searchText.toLowerCase().trim()) ||
+        project.toLowerCase().includes(searchText.toLowerCase().trim()) ||
         assignedEmployee
           .toLowerCase()
           .includes(searchText.toLowerCase().trim()) ||
@@ -514,16 +457,16 @@ const TaskList: NextPageWithLayout = () => {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - taskList.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
       stableSort(
-        filterRows(rows, searchText),
+        filterRows(taskList, searchText),
         getComparator(order, orderBy)
       ).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [order, orderBy, page, rowsPerPage, rows, searchText]
+    [order, orderBy, page, rowsPerPage, taskList, searchText]
   );
 
   const handleEditProject = (e: any, id: string) => {
@@ -574,10 +517,10 @@ const TaskList: NextPageWithLayout = () => {
                   <TableRow
                     hover
                     role="checkbox"
-                    key={row.id}
+                    key={row._id}
                     sx={{ cursor: "pointer" }}
                   >
-                    <TableCell sx={{ fontSize: ".9rem" }}>{row.id}</TableCell>
+                    <TableCell sx={{ fontSize: ".9rem" }}>{row.num}</TableCell>
                     <TableCell sx={{ fontSize: ".9rem" }}>
                       {row.title}
                     </TableCell>
@@ -585,7 +528,7 @@ const TaskList: NextPageWithLayout = () => {
                       {row.description}
                     </TableCell>
                     <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.projectName}
+                      {row.project}
                     </TableCell>
                     <TableCell sx={{ fontSize: ".9rem" }}>
                       {row.assignedEmployee}
@@ -600,21 +543,21 @@ const TaskList: NextPageWithLayout = () => {
                       {row.status}
                     </TableCell>
                     <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.estimateStartDate}
+                      {row.estimate_start_date}
                     </TableCell>
                     <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.estimateFinishDate}
+                      {row.estimate_finish_date}
                     </TableCell>
                     <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.actualStartDate}
+                      {row.actual_start_date}
                     </TableCell>
                     <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.actualFinishDate}
+                      {row.actual_finish_date}
                     </TableCell>
                     <TableCell sx={{ display: "flex" }}>
                       <TableBtn
                         onClick={(event: any) =>
-                          handleEditProject(event, row.id)
+                          handleEditProject(event, row._id)
                         }
                       >
                         Edit
@@ -639,7 +582,7 @@ const TaskList: NextPageWithLayout = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={taskList.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

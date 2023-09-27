@@ -21,10 +21,10 @@ export class TaskEntity {
   @Prop({ required: true })
   estimateHour: number;
 
-  @Prop({ default: true })
+  @Prop()
   actualHour: number;
 
-  @Prop({ required: true })
+  @Prop()
   status: string;
 
   @Prop()

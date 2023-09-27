@@ -17,8 +17,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class CreateController {
   constructor(private taskService: TaskService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Post('add')
   async create(
     @Response() res,
