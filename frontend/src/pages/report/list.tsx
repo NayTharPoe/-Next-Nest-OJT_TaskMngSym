@@ -8,7 +8,14 @@ import palette from '@/theme/palette';
 import dayjs from 'dayjs';
 
 const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 90, disableColumnMenu: true },
+  {
+    field: 'id',
+    headerName: 'ID',
+    width: 90,
+    disableColumnMenu: true,
+    align: 'center',
+    headerAlign: 'center',
+  },
   {
     field: 'date',
     headerName: 'Date',
@@ -213,21 +220,6 @@ const ReportListPage = () => {
               >
                 Search
               </Button>
-              {/* <Button
-                variant="contained"
-                size="large"
-                sx={{
-                  backgroundColor: palette.secondary.main,
-                  color: palette.text.primary,
-                  borderRadius: '.7rem',
-                  '&:hover': {
-                    backgroundColor: palette.secondary.main,
-                    boxShadow: 'none',
-                  },
-                }}
-              >
-                Download CSV
-              </Button> */}
             </Box>
           </form>
         </Grid>
@@ -251,6 +243,8 @@ const ReportListPage = () => {
             backgroundColor: palette.common.white,
             borderRadius: '.7rem',
             '.MuiDataGrid-cell': { py: '20px' },
+            '.MuiDataGrid-columnHeadersInner': { fontSize: '1rem' },
+            '.MuiDataGrid-row': { fontSize: '.9rem' },
           }}
         />
       </Box>

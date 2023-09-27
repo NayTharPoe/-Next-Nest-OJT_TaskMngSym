@@ -16,19 +16,15 @@
     "@mui/material": "^5.14.8",
     "@mui/x-data-grid": "^6.13.0",
     "@mui/x-data-grid-generator": "^6.13.0",
-    "@mui/x-date-pickers": "^6.15.0",
     "@types/node": "20.6.0",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
-    "dayjs": "^1.11.10",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "next": "13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-select": "^5.7.5",
-    "typescript": "5.2.2",
-    "yup": "^1.2.0"
+    "typescript": "5.2.2"
   },
   "devDependencies": {
     "mirrorful": "^6.1.15"

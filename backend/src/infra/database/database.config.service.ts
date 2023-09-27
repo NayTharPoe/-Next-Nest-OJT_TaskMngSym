@@ -4,5 +4,9 @@ import { MongooseModuleOptions } from '@nestjs/mongoose';
 export const mongooseConfigFactory = (
   configService: ConfigService,
 ): MongooseModuleOptions => ({
-  uri: `mongodb+srv://${configService.get('DB_NAME')}:${configService.get('DB_PASS')}@cluster0.xycxh1h.mongodb.net/Next_Nest_Task?retryWrites=true&w=majority`,
+  uri: `mongodb+srv://${configService.get('DB_USERNAME')}:${configService.get(
+    'DB_PASSWORD',
+  )}@${configService.get('DB_HOST')}/${configService.get(
+    'DB_NAME',
+  )}?retryWrites=true&w=majority`,
 });
