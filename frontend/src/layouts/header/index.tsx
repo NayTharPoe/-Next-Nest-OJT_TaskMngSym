@@ -76,56 +76,169 @@ const Header = () => {
       <Box sx={{ width: 'max-content', display: 'flex', gap: 3 }}>
         {/* notification item */}
         <Box>
-          <IconButton aria-label={notificationsLabel(100)}>
+          <IconButton aria-label={notificationsLabel(100)} sx={{ position: 'relative' }}>
             <Badge badgeContent={100} color="error">
               <NotificationsIcon />
             </Badge>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 50,
+                left: -320,
+                width: 360,
+                bgcolor: palette.common.white,
+                borderRadius: '.75rem',
+                p: 1,
+              }}
+            >
+              <List component="nav" sx={{ overflow: 'auto', maxHeight: 360 }}>
+                <ListItem alignItems="flex-start">
+                  <ListItemButton sx={{ flexDirection: 'column' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          alt="profile pics"
+                          src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        sx={{ alignItems: 'center' }}
+                        primary={
+                          <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
+                            Reports
+                          </Typography>
+                        }
+                        secondary={
+                          <>
+                            <Typography
+                              sx={{ display: 'inline' }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              Ali Connors
+                            </Typography>
+                            {" — I'll be in your neighborhood doing errands this…"}
+                          </>
+                        }
+                      />
+                    </Box>
+                    <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', marginLeft: 'auto' }}>
+                      2 days ago
+                    </Typography>
+                  </ListItemButton>
+                </ListItem>
+                <ListItem alignItems="flex-start">
+                  <ListItemButton sx={{ flexDirection: 'column' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          alt="profile pics"
+                          src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        sx={{ alignItems: 'center' }}
+                        primary={
+                          <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
+                            Reports
+                          </Typography>
+                        }
+                        secondary={
+                          <>
+                            <Typography
+                              sx={{ display: 'inline' }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              Ali Connors
+                            </Typography>
+                            {" — I'll be in your neighborhood doing errands this…"}
+                          </>
+                        }
+                      />
+                    </Box>
+                    <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', marginLeft: 'auto' }}>
+                      2 days ago
+                    </Typography>
+                  </ListItemButton>
+                </ListItem>
+                <ListItem alignItems="flex-start">
+                  <ListItemButton sx={{ flexDirection: 'column' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          alt="profile pics"
+                          src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        sx={{ alignItems: 'center' }}
+                        primary={
+                          <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
+                            Reports
+                          </Typography>
+                        }
+                        secondary={
+                          <>
+                            <Typography
+                              sx={{ display: 'inline' }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              Ali Connors
+                            </Typography>
+                            {" — I'll be in your neighborhood doing errands this…"}
+                          </>
+                        }
+                      />
+                    </Box>
+                    <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', marginLeft: 'auto' }}>
+                      2 days ago
+                    </Typography>
+                  </ListItemButton>
+                </ListItem>
+                <ListItem alignItems="flex-start">
+                  <ListItemButton sx={{ flexDirection: 'column' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          alt="profile pics"
+                          src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        sx={{ alignItems: 'center' }}
+                        primary={
+                          <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
+                            Reports
+                          </Typography>
+                        }
+                        secondary={
+                          <>
+                            <Typography
+                              sx={{ display: 'inline' }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              Ali Connors
+                            </Typography>
+                            {" — I'll be in your neighborhood doing errands this…"}
+                          </>
+                        }
+                      />
+                    </Box>
+                    <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', marginLeft: 'auto' }}>
+                      2 days ago
+                    </Typography>
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Box>
           </IconButton>
-          <Box
-            sx={{
-              width: '100%',
-              height: 400,
-              maxWidth: 360,
-              bgcolor: palette.common.white,
-              borderRadius: '.75rem',
-            }}
-          >
-            <List component="nav">
-              <ListItem alignItems="flex-start">
-                <ListItemButton>
-                  <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem' }}>
-                    2 days ago
-                  </Typography>
-
-                  <ListItemAvatar>
-                    <Avatar
-                      alt="profile pics"
-                      src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
-                    />
-                  </ListItemAvatar>
-                  <ListItemText
-                    sx={{ alignItems: 'center' }}
-                    primary={
-                      <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>Reports</Typography>
-                    }
-                    secondary={
-                      <>
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                          Ali Connors
-                        </Typography>
-                        {" — I'll be in your neighborhood doing errands this…"}
-                      </>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </Box>
         </Box>
         {/* profile item */}
         <Box>
