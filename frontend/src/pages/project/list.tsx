@@ -88,7 +88,7 @@ const ProjectListPage = ({ projects }: any) => {
 
   useEffect(() => {
     const filterRows: any = (rows: any[], searchText: string) => {
-      return rows.filter((row) => {
+      return rows?.filter((row) => {
         const { projectName, language, description, startDate, endDate } = row;
 
         return (
@@ -120,8 +120,8 @@ const ProjectListPage = ({ projects }: any) => {
   const handleDeleteProject = async (id: any) => {
     try {
       setFilteredRows((prevFilteredRows) => prevFilteredRows.filter((row: { _id: any }) => row._id !== id));
-      const res = await axios.delete(`http://localhost:8080/project/delete/${id}`);
       setDialogOpen(false);
+      const res = await axios.delete(`http://localhost:8080/project/delete/${id}`);
       console.log(res);
     } catch (error) {
       console.log(error);
