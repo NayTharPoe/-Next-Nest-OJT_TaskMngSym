@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Divider, List, ListItemAvatar, ListItemButton, ListItemText, Paper } from '@mui/material';
+import { Box, Chip, Divider, List, ListItemAvatar, ListItemButton, ListItemText, Paper } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
@@ -26,6 +26,7 @@ function notificationsLabel(count: number) {
 }
 
 const Header = () => {
+  const [showMessageBox, setShowMessageBox] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const theme = useTheme();
 
@@ -35,6 +36,10 @@ const Header = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleNotificationBox = () => {
+    setShowMessageBox((prevShowMessageBox) => !prevShowMessageBox);
   };
 
   const router = useRouter();
@@ -74,12 +79,14 @@ const Header = () => {
         </Typography>
       </Box>
       <Box sx={{ width: 'max-content', display: 'flex', gap: 3 }}>
-        {/* notification item */}
-        <Box>
-          <IconButton aria-label={notificationsLabel(100)} sx={{ position: 'relative' }}>
+        <Box sx={{ position: 'relative' }}>
+          <IconButton aria-label={notificationsLabel(100)} onClick={handleNotificationBox}>
             <Badge badgeContent={100} color="error">
               <NotificationsIcon />
             </Badge>
+          </IconButton>
+          {/* notification item */}
+          {showMessageBox && (
             <Box
               sx={{
                 position: 'absolute',
@@ -89,8 +96,16 @@ const Header = () => {
                 bgcolor: palette.common.white,
                 borderRadius: '.75rem',
                 p: 1,
+                pt: 0,
               }}
             >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
+                <Typography variant="h4" color={palette.text.primary}>
+                  Notification
+                </Typography>
+                <Chip label="New 16" size="small" color="info" variant="filled" />
+              </Box>
+              <Divider />
               <List component="nav" sx={{ overflow: 'auto', maxHeight: 360 }}>
                 <ListItem alignItems="flex-start">
                   <ListItemButton sx={{ flexDirection: 'column' }}>
@@ -238,7 +253,7 @@ const Header = () => {
                 </ListItem>
               </List>
             </Box>
-          </IconButton>
+          )}
         </Box>
         {/* profile item */}
         <Box>
