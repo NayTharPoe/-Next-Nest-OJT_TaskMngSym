@@ -166,18 +166,6 @@ const Header = () => {
                   <Tab label="Tasks" {...a11yProps(1)} />
                 </Tabs>
               </AppBar>
-              {/* <SwipeableViews
-                axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                index={value}
-                onChangeIndex={handleChangeIndex}
-              >
-                <TabPanel value={value} index={0} dir={theme.direction}>
-                  Reports Message
-                </TabPanel>
-                <TabPanel value={value} index={1} dir={theme.direction}>
-                  Tasks Message
-                </TabPanel>
-              </SwipeableViews> */}
             </Box>
           </Menu>
         </Box>

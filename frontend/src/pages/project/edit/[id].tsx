@@ -9,6 +9,9 @@ import palette from '@/theme/palette';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
 import { ProjectSchema } from '@/lib/validation/projectSchema';
+import useSWR from 'swr';
+import dayjs from 'dayjs';
+import axios from 'axios';
 
 const UpdateFormButton = (props: any) => {
   return (
@@ -52,7 +55,9 @@ const CancelFormButton = (props: any) => {
   );
 };
 
-const AddNewProjectPage: NextPageWithLayout = () => {
+const fetcher = (url: RequestInfo | URL) => fetch(url).then((res) => res.json());
+
+const EditProjectPage: NextPageWithLayout = ({ project }: any) => {
   const router = useRouter();
   const {
     handleSubmit,
@@ -61,16 +66,25 @@ const AddNewProjectPage: NextPageWithLayout = () => {
   } = useForm({
     resolver: yupResolver(ProjectSchema),
     defaultValues: {
-      projectName: '',
-      language: '',
-      description: '',
-      startDate: null || undefined,
-      endDate: null || undefined,
+      projectName: project?.data?.projectName || '',
+      language: project?.data?.language || '',
+      description: project?.data?.description || '',
+      startDate: project.data.startDate && dayjs(project.data.startDate),
+      endDate: project.data.endDate && dayjs(project.data.endDate),
     },
   });
 
-  const onSubmit = (data: any): void => {
-    console.log(data);
+  const onSubmit = async (payload: any) => {
+    try {
+      const res = await axios.patch(`http://localhost:8080/project/edit/${project?.data._id}`, {
+        ...payload,
+        starDate: dayjs(payload.starDate).format('YYYY-MM-DD'),
+        endDate: dayjs(payload.endDate).format('YYYY-MM-DD'),
+      });
+      router.push('/project/list');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -262,8 +276,20 @@ const AddNewProjectPage: NextPageWithLayout = () => {
   );
 };
 
-AddNewProjectPage.getLayout = function getLayout(page: ReactElement) {
+EditProjectPage.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export default AddNewProjectPage;
+export default EditProjectPage;
+
+export async function getServerSideProps(context: { query: { id: any } }) {
+  const { id } = context.query;
+  const res = await fetch(`http://localhost:8080/project/detail/${id}`);
+  const project = await res.json();
+
+  return {
+    props: {
+      project,
+    },
+  };
+}

@@ -10,6 +10,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
 import { ProjectSchema } from '@/lib/validation/projectSchema';
 import dayjs, { Dayjs } from 'dayjs';
+import axios from 'axios';
 
 const CreateFormButton = (props: any) => {
   return (
@@ -70,8 +71,17 @@ const AddNewProjectPage: NextPageWithLayout = () => {
     },
   });
 
-  const onSubmit = (data: any): void => {
-    console.log(data);
+  const onSubmit = async (payload: any) => {
+    try {
+      const res = await axios.post('http://localhost:8080/project/add', {
+        ...payload,
+        starDate: dayjs(payload.starDate).format('YYYY-MM-DD'),
+        endDate: dayjs(payload.endDate).format('YYYY-MM-DD'),
+      });
+      router.push('/project/list');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const isWeekend = (date: Dayjs) => {

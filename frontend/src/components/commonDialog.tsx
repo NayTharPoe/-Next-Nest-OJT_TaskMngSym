@@ -19,18 +19,13 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ConfirmDialog({ open, onClose, id }: any) {
-  const handleDelete = (id: number) => {
-    console.log(id);
-    onClose();
-  };
-
+export default function ConfirmDialog(props: any) {
   return (
     <div>
       <Dialog
-        open={open}
+        open={props.open}
         TransitionComponent={Transition}
-        onClose={onClose}
+        onClose={props.onClose}
         aria-labelledby="responsive-dialog-title"
         BackdropProps={{
           sx: { backgroundColor: 'rgba(0, 0, 0, 0.2)' }, // Set the backdrop color with transparency
@@ -55,14 +50,10 @@ export default function ConfirmDialog({ open, onClose, id }: any) {
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ pb: 3 }}>
-          <Button onClick={onClose} autoFocus sx={{ color: palette.primary.dark, fontSize: '0.95rem' }}>
+          <Button onClick={props.onClose} autoFocus sx={{ color: palette.primary.dark, fontSize: '0.95rem' }}>
             Cancel
           </Button>
-          <Button
-            onClick={() => handleDelete(id)}
-            autoFocus
-            sx={{ color: palette.primary.dark, fontSize: '0.95rem' }}
-          >
+          <Button autoFocus sx={{ color: palette.primary.dark, fontSize: '0.95rem' }} {...props}>
             Delete
           </Button>
         </DialogActions>
