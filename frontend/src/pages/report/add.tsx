@@ -29,6 +29,7 @@ import { styled } from '@mui/material/styles';
 import palette from '@/theme/palette';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const PreviewDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -152,9 +153,11 @@ const ReportAddPage = () => {
   const [taskOptions, setTaskOptions] = useState([]);
   const [selectedTaskIdData, setSelectedTaskIdData] = useState([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState([]);
+  const router = useRouter();
 
   const handleDialogClose = () => {
     setOpenDialog(false);
+    router.push('/report/list');
   };
 
   const showDialog = (title: string, contentText: string) => {
@@ -271,7 +274,6 @@ const ReportAddPage = () => {
   };
 
   const onSubmit = async (data: any) => {
-    console.log('data', data);
     const reportByRawData = {
       employeeName: 'ME ME ME',
       profile:
@@ -287,23 +289,17 @@ const ReportAddPage = () => {
       showDialog('Total Hours Limitations', 'Total hours must be 8 hours.');
     } else {
       showDialog('Successful Submission', 'Your report has been added successfully');
-      const payload = data.reports?.map((row: any) => ({
-        ...row,
-        status: Number(row.status),
-        reportTo: roleOptions.find((option) => option.value === data.reportTo)?.label,
-        reportBy: reportByRawData,
-        problemFeeling: data.problem_feeling,
-      }));
-
-      console.log('this is payload', payload);
 
       try {
-        const res = await axios.post('http://localhost:8080/report/add', payload, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        console.log(res);
+        const payload = data?.reports?.map((row: any) => ({
+          ...row,
+          status: Number(row.status),
+          reportTo: roleOptions.find((option) => option.value === data.reportTo)?.label,
+          reportBy: reportByRawData,
+          problemFeeling: data.problem_feeling,
+        }));
+
+        const res = await axios.post('http://localhost:8080/report/add', payload);
       } catch (error) {
         console.log(error);
       }
@@ -577,9 +573,7 @@ const ReportAddPage = () => {
         />
 
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
-          <Button type="submit" onClick={onSubmit}>
-            Submit
-          </Button>
+          <Button type="submit">Submit</Button>
           <Button onClick={handlePreviewOpen}>Preview</Button>
         </Box>
 

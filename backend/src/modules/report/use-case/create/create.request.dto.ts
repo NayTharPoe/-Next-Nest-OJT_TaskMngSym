@@ -56,7 +56,7 @@ export class CreateReportRequestDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  readonly hour: number;
+  readonly hours: number;
 
   @ApiProperty({ type: ReportByDto })
   @IsNotEmpty()

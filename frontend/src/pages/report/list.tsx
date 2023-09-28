@@ -62,7 +62,7 @@ const ReportListPage = ({ reports }: any) => {
   };
 
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
+    <Box sx={{ height: 400, width: '100%', my: 4 }}>
       <Grid
         container
         spacing={2}
@@ -150,7 +150,7 @@ const ReportListPage = ({ reports }: any) => {
         </Grid>
       </Grid>
       <Grid
-        mt={2}
+        py={4}
         container
         spacing={3}
         sx={{
@@ -169,7 +169,7 @@ const ReportListPage = ({ reports }: any) => {
                   p: 1,
                   borderRadius: '1.4rem',
                   '@media (min-width: 320px)': {
-                    width: '300px',
+                    width: '335px',
                   },
                 }}
               >
@@ -200,7 +200,7 @@ const ReportListPage = ({ reports }: any) => {
                       <Chip label={row.percentage + '%'} sx={{ backgroundColor: '#D9D8DF' }} />
                       <Chip label={row.types} sx={{ backgroundColor: '#DACEF2' }} />
                       <Chip label={statusOptions.find((option) => option.value === row.status)?.label} />
-                      <Chip label={row.hour + 'hrs'} sx={{ backgroundColor: '#F2CED6' }} />
+                      <Chip label={row.hours + 'hrs'} sx={{ backgroundColor: '#F2CED6' }} />
                     </Stack>
                   </Box>
                 </CardContent>

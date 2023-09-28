@@ -27,7 +27,7 @@ export class ReportEntity extends Document {
   status: number;
 
   @Prop({ required: true })
-  hour: number;
+  hours: number;
 
   @Prop({
     required: true,
