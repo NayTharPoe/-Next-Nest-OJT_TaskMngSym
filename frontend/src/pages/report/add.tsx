@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -28,6 +28,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
 import palette from '@/theme/palette';
 import dayjs from 'dayjs';
+import axios from 'axios';
 
 const PreviewDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -41,7 +42,7 @@ const PreviewDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-function CommonDialog({ open, onClose, title, contentText }: any) {
+const CommonDialog = ({ open, onClose, title, contentText }: any) => {
   return (
     <Dialog
       open={open}
@@ -60,7 +61,7 @@ function CommonDialog({ open, onClose, title, contentText }: any) {
       </DialogActions>
     </Dialog>
   );
-}
+};
 
 type FormValues = {
   report: {
@@ -74,18 +75,11 @@ type FormValues = {
   }[];
 };
 
-const roleOptions = [
-  { value: 'Admin Nay', label: 'Admin Nay' },
-  { value: 'James', label: 'James' },
-  { value: 'Lucas', label: 'Lucas' },
-  { value: 'Brondy', label: 'Brondy' },
-];
-
 const statusOptions = [
-  { value: 'In Progress', label: 'In Progress' },
-  { value: 'Open', label: 'Open' },
-  { value: 'Finish', label: 'Finish' },
-  { value: 'Close', label: 'Close' },
+  { value: 0, label: 'Open' },
+  { value: 1, label: 'In Progress' },
+  { value: 2, label: 'Finish' },
+  { value: 3, label: 'Close' },
 ];
 
 const typeOptions = [
@@ -94,14 +88,6 @@ const typeOptions = [
   { value: 'Review', label: 'Review' },
   { value: 'Bugfix', label: 'Bugfix' },
   { value: 'Testing', label: 'Testing' },
-];
-
-const taskIdOptions = [
-  { value: 'T001', label: 'T001' },
-  { value: 'T002', label: 'T002' },
-  { value: 'T003', label: 'T003' },
-  { value: 'T004', label: 'T004' },
-  { value: 'T005', label: 'T005' },
 ];
 
 const detailTaskIdOptions = [
@@ -162,6 +148,10 @@ const ReportAddPage = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogContentText, setDialogContentText] = useState('');
+  const [roleOptions, setRoleOptions] = useState<{ value: string; label: string }[]>([]);
+  const [taskOptions, setTaskOptions] = useState([]);
+  const [selectedTaskIdData, setSelectedTaskIdData] = useState([]);
+  const [selectedTaskIds, setSelectedTaskIds] = useState([]);
 
   const handleDialogClose = () => {
     setOpenDialog(false);
@@ -176,6 +166,7 @@ const ReportAddPage = () => {
   const handlePreviewOpen = () => {
     setOpenPreviewDialog(true);
   };
+
   const handlePreviewClose = () => {
     setOpenPreviewDialog(false);
   };
@@ -218,21 +209,112 @@ const ReportAddPage = () => {
     return totalHour;
   };
 
+  const previewAdmin = useWatch({ control, name: 'reportTo' });
+  const previewProblem = useWatch({ control, name: 'problem_feeling' });
   const reportValues = useWatch({ control, name: 'reports' });
   const totalHour = getTotalHour(reportValues || []);
 
-  console.log(reportValues);
+  const fetchRoles = async () => {
+    try {
+      const res = await axios
+        .get('http://localhost:8080/employees/list?page=1&limit=1000')
+        .then((res) => res.data);
+      const adminRoles = res.data
+        ?.filter((e: { position: string }) => e.position !== '1')
+        .map((employee: any) => ({
+          value: employee._id,
+          label: employee.employeeName,
+        }));
+      setRoleOptions(adminRoles);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const onSubmit = (data: any) => {
+  const fetchTasks = async () => {
+    try {
+      const res = await axios
+        .get('http://localhost:8080/tasks/list?page=1&limit=1000')
+        .then((res) => res.data);
+      const taskOptions = res.data?.map((task: { _id: any }, index: number) => ({
+        value: task._id,
+        label: index + 1,
+      }));
+
+      const selectedTaskData = res.data?.map((task: any) => ({
+        key: task._id,
+        taskTitle: task?.title,
+        project: task.project?.projectName,
+      }));
+
+      setTaskOptions(taskOptions);
+      setSelectedTaskIdData(selectedTaskData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleChangeTask = (e: any, index: any) => {
+    const selectedTaskId = e.target.value;
+    const selectedTask: any = selectedTaskIdData.find((task: any) => task.key === selectedTaskId);
+
+    // Update the values for the specific row at the given index
+    if (selectedTask) {
+      const updatedSelectedTaskIds: any = [...selectedTaskIds];
+      updatedSelectedTaskIds[index] = selectedTaskId;
+      setSelectedTaskIds(updatedSelectedTaskIds);
+
+      setValue(`reports.${index}.taskId`, selectedTaskId);
+      setValue(`reports.${index}.taskTitle`, selectedTask.taskTitle);
+      setValue(`reports.${index}.project`, selectedTask.project);
+    }
+  };
+
+  const onSubmit = async (data: any) => {
+    console.log('data', data);
+    const reportByRawData = {
+      employeeName: 'ME ME ME',
+      profile:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROI--23ZsZB50wGPBSL3U9wV4Gq83t5Xxh-w&usqp=CAU',
+      position: '0',
+    };
+
     if (fields.length <= 0) {
       showDialog('No Data', 'Please add at least 1 report.');
+    } else if (Object.keys(errors).length) {
+      return;
     } else if (totalHour !== 8) {
       showDialog('Total Hours Limitations', 'Total hours must be 8 hours.');
     } else {
       showDialog('Successful Submission', 'Your report has been added successfully');
-      console.log('submitted data', data);
+      const payload = data.reports?.map((row: any) => ({
+        ...row,
+        status: Number(row.status),
+        reportTo: roleOptions.find((option) => option.value === data.reportTo)?.label,
+        reportBy: reportByRawData,
+        problemFeeling: data.problem_feeling,
+      }));
+
+      console.log('this is payload', payload);
+
+      try {
+        const res = await axios.post('http://localhost:8080/report/add', payload, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
+
+  useEffect(() => {
+    fetchRoles();
+    fetchTasks();
+  }, []);
+
   return (
     <Box sx={{ mt: 5 }}>
       <form>
@@ -251,7 +333,7 @@ const ReportAddPage = () => {
                 helperText={errors.reportTo?.message}
                 sx={{ width: 120 }}
               >
-                {roleOptions.map((option) => (
+                {roleOptions.map((option: any) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
                   </MenuItem>
@@ -311,13 +393,15 @@ const ReportAddPage = () => {
                             <TextField
                               {...field}
                               id="taskId"
+                              value={selectedTaskIds[index] || ''}
                               select
                               label="Task ID"
                               fullWidth
                               error={!!errors.reports?.[index]?.taskId}
                               helperText={errors.reports?.[index]?.taskId?.message}
+                              onChange={(e) => handleChangeTask(e, index)}
                             >
-                              {taskIdOptions.map((option) => (
+                              {taskOptions?.map((option: any) => (
                                 <MenuItem key={option.value} value={option.value}>
                                   {option.label}
                                 </MenuItem>
@@ -337,6 +421,7 @@ const ReportAddPage = () => {
                               label="Task Title"
                               id="taskTitle"
                               sx={{ m: 1, width: '25ch' }}
+                              disabled
                               error={!!errors.reports?.[index]?.taskTitle}
                               helperText={errors.reports?.[index]?.taskTitle?.message}
                             />
@@ -354,6 +439,7 @@ const ReportAddPage = () => {
                               label="Project"
                               id="project"
                               sx={{ m: 1, width: '25ch' }}
+                              disabled
                               error={!!errors.reports?.[index]?.project}
                               helperText={errors.reports?.[index]?.project?.message}
                             />
@@ -496,6 +582,7 @@ const ReportAddPage = () => {
           </Button>
           <Button onClick={handlePreviewOpen}>Preview</Button>
         </Box>
+
         {/* preview dialog */}
         <PreviewDialog
           onClose={handlePreviewClose}
@@ -521,8 +608,7 @@ const ReportAddPage = () => {
             <Typography>
               Report To :{' '}
               <span className="fw-600">
-                {/* {roleOptions.find((row) => row.value === selectedPerson)?.label || ''} */}
-                {'Admin'}
+                {roleOptions.find((row: any) => row.value === previewAdmin)?.label}
               </span>
             </Typography>
             <Typography>
@@ -542,15 +628,15 @@ const ReportAddPage = () => {
               <Box key={index}>
                 <Typography>
                   - {row.taskTitle}, &lt;{row.percentage}%&gt;, &lt;{row.types}&gt;, &lt;
-                  {statusOptions.find((status) => status.value === row.status.toString())?.label}
-                  &gt;, &lt;{row.hours}hour&gt;
+                  {statusOptions.find((option) => option.value.toString() === row.status.toString())?.label}
+                  &gt;, &lt;{row.hours}Hours&gt;
                 </Typography>
               </Box>
             ))}
             <Typography>【実績】</Typography>
             <Typography>
               {' '}
-              Problem, Feeling - <span>{'Nothing'}</span>
+              Problem, Feeling - <span>{previewProblem || 'Nothing'}</span>
             </Typography>
           </DialogContent>
           <DialogActions>

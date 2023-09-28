@@ -10,8 +10,8 @@ import { EmployeePaginationRequestDto } from 'src/common/dtos/request/employeePa
 export class GetAllController {
   constructor(private employeeService: EmployeeService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Get('list')
   @ApiQuery({
     name: 'limit',
