@@ -27,12 +27,7 @@ const AuthButton = (props: any) => {
   });
 
   return (
-    <BootstrapButton
-      {...props}
-      type="submit"
-      variant="contained"
-      disableFocusRipple
-    >
+    <BootstrapButton type="submit" variant="contained" disableFocusRipple>
       {props.children}
     </BootstrapButton>
   );

@@ -3,25 +3,44 @@ import AuthButton from "@/components/authBtn";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 import {
-  Box,
   Card,
   Grid,
   IconButton,
   InputAdornment,
   Link,
+  Modal,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import AuthDialog from "@/components/authDialog";
+import Loading from "@/components/loading";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "transparent",
+  outline: "none",
+};
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const {
     control,
@@ -30,14 +49,25 @@ const Login = () => {
   } = useForm();
 
   const onSubmit = (data: any): void => {
-    axios.post("http://localhost:8080/auth/login", data).then((res) => {
-      setOpen(true);
-      router.push("/");
-    });
+    setIsLoading(true);
+    axios
+      .post("http://localhost:8080/auth/login", data)
+      .then((res) => {
+        const userData = res.data.result;
+        localStorage.setItem("user", JSON.stringify(userData));
+        setIsLoading(false);
+        router.push("/");
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setOpen(true);
+        setMessage(err.response.data.message);
+      });
   };
 
   return (
-    <Box>
+    <>
+      {isLoading && <Loading />}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container>
           <Grid
@@ -64,7 +94,10 @@ const Login = () => {
             alignItems="center"
             item
             sx={{
-              backgroundImage: { xs: `url('/auth-img/login.png')`, md: "none" },
+              backgroundImage: {
+                xs: `url('/auth-img/login.png')`,
+                md: "none",
+              },
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
@@ -153,11 +186,14 @@ const Login = () => {
                 </Link>
               </Stack>
               <AuthButton>Login</AuthButton>
+              <AuthDialog open={open} close={handleClose}>
+                {message}
+              </AuthDialog>
             </Card>
           </Grid>
         </Grid>
       </form>
-    </Box>
+    </>
   );
 };
 
