@@ -1,12 +1,56 @@
 /* eslint-disable @next/next/no-img-element */
 import AuthButton from "@/components/authBtn";
+import AuthDialog from "@/components/authDialog";
+import Loading from "@/components/loading";
 import { Box, Card, Grid, Stack, TextField, Typography } from "@mui/material";
+import axios from "axios";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 
 const ForgetPasswrod = () => {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [statusText, setStatusText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const handleClose = () => {
+    setOpen(false);
+    if (statusText === "OK") {
+      router.push("/auth/login");
+    }
+  };
+
+  const onSubmit = (data: any): void => {
+    setIsLoading(true);
+    axios
+      .post("http://localhost:8080/auth/forget-password", data)
+      .then((res: any) => {
+        setStatusText(res.statusText);
+        setOpen(true);
+        setMessage(res.data?.message);
+        setIsLoading(false);
+        // router.push("/auth/login");
+      })
+      .catch((err) => {
+        setOpen(true);
+        setIsLoading(false);
+        setMessage(err.response?.data.message);
+      });
+  };
+
   return (
     <>
-      <Box>
+      {isLoading && <Loading />}
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container>
           <Grid
             sx={{
@@ -60,19 +104,37 @@ const ForgetPasswrod = () => {
                 mt={4}
                 spacing={3}
               >
-                <TextField
+                <Controller
                   name="email"
-                  type="email"
-                  style={{ borderRadius: "25px" }}
-                  label="Enter your email"
-                  fullWidth
-                ></TextField>
+                  control={control}
+                  rules={{ required: "Email is required" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      name="email"
+                      type="email"
+                      style={{ borderRadius: "25px" }}
+                      label="Enter your email"
+                      value={field.value || ""}
+                      error={!!errors.email}
+                      helperText={errors.email?.message as string}
+                      fullWidth
+                    ></TextField>
+                  )}
+                />
               </Stack>
-              <AuthButton btnText={"Reset your password"} />
+              <AuthButton>Forget Password</AuthButton>
+              <AuthDialog
+                statusText={statusText}
+                open={open}
+                close={handleClose}
+              >
+                {message}
+              </AuthDialog>
             </Card>
           </Grid>
         </Grid>
-      </Box>
+      </form>
     </>
   );
 };

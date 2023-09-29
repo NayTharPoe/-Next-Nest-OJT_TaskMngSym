@@ -6,7 +6,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { EmployeeDocument, EmployeeEntity } from 'src/modules/employee/entities/employee.entities';
+import {
+  EmployeeDocument,
+  EmployeeEntity,
+} from 'src/modules/employee/entities/employee.entities';
 import { LoginRequestDto } from '../use-case/login/login.request.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ForgetEmailService } from 'src/template/forgetEmail';
@@ -20,7 +23,8 @@ import { TokenService } from '../tokens/service/token.service';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(EmployeeEntity.name) private employeeModel: Model<EmployeeDocument>,
+    @InjectModel(EmployeeEntity.name)
+    private employeeModel: Model<EmployeeDocument>,
     private readonly tokenService: TokenService,
     private readonly jwtService: JwtService,
     private forgetEmailService: ForgetEmailService,
@@ -37,7 +41,7 @@ export class AuthService {
     const passwordMatch = await bcrypt.compare(payload.password, user.password);
 
     if (!passwordMatch) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Wrong Password!');
     }
 
     const data = {
@@ -56,6 +60,7 @@ export class AuthService {
       phone: user.phone,
       dob: user.dob,
       position: user.position,
+      profile: user.profile,
       token,
     };
     return result;
@@ -71,7 +76,7 @@ export class AuthService {
 
     const resetLink = `${this.configService.get(
       'CLIENT_DOMAIN',
-    )}/reset-password/${user._id}`;
+    )}/auth/reset-password/${user._id}`;
 
     const content = this.forgetEmailService.forgetTemplate(email, resetLink);
 
