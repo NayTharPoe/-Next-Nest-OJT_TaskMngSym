@@ -43,6 +43,26 @@ const PreviewDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+const SubmitBtn = styled(Button)({
+  backgroundColor: palette.primary.main,
+  color: palette.text.primary,
+  padding: '10px 20px',
+  '&:hover': {
+    backgroundColor: palette.primary.main,
+    color: palette.text.primary,
+  },
+});
+
+const PreviewBtn = styled(Button)({
+  backgroundColor: palette.secondary.main,
+  color: palette.text.primary,
+  padding: '10px 20px',
+  '&:hover': {
+    backgroundColor: palette.secondary.main,
+    color: palette.text.primary,
+  },
+});
+
 const CommonDialog = ({ open, onClose, title, contentText }: any) => {
   return (
     <Dialog
@@ -337,7 +357,7 @@ const ReportAddPage = () => {
               </TextField>
             )}
           />
-          <Button
+          <SubmitBtn
             onClick={() =>
               append({
                 taskId: '',
@@ -351,7 +371,7 @@ const ReportAddPage = () => {
             }
           >
             Add Report
-          </Button>
+          </SubmitBtn>
         </Box>
       </form>
 
@@ -572,9 +592,9 @@ const ReportAddPage = () => {
           contentText={dialogContentText}
         />
 
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
-          <Button type="submit">Submit</Button>
-          <Button onClick={handlePreviewOpen}>Preview</Button>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'center', mt: 5 }}>
+          <SubmitBtn type="submit">Submit</SubmitBtn>
+          <PreviewBtn onClick={handlePreviewOpen}>Preview</PreviewBtn>
         </Box>
 
         {/* preview dialog */}
