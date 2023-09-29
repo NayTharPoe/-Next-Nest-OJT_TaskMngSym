@@ -61,7 +61,7 @@ const Login = () => {
       .catch((err) => {
         setIsLoading(false);
         setOpen(true);
-        setMessage(err.response.data.message);
+        setMessage(err.response?.data.message);
       });
   };
 

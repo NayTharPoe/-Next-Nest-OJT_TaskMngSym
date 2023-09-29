@@ -51,13 +51,13 @@ const ResetPassword = () => {
       .then((res) => {
         setStatusText(res.statusText);
         setOpen(true);
-        setMessage(res.data.message);
+        setMessage(res.data?.message);
         setIsLoading(false);
       })
       .catch((err) => {
         setOpen(true);
         setIsLoading(false);
-        setMessage(err.response.data.message);
+        setMessage(err.response?.data.message);
       });
   };
 

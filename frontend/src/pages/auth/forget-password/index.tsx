@@ -4,6 +4,7 @@ import AuthDialog from "@/components/authDialog";
 import Loading from "@/components/loading";
 import { Box, Card, Grid, Stack, TextField, Typography } from "@mui/material";
 import axios from "axios";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 
@@ -13,6 +14,8 @@ const ForgetPasswrod = () => {
   const [statusText, setStatusText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -21,6 +24,9 @@ const ForgetPasswrod = () => {
 
   const handleClose = () => {
     setOpen(false);
+    if (statusText === "OK") {
+      router.push("/auth/login");
+    }
   };
 
   const onSubmit = (data: any): void => {
@@ -30,13 +36,14 @@ const ForgetPasswrod = () => {
       .then((res: any) => {
         setStatusText(res.statusText);
         setOpen(true);
-        setMessage(res.data.message);
+        setMessage(res.data?.message);
         setIsLoading(false);
+        // router.push("/auth/login");
       })
       .catch((err) => {
         setOpen(true);
         setIsLoading(false);
-        setMessage(err.response.data.message);
+        setMessage(err.response?.data.message);
       });
   };
 
