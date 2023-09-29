@@ -19,16 +19,18 @@ import AddNewBtn from '@/components/addNewBtn';
 import palette from '@/theme/palette';
 import dayjs from 'dayjs';
 import { report } from 'process';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 const ReportListPage = ({ reports }: any) => {
-  const [dataSource, setDataSource] = useState([]);
+  const [dataSource, setDataSource] = useState(reports.data);
   const [formData, setFormData] = useState({
     reportTo: '',
     reportBy: '',
     selectedDate: null,
   });
+  const router = useRouter();
 
-  console.log(reports.data);
   const statusOptions = [
     { value: 0, label: 'Open' },
     { value: 1, label: 'In Progress' },
@@ -51,14 +53,43 @@ const ReportListPage = ({ reports }: any) => {
     });
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('Form Data Submitted:', formData);
 
-    // const formattedDate = dayjs(formData.selectedDate).format('YYYY-MM-DD') || 'null';
-    // const reportTo = formData.reportTo ? formData.reportTo : 'null';
-    // const reportBy = formData.reportBy ? formData.reportBy : 'null';
-    // const api = `http://localhost:3000/reports/list?reportTo=${reportTo}&reportBy=${reportBy}&date=${formattedDate}`;
+    const formattedDate = formData.selectedDate ? dayjs(formData.selectedDate).format('YYYY-MM-DD') : '';
+
+    const queryParams: Record<string, string | number> = {
+      page: 1,
+      limit: 2000,
+    };
+
+    if (formData.reportTo) {
+      queryParams.reportTo = formData.reportTo;
+    }
+
+    if (formData.reportBy) {
+      queryParams.reportBy = formData.reportBy;
+    }
+
+    if (formattedDate) {
+      queryParams.date = formattedDate;
+    }
+
+    const reportToParam = formData.reportTo ? `&reportTo=${formData.reportTo}` : '';
+    const reportByParam = formData.reportBy ? `&reportTo=${formData.reportBy}` : '';
+    const dateParam = formData.selectedDate ? `&date=${formattedDate}` : '';
+    router.push(`${router.pathname}?page=1&limit=2000${reportToParam}${reportByParam}${dateParam}`);
+
+    try {
+      const response = await axios.get('http://localhost:8080/reports/list', {
+        params: queryParams,
+      });
+
+      console.log('API Response:', response.data);
+      setDataSource(response.data.data);
+    } catch (error) {
+      console.error('API Error:', error);
+    }
   };
 
   return (
@@ -69,7 +100,7 @@ const ReportListPage = ({ reports }: any) => {
         sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}
       >
         <Grid item>
-          <Box component="form" onClick={handleSubmit}>
+          <Box component="form" onSubmit={handleSubmit}>
             <Grid container spacing={2} sx={{ alignItems: 'center' }}>
               <Grid item xs={6} sm={3}>
                 <TextField
@@ -110,6 +141,7 @@ const ReportListPage = ({ reports }: any) => {
               </Grid>
               <Grid item xs={6} sm={3}>
                 <DatePicker
+                  format="YYYY/MM/DD"
                   value={formData.selectedDate}
                   onChange={(newValue: any) => handleDateChange(newValue)}
                   sx={{
@@ -128,7 +160,6 @@ const ReportListPage = ({ reports }: any) => {
                   variant="contained"
                   size="large"
                   type="submit"
-                  onClick={handleSubmit}
                   sx={{
                     backgroundColor: palette.primary.main,
                     color: palette.text.primary,
@@ -158,7 +189,7 @@ const ReportListPage = ({ reports }: any) => {
           justifyContent: 'center',
         }}
       >
-        {reports?.data?.map((row: any) => {
+        {dataSource?.map((row: any) => {
           return (
             <Grid key={row._id} item>
               <Card
@@ -196,6 +227,7 @@ const ReportListPage = ({ reports }: any) => {
 
                     <Typography>【所感】Problem : {row.problemFeeling}</Typography>
                     <Typography>【実績】- {row.taskTitle}</Typography>
+                    <Typography>Date : {dayjs(row.createdAt).format('YYYY-MM-DD')}</Typography>
                     <Stack spacing={1} sx={{ mt: 1.75 }} direction={{ xs: 'column', sm: 'row' }}>
                       <Chip label={row.percentage + '%'} sx={{ backgroundColor: '#D9D8DF' }} />
                       <Chip label={row.types} sx={{ backgroundColor: '#DACEF2' }} />
