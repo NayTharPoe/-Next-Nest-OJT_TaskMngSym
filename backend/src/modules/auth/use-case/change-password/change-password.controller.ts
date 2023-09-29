@@ -9,8 +9,8 @@ import { AuthGuard } from '../../guard/auth.guard';
 export class ChangePasswordController {
   constructor(private authService: AuthService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Post('change-password')
   async change(@Body() payload: ChangeRequestDto, @Response() res) {
     await this.authService.changePassword(payload);
