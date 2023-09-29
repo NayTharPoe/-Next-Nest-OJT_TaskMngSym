@@ -27,6 +27,8 @@ import palette from "@/theme/palette";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import dayjs from "dayjs";
+import Loading from "@/components/loading";
+import TaskDownload from "@/components/taskDownload";
 
 interface Data {
   _id: string;
@@ -299,7 +301,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       }}
     >
       <Typography
-        // sx={{ flex: "1 1 100%", display: "flex", gap: "2" }}
         sx={{ display: "flex", alignItems: "center" }}
         variant="h6"
         id="tableTitle"
@@ -309,18 +310,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           value={searchText}
           inputSearch={handleSearchInputChange}
         />
-        {/* <Select
-          size="small"
-          sx={{ marginLeft: "15px", width: "30%" }}
-          value={selectStatus}
-          onChange={handleChange}
-        >
-          <MenuItem value="0">Opened</MenuItem>
-          <MenuItem value="1">In progress</MenuItem>
-          <MenuItem value="2">Finished</MenuItem>
-          <MenuItem value="3">Closed</MenuItem>
-          <MenuItem value="4">All</MenuItem>
-        </Select> */}
       </Typography>
     </Toolbar>
   );
@@ -359,6 +348,9 @@ const TaskList: NextPageWithLayout = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [IdToDelete, setIdToDelete] = useState(null);
   const [taskList, setTaskList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [onClose, setOnClose] = useState(false);
   const router = useRouter();
 
   const statusOption = [
@@ -369,6 +361,7 @@ const TaskList: NextPageWithLayout = () => {
   ];
 
   useEffect(() => {
+    setIsLoading(true);
     const taskApi = async () => {
       const taskApi = await axios.get(
         "http://localhost:8080/tasks/list?limit=30"
@@ -387,11 +380,12 @@ const TaskList: NextPageWithLayout = () => {
           ...task,
           num: task._id.length + index - 23,
           project: projectApi.data.data.filter(
-            (projectData: any) => projectData._id === task.project._id
-          )[0].projectName,
+            (projectData: any) => projectData._id === task.project?._id
+          )[0]?.projectName,
           assignedEmployee: employeeApi.data.data.filter(
-            (employee: any) => employee._id === task.assignedEmployee._id
-          )[0].employeeName,
+            (employee: any) => employee._id === task.assignedEmployee?._id
+          )[0]?.employeeName,
+          description: task.description ? task.description : "-",
           status: statusValue ? statusValue : "Open",
           actualHour: task.actualHour ? task.actualHour : "-",
           estimate_start_date: task.estimate_start_date
@@ -409,6 +403,7 @@ const TaskList: NextPageWithLayout = () => {
         };
       });
       setTaskList(taskData);
+      setIsLoading(false);
     };
     taskApi();
   }, []);
@@ -438,20 +433,19 @@ const TaskList: NextPageWithLayout = () => {
     setPage(0);
   };
 
-  function filterRows(rows: Data[], searchText: string): Data[] {
-    const filteredRows = rows.filter((row) => {
+  function filterRows(taskList: any, searchText: string) {
+    const filteredRows = taskList.filter((row: any) => {
       const { title, project, assignedEmployee, status } = row;
 
       return (
-        title.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        project.toLowerCase().includes(searchText.toLowerCase().trim()) ||
+        title?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
+        project?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
         assignedEmployee
           .toLowerCase()
           .includes(searchText.toLowerCase().trim()) ||
-        status.toLocaleLowerCase().includes(searchText.toLowerCase().trim())
+        status?.toLocaleLowerCase().includes(searchText.toLowerCase().trim())
       );
     });
-
     return filteredRows;
   }
 
@@ -465,12 +459,21 @@ const TaskList: NextPageWithLayout = () => {
         filterRows(taskList, searchText),
         getComparator(order, orderBy)
       ).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [order, orderBy, page, rowsPerPage, taskList, searchText]
   );
 
-  const handleEditProject = (e: any, id: string) => {
+  const handleEditTask = (e: any, id: string) => {
     router.push(`/task/edit/${id}`);
+  };
+
+  const handleDelete = (id: string) => {
+    axios.delete(`http://localhost:8080/task/${id}`);
+    setTaskList((prevList: any) =>
+      prevList?.filter((row: any) => row._id !== id)
+    );
+    setOpen(false);
   };
 
   const handleOpenDialog = (id: any) => {
@@ -483,8 +486,16 @@ const TaskList: NextPageWithLayout = () => {
   };
 
   return (
-    <Box>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+    <>
+      {isLoading && <Loading />}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mt: 2,
+        }}
+      >
+        <TaskDownload datas={visibleRows} />
         <AddButton onClick={() => router.push("/task/add")}>
           <AddIcon fontSize="small" sx={{ mr: 1 }} /> New Task
         </AddButton>
@@ -556,16 +567,17 @@ const TaskList: NextPageWithLayout = () => {
                     </TableCell>
                     <TableCell sx={{ display: "flex" }}>
                       <TableBtn
-                        onClick={(event: any) =>
-                          handleEditProject(event, row._id)
-                        }
+                        onClick={(event: any) => handleEditTask(event, row._id)}
                       >
                         Edit
                       </TableBtn>
+                      <TableBtn onClick={() => setOpen(true)}>Remove</TableBtn>
                       <ConfirmDialog
-                        open={dialogOpen}
-                        onClose={handleCloseDialog}
-                        id={IdToDelete}
+                        open={open}
+                        onClose={onClose}
+                        onClick={() => handleDelete(row._id)}
+                        onCancel={() => setOpen(false)}
+                        id={row._id}
                       />
                     </TableCell>
                   </TableRow>
@@ -589,7 +601,7 @@ const TaskList: NextPageWithLayout = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-    </Box>
+    </>
   );
 };
 

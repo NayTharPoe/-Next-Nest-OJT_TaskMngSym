@@ -17,9 +17,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import palette from "@/theme/palette";
 import { DatePicker } from "@mui/x-date-pickers";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import axios from "axios";
 import dayjs from "dayjs";
+import { TaskAddSchema } from "@/utils/taskValidate";
 
 const TaskCreate = () => {
   const [selectProject, setSelectProject] = useState([]);
@@ -54,7 +56,9 @@ const TaskCreate = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(TaskAddSchema),
+  });
 
   const onSubmit = (data: any): void => {
     const result = {
@@ -117,7 +121,6 @@ const TaskCreate = () => {
               </InputLabel>
               <Controller
                 name="project"
-                rules={{ required: "Project is required" }}
                 control={control}
                 render={({ field }) => (
                   <>
@@ -250,9 +253,15 @@ const TaskCreate = () => {
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value || null}
+                      value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                        },
                       }}
                     />
                   </LocalizationProvider>
@@ -269,9 +278,17 @@ const TaskCreate = () => {
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value || null}
+                      value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                          error: !!errors.estimate_finish_date,
+                          helperText: errors.estimate_finish_date?.message,
+                        },
                       }}
                     />
                   </LocalizationProvider>

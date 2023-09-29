@@ -17,9 +17,7 @@ export class CreateTaskRequestDto {
   @IsNotEmpty()
   title: string;
 
-  @IsString()
   @ApiProperty()
-  @IsNotEmpty()
   description: string;
 
   @IsNumber()

@@ -20,10 +20,14 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { useRouter } from "next/router";
 import axios from "axios";
 import dayjs from "dayjs";
+import Loading from "@/components/loading";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { TaskEditSchema } from "@/utils/taskValidate";
 
 const TaskEdit = () => {
   const [selectProject, setSelectProject] = useState([]);
   const [selectEmployee, setSelectEmployee] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const {
@@ -31,7 +35,9 @@ const TaskEdit = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(TaskEditSchema),
+  });
 
   const statusOption = [
     { value: "0", label: "Opened" },
@@ -41,6 +47,7 @@ const TaskEdit = () => {
   ];
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchData = async () => {
       const projectApi = await axios.get(
         "http://localhost:8080/projects/list?limit=30"
@@ -65,17 +72,18 @@ const TaskEdit = () => {
       axios
         .get(`http://localhost:8080/task/detail/${router.query.id}?limit=30`)
         .then((res) => {
-          setValue("project", res.data.data.project._id);
-          setValue("assignedEmployee", res.data.data.assignedEmployee._id);
+          setValue("project", res.data.data.project?._id);
+          setValue("assignedEmployee", res.data.data.assignedEmployee?._id);
           setValue("description", res.data.data.description);
           setValue("title", res.data.data.title);
           setValue("status", res.data.data.status);
           setValue("estimateHour", res.data.data.estimateHour);
           setValue("actualHour", res.data.data.actualHour);
-          setValue("estimateStart", res.data.data.estimate_start_date);
-          setValue("estimateFinish", res.data.data.estimate_finish_date);
-          setValue("actualStart", res.data.data.actual_start_date);
-          setValue("actualFinish", res.data.data.actual_finish_date);
+          setValue("estimate_start_date", res.data.data.estimate_start_date);
+          setValue("estimate_finish_date", res.data.data.estimate_finish_date);
+          setValue("actual_start_date", res.data.data.actual_start_date);
+          setValue("actual_finish_date", res.data.data.actual_finish_date);
+          setIsLoading(false);
         });
     }
     fetchData();
@@ -86,17 +94,17 @@ const TaskEdit = () => {
       ...data,
       estimateHour: Number(data.estimateHour),
       actualHour: Number(data.actualHour),
-      estimate_start_date: data.estimateStart
-        ? dayjs(data.estimateStart).format("MM-DD-YYYY")
+      estimate_start_date: data.estimate_start_date
+        ? dayjs(data.estimate_start_date).format("MM-DD-YYYY")
         : "",
-      estimate_finish_date: data.estimateFinish
-        ? dayjs(data.estimateFinish).format("MM-DD-YYYY")
+      estimate_finish_date: data.estimate_finish_date
+        ? dayjs(data.estimate_finish_date).format("MM-DD-YYYY")
         : "",
-      actual_start_date: data.actualStart
-        ? dayjs(data.actualStart).format("MM-DD-YYYY")
+      actual_start_date: data.actual_start_date
+        ? dayjs(data.actual_start_date).format("MM-DD-YYYY")
         : "",
-      actual_finish_date: data.actualFinish
-        ? dayjs(data.actualFinish).format("MM-DD-YYYY")
+      actual_finish_date: data.actual_finish_date
+        ? dayjs(data.actual_finish_date).format("MM-DD-YYYY")
         : "",
     };
     axios
@@ -139,6 +147,7 @@ const TaskEdit = () => {
 
   return (
     <>
+      {isLoading && <Loading />}
       <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
@@ -148,7 +157,6 @@ const TaskEdit = () => {
               </InputLabel>
               <Controller
                 name="project"
-                rules={{ required: "Project is required" }}
                 control={control}
                 render={({ field }) => (
                   <>
@@ -330,7 +338,7 @@ const TaskEdit = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Estimate Start</InputLabel>
               <Controller
-                name="estimateStart"
+                name="estimate_start_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -339,7 +347,13 @@ const TaskEdit = () => {
                       {...field}
                       value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                        },
                       }}
                     />
                   </LocalizationProvider>
@@ -349,7 +363,7 @@ const TaskEdit = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Estimate Finish</InputLabel>
               <Controller
-                name="estimateFinish"
+                name="estimate_finish_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -358,7 +372,15 @@ const TaskEdit = () => {
                       {...field}
                       value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                          error: !!errors.estimate_finish_date,
+                          helperText: errors.estimate_finish_date?.message,
+                        },
                       }}
                     />
                   </LocalizationProvider>
@@ -368,7 +390,7 @@ const TaskEdit = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Actual Start</InputLabel>
               <Controller
-                name="actualStart"
+                name="actual_start_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -377,7 +399,13 @@ const TaskEdit = () => {
                       {...field}
                       value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                        },
                       }}
                     />
                   </LocalizationProvider>
@@ -387,7 +415,7 @@ const TaskEdit = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Actual Finish</InputLabel>
               <Controller
-                name="actualFinish"
+                name="actual_finish_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -396,7 +424,15 @@ const TaskEdit = () => {
                       {...field}
                       value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                          error: !!errors.actual_finish_date,
+                          helperText: errors.actual_finish_date?.message,
+                        },
                       }}
                     />
                   </LocalizationProvider>

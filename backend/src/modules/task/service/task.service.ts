@@ -67,4 +67,13 @@ export class TaskService {
     });
     return data;
   }
+
+  async removeTask(id: string) {
+    const task = await this.taskModel.findOne({ _id: id });
+
+    if (!task) {
+      throw new NotFoundException('No task with this id! you cannot delete');
+    }
+    return await this.taskModel.findByIdAndDelete(id);
+  }
 }
