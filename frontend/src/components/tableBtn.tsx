@@ -1,6 +1,6 @@
-import { Button, styled } from "@mui/material";
-import React from "react";
-import palette from "@/theme/palette";
+import { Button, styled } from '@mui/material';
+import React from 'react';
+import palette from '@/theme/palette';
 
 const TableBtn = (props: any) => {
   let colorCode;
@@ -8,10 +8,10 @@ const TableBtn = (props: any) => {
   const errorColor = palette.error.light;
 
   switch (props.children) {
-    case "Edit":
+    case 'Edit':
       colorCode = secondaryColor;
       break;
-    case "Remove":
+    case 'Remove':
       colorCode = errorColor;
       break;
     default:
@@ -20,25 +20,25 @@ const TableBtn = (props: any) => {
   }
 
   const TableButton = styled(Button)({
-    boxShadow: "none",
-    textTransform: "none",
+    boxShadow: 'none',
+    textTransform: 'none',
     fontSize: 13,
-    padding: "3px 20px",
-    border: "1px solid",
-    borderRadius: "20px",
+    padding: '3px 20px',
+    border: '1px solid',
+    borderRadius: '20px',
     backgroundColor: colorCode,
     color: palette.text.primary,
-    borderColor: props.children === "Edit" ? secondaryColor : errorColor,
-    marginRight: "10px",
-    "&:hover": {
-      backgroundColor: props.children === "Edit" ? secondaryColor : errorColor,
-      borderColor: props.children === "Edit" ? secondaryColor : errorColor,
-      boxShadow: "none",
+    borderColor: props.children === 'Edit' ? secondaryColor : errorColor,
+    marginRight: '10px',
+    '&:hover': {
+      backgroundColor: props.children === 'Edit' ? secondaryColor : errorColor,
+      borderColor: props.children === 'Edit' ? secondaryColor : errorColor,
+      boxShadow: 'none',
     },
-    "&:active": {
-      boxShadow: "none",
-      backgroundColor: props.children === "Edit" ? secondaryColor : errorColor,
-      borderColor: props.children === "Edit" ? secondaryColor : errorColor,
+    '&:active': {
+      boxShadow: 'none',
+      backgroundColor: props.children === 'Edit' ? secondaryColor : errorColor,
+      borderColor: props.children === 'Edit' ? secondaryColor : errorColor,
     },
   });
 

@@ -53,9 +53,15 @@ export default function ConfirmDialog(props: any) {
           <Button onClick={props.onClose} autoFocus sx={{ color: palette.primary.dark, fontSize: '0.95rem' }}>
             Cancel
           </Button>
-          <Button autoFocus sx={{ color: palette.primary.dark, fontSize: '0.95rem' }} {...props}>
-            Delete
-          </Button>
+          {props.status === 'edit' ? (
+            <Button autoFocus sx={{ color: palette.primary.dark, fontSize: '0.95rem' }} {...props}>
+              Edit
+            </Button>
+          ) : (
+            <Button autoFocus sx={{ color: palette.primary.dark, fontSize: '0.95rem' }} {...props}>
+              Delete
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </div>

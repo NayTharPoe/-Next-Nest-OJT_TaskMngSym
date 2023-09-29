@@ -9,7 +9,6 @@ import palette from '@/theme/palette';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
 import { ProjectSchema } from '@/lib/validation/projectSchema';
-import useSWR from 'swr';
 import dayjs from 'dayjs';
 import axios from 'axios';
 
@@ -69,8 +68,8 @@ const EditProjectPage: NextPageWithLayout = ({ project }: any) => {
       projectName: project?.data?.projectName || '',
       language: project?.data?.language || '',
       description: project?.data?.description || '',
-      startDate: project.data.startDate && dayjs(project.data.startDate),
-      endDate: project.data.endDate && dayjs(project.data.endDate),
+      startDate: project?.data?.startDate && dayjs(project.data.startDate),
+      endDate: project?.data?.endDate && dayjs(project.data.endDate),
     },
   });
 
