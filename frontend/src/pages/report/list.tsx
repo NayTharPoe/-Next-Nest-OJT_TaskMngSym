@@ -243,8 +243,8 @@ const ReportListPage = ({ reports }: any) => {
                           width: 60,
                           height: 60,
                         }}
-                        alt="img"
-                        src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
+                        alt="reporter profile"
+                        src={row.reportBy.profile}
                       />
                       <Typography sx={{ my: 1 }}>
                         <Box component="span" sx={{ fontWeight: '600', fontSize: '1.2rem' }}>

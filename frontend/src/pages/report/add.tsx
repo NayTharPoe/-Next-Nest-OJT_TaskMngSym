@@ -111,14 +111,6 @@ const typeOptions = [
   { value: 'Testing', label: 'Testing' },
 ];
 
-const detailTaskIdOptions = [
-  { taskId: 'T001', taskTitle: 'T001 task title', project: { projectName: 'T001 project' } },
-  { taskId: 'T002', taskTitle: 'T002 task title', project: { projectName: 'T002 project' } },
-  { taskId: 'T003', taskTitle: 'T003 task title', project: { projectName: 'T003 project' } },
-  { taskId: 'T004', taskTitle: 'T004 task title', project: { projectName: 'T004 project' } },
-  { taskId: 'T005', taskTitle: 'T005 task title', project: { projectName: 'T005 project' } },
-];
-
 interface Column {
   id: 'id' | 'taskId' | 'taskTitle' | 'project' | 'percentage' | 'types' | 'status' | 'hours' | 'action';
   label: string;
@@ -173,11 +165,15 @@ const ReportAddPage = () => {
   const [taskOptions, setTaskOptions] = useState([]);
   const [selectedTaskIdData, setSelectedTaskIdData] = useState([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState([]);
+  const [currentUserData, setCurrentUserData] = useState<any>({});
   const router = useRouter();
 
-  const handleDialogClose = () => {
+  const handleDialogClose = (status: string) => {
+    if (status === 'success') {
+      router.push('/report/list');
+    }
     setOpenDialog(false);
-    router.push('/report/list');
+    return;
   };
 
   const showDialog = (title: string, contentText: string) => {
@@ -294,32 +290,27 @@ const ReportAddPage = () => {
   };
 
   const onSubmit = async (data: any) => {
-    const reportByRawData = {
-      employeeName: 'Member Johnathan',
-      profile:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROI--23ZsZB50wGPBSL3U9wV4Gq83t5Xxh-w&usqp=CAU',
-      position: '0',
-    };
-
     if (fields.length <= 0) {
       showDialog('No Data', 'Please add at least 1 report.');
     } else if (Object.keys(errors).length) {
       return;
     } else if (totalHour !== 8) {
+      handleDialogClose('null');
       showDialog('Total Hours Limitations', 'Total hours must be 8 hours.');
     } else {
       showDialog('Successful Submission', 'Your report has been added successfully');
+      handleDialogClose('success');
 
       try {
         const payload = data?.reports?.map((row: any) => ({
           ...row,
           status: Number(row.status),
           reportTo: roleOptions.find((option) => option.value === data.reportTo)?.label,
-          reportBy: reportByRawData,
+          reportBy: currentUserData,
           problemFeeling: data.problem_feeling,
         }));
 
-        const res = await axios.post('http://localhost:8080/report/add', payload);
+        await axios.post('http://localhost:8080/report/add', payload);
       } catch (error) {
         console.log(error);
       }
@@ -329,6 +320,10 @@ const ReportAddPage = () => {
   useEffect(() => {
     fetchRoles();
     fetchTasks();
+    const user = localStorage.getItem('user');
+    if (user) {
+      setCurrentUserData(JSON.parse(user));
+    }
   }, []);
 
   return (
@@ -629,7 +624,7 @@ const ReportAddPage = () => {
               Date : <span className="fw-600">{dayjs(new Date()).format('YYYY-MM-DD')}</span>
             </Typography>
             <Typography>
-              Name : <span className="fw-600">Admin</span>
+              Report By : <span className="fw-600">{currentUserData?.employeeName}</span>
             </Typography>
             <Typography>
               Projects :{' '}

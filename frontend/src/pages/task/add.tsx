@@ -17,7 +17,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import palette from "@/theme/palette";
 import { DatePicker } from "@mui/x-date-pickers";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const TaskCreate = () => {
   const router = useRouter();

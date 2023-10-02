@@ -50,8 +50,6 @@ function a11yProps(index: number) {
   };
 }
 
-const settings = ["Profile", "Change Password", "Logout"];
-
 function notificationsLabel(count: number) {
   if (count === 0) {
     return "no notifications";
@@ -67,6 +65,26 @@ const Header = () => {
   const [anchorElMenu, setAnchorElMenu] = useState<null | HTMLElement>(null);
   const theme = useTheme();
   const [value, setValue] = useState(0);
+
+  const logoutApi = () => {
+    localStorage.removeItem("user");
+    router.push("/auth/login");
+    setAnchorElUser(null);
+  };
+
+  const handleChangePassword = () => {
+    router.push("/auth/change-password");
+    setAnchorElUser(null);
+  };
+
+  const handleProfile = () => {
+    const loginUser = localStorage.getItem("user");
+    if (loginUser) {
+      const { _id } = JSON.parse(loginUser);
+      router.push(`employee/detail/${_id}`);
+    }
+    setAnchorElUser(null);
+  };
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -212,11 +230,14 @@ const Header = () => {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            {settings.map((setting) => (
+            {/* {settings.map((setting) => (
               <MenuItem key={setting} onClick={handleCloseUserMenu}>
                 <Typography textAlign="center">{setting}</Typography>
               </MenuItem>
-            ))}
+            ))} */}
+            <MenuItem onClick={handleProfile}>Profile</MenuItem>
+            <MenuItem onClick={handleChangePassword}>Change Password</MenuItem>
+            <MenuItem onClick={logoutApi}>Logout</MenuItem>
           </Menu>
         </Box>
       </Box>
