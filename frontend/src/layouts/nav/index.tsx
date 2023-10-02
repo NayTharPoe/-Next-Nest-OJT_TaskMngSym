@@ -20,8 +20,9 @@ const RenderContent = () => {
   };
 
   useEffect(() => {
-    setLoggedInUser(JSON.parse(localStorage.getItem('user') ?? ''));
+    setLoggedInUser(JSON.parse(localStorage.getItem('user') ?? '{}'));
   }, []);
+
   return (
     <div>
       <Box

@@ -21,12 +21,11 @@ import ClearIcon from '@mui/icons-material/Clear';
 import AddNewBtn from '@/components/addNewBtn';
 import palette from '@/theme/palette';
 import dayjs from 'dayjs';
-import { report } from 'process';
-import axios from 'axios';
+import Loading from '@/components/loading';
 import { useRouter } from 'next/router';
 import { StyledGridOverlay } from '@/components/styledGridOverlay';
 
-const ReportListPage = ({ reports }: any) => {
+const ReportListPage = ({ reports, isLoading }: any) => {
   const [formData, setFormData] = useState({
     reportTo: '',
     reportBy: '',
@@ -68,6 +67,8 @@ const ReportListPage = ({ reports }: any) => {
     const dateParam = formData.selectedDate ? `&date=${formattedDate}` : '';
     router.push(`${router.pathname}?page=1&limit=2000${reportToParam}${reportByParam}${dateParam}`);
   };
+
+  if (isLoading) return <Loading />
 
   return (
     <Box sx={{ height: 400, width: '100%', my: 4 }}>
@@ -284,10 +285,15 @@ ReportListPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getServerSideProps(context: any) {
-  const res = await fetch(
-    `http://localhost:8080/reports/list?${new URLSearchParams(context.query).toString()}`
-  );
-  const reports = await res.json();
+  try {
+    const res = await fetch(
+      `http://localhost:8080/reports/list?${new URLSearchParams(context.query).toString()}`
+    );
+    const reports = await res.json();
 
-  return { props: { reports } };
+    return { props: { reports, isLoading: false } };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return { props: { reports: null, isLoading: false } };
+  }
 }
