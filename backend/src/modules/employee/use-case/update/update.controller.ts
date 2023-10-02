@@ -8,8 +8,6 @@ import {
   NotFoundException,
   UseInterceptors,
   UploadedFile,
-  ParseFilePipe,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { UpdateEmployeeResponseDto } from './update.response.dto';
@@ -23,8 +21,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class UpdateController {
   constructor(private employeeService: EmployeeService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   @Put('edit/:id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({

@@ -110,7 +110,7 @@ export class EmployeeService {
 
     const verifyLink = `${this.configService.get(
       'CLIENT_DOMAIN',
-    )}/verify?token=${token}`;
+    )}/auth/verify/${token}`;
 
     const template = this.verifyEmailService.verifyTemplate(
       employeeData.email,
@@ -143,7 +143,7 @@ export class EmployeeService {
 
     const data = {
       ...employee,
-      profile: profile ? cloudImg.data : '',
+      profile: profile ? cloudImg.data : employee.profile,
     };
 
     const employeeUpdate = await this.employeeModel.findByIdAndUpdate(

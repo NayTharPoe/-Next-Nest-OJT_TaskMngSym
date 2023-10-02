@@ -22,10 +22,17 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import axios from "axios";
+import AuthDialog from "@/components/authDialog";
+import Loading from "@/components/loading";
+import { apiClient } from "@/services/apiClient";
 
 const EmployeeCreate = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedPhoto, setuploadedPhoto] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [statusText, setStatusText] = useState("");
 
   const router = useRouter();
 
@@ -35,6 +42,13 @@ const EmployeeCreate = () => {
     formState: { errors },
   } = useForm();
 
+  const handleClose = () => {
+    setOpen(false);
+    if (statusText === "OK") {
+      router.push("/employee/list");
+    }
+  };
+
   const disabledDate = (current: any) => {
     const todayDate = dayjs().startOf("day");
     const currentDate = dayjs(current).startOf("day");
@@ -42,6 +56,7 @@ const EmployeeCreate = () => {
   };
 
   const onSubmit = (data: any): void => {
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("employeeName", data.employeeName);
     formData.append("email", data.email);
@@ -53,9 +68,25 @@ const EmployeeCreate = () => {
     );
     formData.append("position", data.position);
     formData.append("profile", uploadedPhoto);
-    axios.post("http://localhost:8080/employee/add", formData).then((res) => {
-      router.push("/employee/list");
-    });
+    apiClient
+      .post("http://localhost:8080/employee/add", formData)
+      .then((res) => {
+        setOpen(true);
+        setIsLoading(false);
+        setStatusText(res.statusText);
+        setMessage(res.data?.message);
+      })
+      .catch((err) => {
+        if (err.code === "ERR_NETWORK") {
+          setOpen(true);
+          setIsLoading(false);
+          setMessage(err.message);
+        } else {
+          setOpen(true);
+          setIsLoading(false);
+          setMessage(err.response?.data.message);
+        }
+      });
   };
 
   const handleDragOver = (e: any) => {
@@ -142,6 +173,7 @@ const EmployeeCreate = () => {
 
   return (
     <>
+      {isLoading && <Loading />}
       <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
@@ -309,6 +341,7 @@ const EmployeeCreate = () => {
                   <TextField
                     {...field}
                     id="phone"
+                    type="number"
                     value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
@@ -371,6 +404,9 @@ const EmployeeCreate = () => {
               Cancel
             </CommonButton>
             <CommonButton text="save">Save</CommonButton>
+            <AuthDialog statusText={statusText} open={open} close={handleClose}>
+              {message}
+            </AuthDialog>
           </Stack>
         </form>
       </Box>

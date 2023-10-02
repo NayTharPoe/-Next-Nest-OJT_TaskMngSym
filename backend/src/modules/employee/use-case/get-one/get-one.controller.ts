@@ -9,8 +9,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class GetOneController {
   constructor(private employeeService: EmployeeService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   @Get('detail/:id')
   async getById(
     @Response() res,

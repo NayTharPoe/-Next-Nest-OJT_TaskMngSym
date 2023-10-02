@@ -7,37 +7,40 @@ import {
   Card,
   CardContent,
   Grid,
-  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
-import DeleteIcon from "@mui/icons-material/Delete";
 import CardBtn from "@/components/cardBtn";
 import palette from "@/theme/palette";
 import HomeIcon from "@mui/icons-material/Home";
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 import { useRouter } from "next/router";
-import { useParams } from "next/navigation";
-import { theme } from "@/theme";
-import axios from "axios";
+import { apiClient } from "@/services/apiClient";
+import Loading from "@/components/loading";
 
 const EmployeeList = () => {
   const router = useRouter();
 
   const [employeeData, setEmployeeData] = useState<any>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     if (router.query?.id) {
-      axios
+      apiClient
         .get(`http://localhost:8080/employee/detail/${router.query.id}`)
-        .then((res) => setEmployeeData(res.data.data));
+        .then((res) => {
+          setEmployeeData(res.data.data);
+          setIsLoading(false);
+        });
     }
   }, [router.query.id]);
 
   return (
     <>
+      {isLoading && <Loading />}
       <Grid
         mt={2}
         container

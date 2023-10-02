@@ -112,7 +112,7 @@ const Login = () => {
                 padding: "20px",
               }}
             >
-              <Typography textAlign="center" variant="h5">
+              <Typography textAlign="center" variant="h4">
                 LogIn to TaskSphere
               </Typography>
               <Stack

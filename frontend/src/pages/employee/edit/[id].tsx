@@ -21,10 +21,18 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import axios from "axios";
+import Loading from "@/components/loading";
+import AuthDialog from "@/components/authDialog";
+import { apiClient } from "@/services/apiClient";
 
 const EmployeeEdit = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedPhoto, setUploadedPhoto] = useState<any>(null);
+  const [editUploadImg, setEditUploadImg] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [statusText, setStatusText] = useState("");
 
   const router = useRouter();
   const {
@@ -39,28 +47,26 @@ const EmployeeEdit = () => {
   } = useForm();
 
   useEffect(() => {
+    setIsLoading(true);
     if (router.query?.id) {
-      axios.get(`http://localhost:8080/employee/detail/${id}`).then((res) => {
-        // const dob = new Date(res.data.data.dob);
-        // const formatDate = dayjs(dob).format("MM-DD-YYYY");
-        setValue("employeeName", res.data.data.employeeName);
-        setValue("email", res.data.data.email);
-        setValue("address", res.data.data.address);
-        setValue("phone", res.data.data.phone);
-        setUploadedImage(res.data.data.profile);
-        setValue("dob", res.data.data.dob);
-        setValue("position", res.data.data.position);
-      });
+      apiClient
+        .get(`http://localhost:8080/employee/detail/${id}`)
+        .then((res) => {
+          setValue("employeeName", res.data.data.employeeName);
+          setValue("email", res.data.data.email);
+          setValue("address", res.data.data.address);
+          setValue("phone", res.data.data.phone);
+          setUploadedImage(res.data.data.profile);
+          setEditUploadImg(res.data.data.profile);
+          setValue("dob", res.data.data.dob);
+          setValue("position", res.data.data.position);
+          setIsLoading(false);
+        });
     }
   }, [router.query.id]);
 
-  const disabledDate = (current: any) => {
-    const todayDate = dayjs().startOf("day");
-    const currentDate = dayjs(current).startOf("day");
-    return currentDate.isAfter(todayDate);
-  };
-
-  const onSubmit = (data: any): void => {
+  const onSubmit = (data: any) => {
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("employeeName", data.employeeName);
     formData.append("email", data.email);
@@ -71,12 +77,45 @@ const EmployeeEdit = () => {
       data.dob ? dayjs(data.dob).format("MM/DD/YYYY") : ""
     );
     formData.append("position", data.position);
-    formData.append("profile", uploadedPhoto ? uploadedPhoto : "");
-    axios
+    if (uploadedPhoto) {
+      formData.append("profile", uploadedPhoto);
+    } else if (editUploadImg) {
+      formData.append("profile", editUploadImg);
+    } else {
+      formData.append("profile", "");
+    }
+    apiClient
       .put(`http://localhost:8080/employee/edit/${router.query.id}`, formData)
       .then((res) => {
-        router.push("/employee/list");
+        setOpen(true);
+        setIsLoading(false);
+        setStatusText(res.statusText);
+        setMessage(res.data?.message);
+      })
+      .catch((err) => {
+        if (err.code === "ERR_NETWORK") {
+          setOpen(true);
+          setIsLoading(false);
+          setMessage(err.message);
+        } else {
+          setOpen(true);
+          setIsLoading(false);
+          setMessage(err.response?.data.message);
+        }
       });
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (statusText === "OK") {
+      router.push("/employee/list");
+    }
+  };
+
+  const disabledDate = (current: any) => {
+    const todayDate = dayjs().startOf("day");
+    const currentDate = dayjs(current).startOf("day");
+    return currentDate.isAfter(todayDate);
   };
 
   const handleDragOver = (e: any) => {
@@ -127,6 +166,7 @@ const EmployeeEdit = () => {
   const handleDeleteImage = () => {
     setUploadedImage(null);
     setUploadedPhoto("");
+    setEditUploadImg(null);
   };
 
   const CommonButton = (props: any) => {
@@ -164,6 +204,7 @@ const EmployeeEdit = () => {
 
   return (
     <>
+      {isLoading && <Loading />}
       <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
@@ -330,6 +371,7 @@ const EmployeeEdit = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    type="number"
                     id="phone"
                     value={field.value || ""}
                     onChange={(e) => {
@@ -351,7 +393,7 @@ const EmployeeEdit = () => {
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value ? dayjs(field.value).toDate() : null}
+                      value={field.value ? dayjs(field.value) : null}
                       shouldDisableDate={disabledDate}
                       onChange={(date) => {
                         field.onChange(
@@ -395,6 +437,9 @@ const EmployeeEdit = () => {
               Cancel
             </CommonButton>
             <CommonButton text="save">Save</CommonButton>
+            <AuthDialog statusText={statusText} open={open} close={handleClose}>
+              {message}
+            </AuthDialog>
           </Stack>
         </form>
       </Box>

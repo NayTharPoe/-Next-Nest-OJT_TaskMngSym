@@ -21,18 +21,22 @@ import palette from "@/theme/palette";
 import EmployeeSearchBox from "@/components/employee-search-input";
 import { useRouter } from "next/router";
 import { theme } from "@/theme";
-import axios from "axios";
 import useSWR from "swr";
 import ConfirmDialog from "@/components/commonDialog";
+import Loading from "@/components/loading";
+import { apiClient } from "@/services/apiClient";
 
 const EmployeeList = () => {
   const [searchText, setSearchText] = useState("");
   const [open, setOpen] = useState(false);
   const [onClose, setOnClose] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
   const [employeeList, setEmployeeList] = useState<any>([]);
 
   const fetcher = async () => {
-    const res = await axios.get("http://localhost:8080/employees/list");
+    const res = await apiClient.get(
+      "http://localhost:8080/employees/list?limit=30"
+    );
     setEmployeeList(res.data.data);
     return res;
   };
@@ -41,10 +45,10 @@ const EmployeeList = () => {
 
   const router = useRouter();
 
-  const handleDelete = (id: string) => {
-    axios.delete(`http://localhost:8080/employee/${id}`);
+  const handleDelete = () => {
+    apiClient.delete(`http://localhost:8080/employee/${deleteId}`);
     setEmployeeList((prevList: any) =>
-      prevList?.filter((row: any) => row._id !== id)
+      prevList?.filter((row: any) => row._id !== deleteId)
     );
     setOpen(false);
   };
@@ -92,6 +96,7 @@ const EmployeeList = () => {
 
   return (
     <>
+      {isLoading && <Loading />}
       <Stack
         direction={{ xs: "column", sm: "row" }}
         sx={{
@@ -154,7 +159,11 @@ const EmployeeList = () => {
                     padding: "5px 8px 0",
                   }}
                 >
-                  <IconButton onClick={() => setOpen(true)}>
+                  <IconButton
+                    onClick={() => {
+                      setOpen(true), setDeleteId(row._id);
+                    }}
+                  >
                     <DeleteIcon
                       sx={{
                         color: (theme) => `${theme.palette.text.secondary}`,
@@ -164,7 +173,7 @@ const EmployeeList = () => {
                   <ConfirmDialog
                     open={open}
                     onClose={onClose}
-                    onClick={() => handleDelete(row._id)}
+                    onClick={handleDelete}
                     onCancel={() => setOpen(false)}
                     id={row._id}
                   />
