@@ -21,22 +21,17 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useTheme } from '@mui/material/styles';
 import palette from '@/theme/palette';
 import { useRouter } from 'next/router';
-
-function notificationsLabel(count: number) {
-  if (count === 0) {
-    return 'no notifications';
-  }
-  if (count > 99) {
-    return 'more than 99 notifications';
-  }
-  return `${count} notifications`;
-}
+import axios from 'axios';
+import { socket } from '../../socket';
+import dayjs from 'dayjs';
 
 const Header = () => {
   const [showMessageBox, setShowMessageBox] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [filterNotificationData, setFilterNotificationData] = useState([]);
+  const [notificationBadgeCount, setNotificationBadgeCount] = useState(0);
+  const [loggedInUser, setLoggedInUser] = useState<any>({});
   const theme = useTheme();
-  const [value, setValue] = useState(0);
 
   const logoutApi = () => {
     localStorage.removeItem('user');
@@ -89,6 +84,68 @@ const Header = () => {
     default:
       break;
   }
+
+  const fetchAllNotifications = async () => {
+    try {
+      const curr_user = JSON.parse(localStorage.getItem('user') ?? '');
+      const res = await axios.get('http://localhost:8080/notifications/list');
+      const allNotifications = res?.data?.data || [];
+
+      const filteredNotifications = allNotifications.filter((row: any) => {
+        if (
+          row.tag === 'REPORT' &&
+          row.createdByWhom !== curr_user?._id &&
+          row.sendTo === curr_user?._id &&
+          !row.read.includes(curr_user?._id)
+        ) {
+          return true;
+        }
+        if (
+          row.tag === 'TASK' &&
+          !row.read.includes(curr_user?._id) &&
+          row.createdByWhom !== curr_user?._id
+        ) {
+          return curr_user?.position === '0' || row.sendTo === curr_user?._id;
+        }
+        return false;
+      });
+
+      setFilterNotificationData(filteredNotifications);
+      setNotificationBadgeCount(filteredNotifications?.length);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const eventNames: string[] = ['createReportNotifications'];
+
+    const handleCreateNotifications = async () => {
+      await fetchAllNotifications();
+    };
+
+    eventNames.forEach((eventName: string) => {
+      socket.on(eventName, handleCreateNotifications);
+    });
+
+    return () => {
+      eventNames.forEach((eventName) => {
+        socket.off(eventName, handleCreateNotifications);
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (window.performance.navigation.type === window.performance.navigation.TYPE_RELOAD) {
+      fetchAllNotifications();
+    }
+  }, []);
+
+  useEffect(() => {
+    setLoggedInUser(JSON.parse(localStorage.getItem('user') ?? ''));
+  }, []);
+
+  console.log('filterNoti', filterNotificationData);
   return (
     <Box
       sx={{
@@ -107,8 +164,8 @@ const Header = () => {
       </Box>
       <Box sx={{ width: 'max-content', display: 'flex', gap: 3 }}>
         <Box sx={{ position: 'relative' }}>
-          <IconButton aria-label={notificationsLabel(100)} onClick={handleNotificationBox}>
-            <Badge badgeContent={100} color="error">
+          <IconButton onClick={handleNotificationBox}>
+            <Badge color="primary" variant="dot" invisible={notificationBadgeCount <= 0}>
               <NotificationsIcon />
             </Badge>
           </IconButton>
@@ -130,154 +187,44 @@ const Header = () => {
                 <Typography variant="h4" color={palette.text.primary}>
                   Notification
                 </Typography>
-                <Chip label="New 16" size="small" color="info" variant="filled" />
+                <Chip
+                  label={notificationBadgeCount ? `New ${notificationBadgeCount}` : 'no news'}
+                  size="small"
+                  sx={{ backgroundColor: palette.primary.main, color: palette.common.white }}
+                  variant="filled"
+                />
               </Box>
               <Divider />
               <List component="nav" sx={{ overflow: 'auto', maxHeight: 360 }}>
-                <ListItem alignItems="flex-start">
-                  <ListItemButton sx={{ flexDirection: 'column' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <ListItemAvatar>
-                        <Avatar
-                          alt="profile pics"
-                          src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
-                        />
-                      </ListItemAvatar>
-                      <ListItemText
-                        sx={{ alignItems: 'center' }}
-                        primary={
-                          <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
-                            Reports
-                          </Typography>
-                        }
-                        secondary={
-                          <>
-                            <Typography
-                              sx={{ display: 'inline' }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              Ali Connors
-                            </Typography>
-                            {" — I'll be in your neighborhood doing errands this…"}
-                          </>
-                        }
-                      />
-                    </Box>
-                    <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', marginLeft: 'auto' }}>
-                      2 days ago
-                    </Typography>
-                  </ListItemButton>
-                </ListItem>
-                <ListItem alignItems="flex-start">
-                  <ListItemButton sx={{ flexDirection: 'column' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <ListItemAvatar>
-                        <Avatar
-                          alt="profile pics"
-                          src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
-                        />
-                      </ListItemAvatar>
-                      <ListItemText
-                        sx={{ alignItems: 'center' }}
-                        primary={
-                          <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
-                            Reports
-                          </Typography>
-                        }
-                        secondary={
-                          <>
-                            <Typography
-                              sx={{ display: 'inline' }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              Ali Connors
-                            </Typography>
-                            {" — I'll be in your neighborhood doing errands this…"}
-                          </>
-                        }
-                      />
-                    </Box>
-                    <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', marginLeft: 'auto' }}>
-                      2 days ago
-                    </Typography>
-                  </ListItemButton>
-                </ListItem>
-                <ListItem alignItems="flex-start">
-                  <ListItemButton sx={{ flexDirection: 'column' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <ListItemAvatar>
-                        <Avatar
-                          alt="profile pics"
-                          src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
-                        />
-                      </ListItemAvatar>
-                      <ListItemText
-                        sx={{ alignItems: 'center' }}
-                        primary={
-                          <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
-                            Reports
-                          </Typography>
-                        }
-                        secondary={
-                          <>
-                            <Typography
-                              sx={{ display: 'inline' }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              Ali Connors
-                            </Typography>
-                            {" — I'll be in your neighborhood doing errands this…"}
-                          </>
-                        }
-                      />
-                    </Box>
-                    <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', marginLeft: 'auto' }}>
-                      2 days ago
-                    </Typography>
-                  </ListItemButton>
-                </ListItem>
-                <ListItem alignItems="flex-start">
-                  <ListItemButton sx={{ flexDirection: 'column' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <ListItemAvatar>
-                        <Avatar
-                          alt="profile pics"
-                          src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
-                        />
-                      </ListItemAvatar>
-                      <ListItemText
-                        sx={{ alignItems: 'center' }}
-                        primary={
-                          <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
-                            Reports
-                          </Typography>
-                        }
-                        secondary={
-                          <>
-                            <Typography
-                              sx={{ display: 'inline' }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              Ali Connors
-                            </Typography>
-                            {" — I'll be in your neighborhood doing errands this…"}
-                          </>
-                        }
-                      />
-                    </Box>
-                    <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', marginLeft: 'auto' }}>
-                      2 days ago
-                    </Typography>
-                  </ListItemButton>
-                </ListItem>
+                {filterNotificationData?.length <= 0 ? (
+                  <Typography sx={{ color: palette.text.primary }}>no notifications</Typography>
+                ) : (
+                  filterNotificationData?.map((notification: any) => (
+                    <ListItem key={notification._id} alignItems="flex-start">
+                      <ListItemButton sx={{ flexDirection: 'column', borderRadius: '.65rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <ListItemAvatar>
+                            <Avatar alt="profile pics" src={notification?.profile} />
+                          </ListItemAvatar>
+                          <ListItemText
+                            sx={{ alignItems: 'center' }}
+                            primary={
+                              <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
+                                {notification?.tag}
+                              </Typography>
+                            }
+                            secondary={<span dangerouslySetInnerHTML={{ __html: notification.message }} />}
+                          />
+                        </Box>
+                        <Typography
+                          sx={{ color: palette.text.primary, fontSize: '0.75rem', marginLeft: 'auto' }}
+                        >
+                          {dayjs(notification?.createdAt).format('YYYY/MM/DD')}
+                        </Typography>
+                      </ListItemButton>
+                    </ListItem>
+                  ))
+                )}
               </List>
             </Box>
           )}
@@ -286,10 +233,7 @@ const Header = () => {
         <Box>
           <Tooltip title="Account settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar
-                alt="profile picture"
-                src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
-              />
+              <Avatar alt="profile picture" src={loggedInUser?.profile} />
             </IconButton>
           </Tooltip>
           <Menu

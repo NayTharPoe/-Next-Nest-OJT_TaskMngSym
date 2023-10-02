@@ -1,15 +1,8 @@
 import { styled, alpha } from '@mui/material/styles';
-import {
-  Box,
-  Link,
-  Button,
-  Drawer,
-  Typography,
-  Avatar,
-  Stack,
-} from '@mui/material';
+import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
 import { navConfig } from './config';
 import NavSection from '@/components/nav-section/NavSection';
+import { useState, useEffect } from 'react';
 
 const StyledAccount = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -20,12 +13,15 @@ const StyledAccount = styled('div')(({ theme }) => ({
 }));
 
 const RenderContent = () => {
+  const [loggedInUser, setLoggedInUser] = useState<any>({});
   const account = {
-    displayName: 'James Saquadigo',
-    photoURL:
-      'https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg',
+    displayName: loggedInUser?.employeeName,
+    photoURL: loggedInUser?.profile,
   };
 
+  useEffect(() => {
+    setLoggedInUser(JSON.parse(localStorage.getItem('user') ?? ''));
+  }, []);
   return (
     <div>
       <Box
@@ -35,8 +31,9 @@ const RenderContent = () => {
           display: 'inline-flex',
           fontSize: '22px',
           fontWeight: '600',
-          color:(theme) => `${theme.palette.grey[300]}`
-        }}>
+          color: (theme) => `${theme.palette.grey[300]}`,
+        }}
+      >
         TaskSphere
       </Box>
 
@@ -46,7 +43,8 @@ const RenderContent = () => {
           mx: 2.5,
           backgroundColor: (theme: any) => `${theme.palette.charcoal.light}`,
           borderRadius: '10px',
-        }}>
+        }}
+      >
         <Link underline="none">
           <StyledAccount>
             <Avatar src={account.photoURL} alt="photoURL" />

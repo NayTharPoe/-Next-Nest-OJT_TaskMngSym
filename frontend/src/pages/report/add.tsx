@@ -30,6 +30,7 @@ import palette from '@/theme/palette';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { socket } from '../../socket';
 
 const PreviewDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -141,7 +142,7 @@ const schema = yup.object().shape({
       percentage: yup
         .number()
         .typeError('Percentage must be a number')
-        .min(0, 'percentage must be greater than or equal to 0')
+        .min(1, 'percentage must be greater than 0')
         .max(100, 'percentage must be less than or equal to 100')
         .required('Percentage is required.'),
       types: yup.string().required('Types is required.'),
@@ -239,7 +240,7 @@ const ReportAddPage = () => {
         .get('http://localhost:8080/employees/list?page=1&limit=1000')
         .then((res) => res.data);
       const adminRoles = res.data
-        ?.filter((e: { position: string }) => e.position !== '1')
+        ?.filter((e: { position: string }) => e.position !== '0')
         .map((employee: any) => ({
           value: employee._id,
           label: employee.employeeName,
@@ -310,7 +311,26 @@ const ReportAddPage = () => {
           problemFeeling: data.problem_feeling,
         }));
 
-        await axios.post('http://localhost:8080/report/add', payload);
+        const reportResponse = await axios.post('http://localhost:8080/report/add', payload);
+
+        const notificationPayload = reportResponse.data?.data.map((row: any) => ({
+          tag: 'REPORT',
+          createdByWhom: currentUserData?._id,
+          profile: currentUserData?.profile,
+          sendTo: previewAdmin,
+          message: `
+          <span class="report-by">${row.reportBy.employeeName}</span> reported on
+          <span class="project-name"> ${row.project} </span> &
+          <span class="task-title">${row.taskTitle} </span>
+          <span class="types">(${row.types})</span>
+         `,
+        }));
+
+        const notificationResponse = await axios.post(
+          'http://localhost:8080/notification/add',
+          notificationPayload
+        );
+        socket.emit('reportCreated', notificationResponse.data);
       } catch (error) {
         console.log(error);
       }

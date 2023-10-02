@@ -4,12 +4,14 @@ import { ConfigService } from '@nestjs/config/dist';
 import { ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from './infra/swagger/swagger.config';
 import { Logger } from '@nestjs/common';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 const configService = new ConfigService();
 const logger = new Logger('Main');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useWebSocketAdapter(new IoAdapter(app));
   setupSwagger(app);
 
   app.enableCors({
