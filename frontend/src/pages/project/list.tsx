@@ -140,7 +140,7 @@ const ProjectListPage = ({ projects }: any) => {
     {
       field: 'displayId',
       headerName: 'ID',
-      width: 80,
+      flex: 1,
       disableColumnMenu: true,
       headerAlign: 'center',
       align: 'center',
@@ -148,38 +148,38 @@ const ProjectListPage = ({ projects }: any) => {
     {
       field: 'projectName',
       headerName: 'Project Name',
-      width: 160,
+      flex: 2,
       disableColumnMenu: true,
     },
     {
       field: 'language',
       headerName: 'Language',
-      width: 150,
+      flex: 2,
       disableColumnMenu: true,
     },
     {
       field: 'description',
       headerName: 'Description',
-      width: 240,
+      flex: 3,
       disableColumnMenu: true,
     },
     {
       field: 'startDate',
       headerName: 'Start Date',
-      width: 130,
+      flex: 2,
       disableColumnMenu: true,
     },
     {
       field: 'endDate',
       headerName: 'End Date',
-      width: 130,
+      flex: 2,
       disableColumnMenu: true,
     },
     {
       field: 'actions',
       headerName: 'Actions',
       sortable: false,
-      width: 280,
+      flex: 3,
       disableColumnMenu: true,
       renderCell: (params) => {
         const row = params.row;
