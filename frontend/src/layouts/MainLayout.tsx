@@ -23,8 +23,10 @@ const MainLayout = (props: any) => {
   };
 
   const container = window !== undefined ? () => window().document.body : undefined;
+  const container = window !== undefined ? () => window().document.body : undefined;
 
   return (
+    <Box sx={{ display: 'flex' }}>
     <Box sx={{ display: 'flex' }}>
       <AppBar
         position="fixed"
@@ -32,7 +34,7 @@ const MainLayout = (props: any) => {
           width: { xl: `calc(100% - ${drawerWidth}px)` },
           ml: { xl: `${drawerWidth}px` },
           boxShadow: 'none',
-          backgroundColor: (theme) => `${theme.palette.background.paper}`,
+          background: (theme) => `${theme.palette.background.paper}`,
         }}
       >
         <Toolbar>
@@ -70,6 +72,9 @@ const MainLayout = (props: any) => {
             display: { xs: 'block', md: 'none' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
             },
           }}
           PaperProps={{
@@ -84,6 +89,9 @@ const MainLayout = (props: any) => {
         <Drawer
           variant="permanent"
           sx={{
+            display: { xs: 'none', md: 'block' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
             display: { xs: 'none', md: 'block' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',

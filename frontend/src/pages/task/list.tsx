@@ -1,6 +1,6 @@
-import * as React from "react";
-import { ReactElement, useState } from "react";
-import { alpha } from "@mui/material/styles";
+import * as React from 'react';
+import { ReactElement, useState } from 'react';
+import { alpha } from '@mui/material/styles';
 import {
   Box,
   Table,
@@ -15,16 +15,16 @@ import {
   Typography,
   Paper,
   Button,
-} from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
-import MainLayout from "@/layouts/MainLayout";
-import AddIcon from "@mui/icons-material/Add";
-import type { NextPageWithLayout } from "../_app";
-import TableBtn from "@/components/tableBtn";
-import ProjectSearchBox from "@/components/project-search-input";
-import ConfirmDialog from "@/components/commonDialog";
-import palette from "@/theme/palette";
-import { useRouter } from "next/navigation";
+} from '@mui/material';
+import { visuallyHidden } from '@mui/utils';
+import MainLayout from '@/layouts/MainLayout';
+import AddIcon from '@mui/icons-material/Add';
+import type { NextPageWithLayout } from '../_app';
+import TableBtn from '@/components/tableBtn';
+import ProjectSearchBox from '@/components/ProjectSearchBox';
+import ConfirmDialog from '@/components/commonDialog';
+import palette from '@/theme/palette';
+import { useRouter } from 'next/navigation';
 
 interface Data {
   id: string;
@@ -73,116 +73,116 @@ function createData(
 
 const rows = [
   createData(
-    "1",
-    "this is title 1",
-    "this is description 1",
-    "React",
-    "alinn",
+    '1',
+    'this is title 1',
+    'this is description 1',
+    'React',
+    'alinn',
     3,
     2,
-    "Opened",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
+    'Opened',
+    '2023-02-12',
+    '2023-03-15',
+    '2023-02-12',
+    '2023-03-15'
   ),
   createData(
-    "2",
-    "this is title 2",
-    "this is description 2",
-    "Vue",
-    "mgmg",
+    '2',
+    'this is title 2',
+    'this is description 2',
+    'Vue',
+    'mgmg',
     3,
     2,
-    "In progress",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
+    'In progress',
+    '2023-02-12',
+    '2023-03-15',
+    '2023-02-12',
+    '2023-03-15'
   ),
   createData(
-    "3",
-    "this is title 3",
-    "this is description 3",
-    "Next",
-    "james",
+    '3',
+    'this is title 3',
+    'this is description 3',
+    'Next',
+    'james',
     3,
     2,
-    "Finished",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
+    'Finished',
+    '2023-02-12',
+    '2023-03-15',
+    '2023-02-12',
+    '2023-03-15'
   ),
   createData(
-    "4",
-    "this is title 4",
-    "this is description 4",
-    "Nest",
-    "mac",
+    '4',
+    'this is title 4',
+    'this is description 4',
+    'Nest',
+    'mac',
     3,
     2,
-    "Closed",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
+    'Closed',
+    '2023-02-12',
+    '2023-03-15',
+    '2023-02-12',
+    '2023-03-15'
   ),
   createData(
-    "5",
-    "this is title 5",
-    "this is description 5",
-    "Php",
-    "ayeaye",
+    '5',
+    'this is title 5',
+    'this is description 5',
+    'Php',
+    'ayeaye',
     3,
     2,
-    "In progress",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
+    'In progress',
+    '2023-02-12',
+    '2023-03-15',
+    '2023-02-12',
+    '2023-03-15'
   ),
   createData(
-    "6",
-    "this is title 6",
-    "this is description 6",
-    "Angular",
-    "john",
+    '6',
+    'this is title 6',
+    'this is description 6',
+    'Angular',
+    'john',
     3,
     2,
-    "Finished",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
+    'Finished',
+    '2023-02-12',
+    '2023-03-15',
+    '2023-02-12',
+    '2023-03-15'
   ),
   createData(
-    "7",
-    "this is title 7",
-    "this is description 7",
-    "ruby",
-    "aruther",
+    '7',
+    'this is title 7',
+    'this is description 7',
+    'ruby',
+    'aruther',
     3,
     2,
-    "In progress",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
+    'In progress',
+    '2023-02-12',
+    '2023-03-15',
+    '2023-02-12',
+    '2023-03-15'
   ),
   createData(
-    "8",
-    "this is title 8",
-    "this is description 8",
-    "React",
-    "zaw zaw",
+    '8',
+    'this is title 8',
+    'this is description 8',
+    'React',
+    'zaw zaw',
     3,
     2,
-    "Finished",
-    "2023-02-12",
-    "2023-03-15",
-    "2023-02-12",
-    "2023-03-15"
+    'Finished',
+    '2023-02-12',
+    '2023-03-15',
+    '2023-02-12',
+    '2023-03-15'
   ),
 ];
 
@@ -196,24 +196,18 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-type Order = "asc" | "desc";
+type Order = 'asc' | 'desc';
 
 function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
+): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
+  return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
-) {
+function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -235,109 +229,105 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: "id",
+    id: 'id',
     numeric: false,
     disablePadding: false,
-    label: "ID",
+    label: 'ID',
   },
   {
-    id: "title",
+    id: 'title',
     numeric: false,
     minWidth: 120,
     disablePadding: false,
-    label: "Title",
+    label: 'Title',
   },
   {
-    id: "description",
+    id: 'description',
     numeric: false,
     minWidth: 150,
     disablePadding: false,
-    label: "Description",
+    label: 'Description',
   },
   {
-    id: "projectName",
+    id: 'projectName',
     numeric: false,
     minWidth: 140,
     disablePadding: false,
-    label: "Project Name",
+    label: 'Project Name',
   },
   {
-    id: "assignEmployee",
+    id: 'assignEmployee',
     numeric: false,
     minWidth: 140,
     disablePadding: false,
-    label: "Assigned Employee",
+    label: 'Assigned Employee',
   },
   {
-    id: "estimateHour",
+    id: 'estimateHour',
     numeric: false,
     minWidth: 100,
     disablePadding: false,
-    label: "Estimate Hour",
+    label: 'Estimate Hour',
   },
   {
-    id: "actualHour",
+    id: 'actualHour',
     numeric: false,
     disablePadding: false,
-    label: "Actual Hour",
+    label: 'Actual Hour',
   },
   {
-    id: "status",
+    id: 'status',
     numeric: false,
     disablePadding: false,
-    label: "Status",
+    label: 'Status',
   },
   {
-    id: "estimateStartDate",
-    numeric: false,
-    minWidth: 150,
-    disablePadding: false,
-    label: "Estimate Start Date",
-  },
-  {
-    id: "estimateFinishDate",
+    id: 'estimateStartDate',
     numeric: false,
     minWidth: 150,
     disablePadding: false,
-    label: "Estimate Finish Date",
+    label: 'Estimate Start Date',
   },
   {
-    id: "actualStartDate",
+    id: 'estimateFinishDate',
     numeric: false,
     minWidth: 150,
     disablePadding: false,
-    label: "Actual Start Date",
+    label: 'Estimate Finish Date',
   },
   {
-    id: "actualFinishDate",
+    id: 'actualStartDate',
     numeric: false,
     minWidth: 150,
     disablePadding: false,
-    label: "Actual Finish Date",
+    label: 'Actual Start Date',
   },
   {
-    id: "action",
+    id: 'actualFinishDate',
+    numeric: false,
+    minWidth: 150,
+    disablePadding: false,
+    label: 'Actual Finish Date',
+  },
+  {
+    id: 'action',
     numeric: false,
     disablePadding: false,
-    label: "Action",
+    label: 'Action',
   },
 ];
 
 interface EnhancedTableProps {
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
   order: Order;
   orderBy: string;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { order, orderBy, onRequestSort } = props;
-  const createSortHandler =
-    (property: any) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+  const createSortHandler = (property: any) => (event: React.MouseEvent<unknown>) => {
+    onRequestSort(event, property);
+  };
 
   return (
     <TableHead>
@@ -345,31 +335,29 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ ".MuiTableSortLabel-root": { fontSize: "1rem" } }}
+            sx={{ '.MuiTableSortLabel-root': { fontSize: '1rem' } }}
           >
-            {headCell.id === "actions" ? (
+            {headCell.id === 'actions' ? (
               <TableSortLabel
                 style={{ minWidth: headCell.minWidth }}
-                sx={{ ".MuiSvgIcon-root": { display: "none" } }}
+                sx={{ '.MuiSvgIcon-root': { display: 'none' } }}
               >
                 {headCell.label}
               </TableSortLabel>
             ) : (
               <TableSortLabel
                 active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
+                direction={orderBy === headCell.id ? order : 'asc'}
                 style={{ minWidth: headCell.minWidth }}
                 onClick={createSortHandler(headCell.id)}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
-                    {order === "desc"
-                      ? "sorted descending"
-                      : "sorted ascending"}
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </Box>
                 ) : null}
               </TableSortLabel>
@@ -400,25 +388,18 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
-          bgcolor: (theme: any) =>
-            alpha(
-              theme.palette.charcoal.main,
-              theme.palette.action.activatedOpacity
-            ),
+          bgcolor: (theme: any) => alpha(theme.palette.charcoal.main, theme.palette.action.activatedOpacity),
         }),
       }}
     >
       <Typography
         // sx={{ flex: "1 1 100%", display: "flex", gap: "2" }}
-        sx={{ display: "flex", alignItems: "center" }}
+        sx={{ display: 'flex', alignItems: 'center' }}
         variant="h6"
         id="tableTitle"
         component="div"
       >
-        <ProjectSearchBox
-          value={searchText}
-          inputSearch={handleSearchInputChange}
-        />
+        <ProjectSearchBox value={searchText} inputSearch={handleSearchInputChange} />
         {/* <Select
           size="small"
           sx={{ marginLeft: "15px", width: "30%" }}
@@ -441,15 +422,15 @@ const AddButton = (props: any) => {
     <Button
       variant="contained"
       sx={{
-        padding: "10px 15px",
-        borderRadius: "25px",
-        boxShadow: "none",
+        padding: '10px 15px',
+        borderRadius: '25px',
+        boxShadow: 'none',
         background: palette.primary.main,
         color: palette.text.primary,
-        "&:hover": {
+        '&:hover': {
           background: palette.primary.main,
           borderColor: palette.primary.border,
-          boxShadow: "none",
+          boxShadow: 'none',
         },
       }}
       {...props}
@@ -460,12 +441,12 @@ const AddButton = (props: any) => {
 };
 
 const TaskList: NextPageWithLayout = () => {
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("projectName");
+  const [order, setOrder] = React.useState<Order>('asc');
+  const [orderBy, setOrderBy] = React.useState<keyof Data>('projectName');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [IdToDelete, setIdToDelete] = useState(null);
   const router = useRouter();
@@ -474,13 +455,10 @@ const TaskList: NextPageWithLayout = () => {
     setSearchText(newSearchText);
   };
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => {
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
     console.log(property);
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
@@ -488,9 +466,7 @@ const TaskList: NextPageWithLayout = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -502,9 +478,7 @@ const TaskList: NextPageWithLayout = () => {
       return (
         title.toLowerCase().includes(searchText.toLowerCase().trim()) ||
         projectName.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        assignedEmployee
-          .toLowerCase()
-          .includes(searchText.toLowerCase().trim()) ||
+        assignedEmployee.toLowerCase().includes(searchText.toLowerCase().trim()) ||
         status.toLocaleLowerCase().includes(searchText.toLowerCase().trim())
       );
     });
@@ -513,15 +487,14 @@ const TaskList: NextPageWithLayout = () => {
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(
-        filterRows(rows, searchText),
-        getComparator(order, orderBy)
-      ).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+      stableSort(filterRows(rows, searchText), getComparator(order, orderBy)).slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [order, orderBy, page, rowsPerPage, rows, searchText]
   );
@@ -541,19 +514,19 @@ const TaskList: NextPageWithLayout = () => {
 
   return (
     <Box>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-        <AddButton onClick={() => router.push("/task/add")}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+        <AddButton onClick={() => router.push('/task/add')}>
           <AddIcon fontSize="small" sx={{ mr: 1 }} /> New Task
         </AddButton>
       </Box>
       <Paper
         sx={{
-          "media (min-width : 300px)": { width: "calc(100% - 290px)" },
+          'media (min-width : 300px)': { width: 'calc(100% - 290px)' },
           mb: 2,
           mt: 3,
           p: 2,
           background: palette.common.white,
-          borderRadius: "1.1rem",
+          borderRadius: '1.1rem',
         }}
       >
         <EnhancedTableToolbar
@@ -563,67 +536,26 @@ const TaskList: NextPageWithLayout = () => {
         />
         <TableContainer>
           <Table sx={{}} aria-labelledby="tableTitle">
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
               {visibleRows.map((row, _index) => {
                 return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    key={row.id}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <TableCell sx={{ fontSize: ".9rem" }}>{row.id}</TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.title}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.description}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.projectName}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.assignedEmployee}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.estimateHour}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.actualHour}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.status}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.estimateStartDate}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.estimateFinishDate}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.actualStartDate}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.actualFinishDate}
-                    </TableCell>
-                    <TableCell sx={{ display: "flex" }}>
-                      <TableBtn
-                        onClick={(event: any) =>
-                          handleEditProject(event, row.id)
-                        }
-                      >
-                        Edit
-                      </TableBtn>
-                      <ConfirmDialog
-                        open={dialogOpen}
-                        onClose={handleCloseDialog}
-                        id={IdToDelete}
-                      />
+                  <TableRow hover role="checkbox" key={row.id} sx={{ cursor: 'pointer' }}>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.id}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.title}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.description}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.projectName}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.assignedEmployee}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.estimateHour}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.actualHour}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.status}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.estimateStartDate}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.estimateFinishDate}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.actualStartDate}</TableCell>
+                    <TableCell sx={{ fontSize: '.9rem' }}>{row.actualFinishDate}</TableCell>
+                    <TableCell sx={{ display: 'flex' }}>
+                      <TableBtn onClick={(event: any) => handleEditProject(event, row.id)}>Edit</TableBtn>
+                      <ConfirmDialog open={dialogOpen} onClose={handleCloseDialog} id={IdToDelete} />
                     </TableCell>
                   </TableRow>
                 );
