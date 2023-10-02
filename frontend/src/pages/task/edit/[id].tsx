@@ -299,6 +299,7 @@ const TaskEdit = () => {
                   <TextField
                     {...field}
                     id="actualHour"
+                    type="number"
                     value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
@@ -323,6 +324,7 @@ const TaskEdit = () => {
                   <TextField
                     {...field}
                     id="estimateHour"
+                    type="number"
                     value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);

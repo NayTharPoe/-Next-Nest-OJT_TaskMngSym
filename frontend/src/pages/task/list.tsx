@@ -346,7 +346,7 @@ const TaskList: NextPageWithLayout = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchText, setSearchText] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [IdToDelete, setIdToDelete] = useState(null);
+  const [IdToDelete, setIdToDelete] = useState<string | number>("");
   const [taskList, setTaskList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -464,25 +464,16 @@ const TaskList: NextPageWithLayout = () => {
     [order, orderBy, page, rowsPerPage, taskList, searchText]
   );
 
-  const handleEditTask = (e: any, id: string) => {
+  const handleEditTask = (id: string) => {
     router.push(`/task/edit/${id}`);
   };
 
-  const handleDelete = (id: string) => {
-    axios.delete(`http://localhost:8080/task/${id}`);
+  const handleDelete = () => {
+    axios.delete(`http://localhost:8080/task/${IdToDelete}`);
     setTaskList((prevList: any) =>
-      prevList?.filter((row: any) => row._id !== id)
+      prevList?.filter((row: any) => row._id !== IdToDelete)
     );
     setOpen(false);
-  };
-
-  const handleOpenDialog = (id: any) => {
-    setDialogOpen(true);
-    setIdToDelete(id);
-  };
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
   };
 
   return (
@@ -567,15 +558,22 @@ const TaskList: NextPageWithLayout = () => {
                     </TableCell>
                     <TableCell sx={{ display: "flex" }}>
                       <TableBtn
-                        onClick={(event: any) => handleEditTask(event, row._id)}
+                        onClick={() => handleEditTask(row._id.toString())}
                       >
                         Edit
                       </TableBtn>
-                      <TableBtn onClick={() => setOpen(true)}>Remove</TableBtn>
+                      <TableBtn
+                        onClick={() => {
+                          setOpen(true);
+                          setIdToDelete(row._id);
+                        }}
+                      >
+                        Remove
+                      </TableBtn>
                       <ConfirmDialog
                         open={open}
                         onClose={onClose}
-                        onClick={() => handleDelete(row._id)}
+                        onClick={handleDelete}
                         onCancel={() => setOpen(false)}
                         id={row._id}
                       />

@@ -17,7 +17,7 @@ export const TaskAddSchema = yup.object().shape({
         if (!endDate || !value) {
           return true;
         }
-        return value > endDate;
+        return value >= endDate;
       }
     ),
 });
@@ -41,7 +41,7 @@ export const TaskEditSchema = yup.object().shape({
         if (!endDate || !value) {
           return true;
         }
-        return value > endDate;
+        return value >= endDate;
       }
     ),
   actual_start_date: yup.date(),
@@ -55,7 +55,7 @@ export const TaskEditSchema = yup.object().shape({
         if (!endDate || !value) {
           return true;
         }
-        return value > endDate;
+        return value >= endDate;
       }
     ),
 });
