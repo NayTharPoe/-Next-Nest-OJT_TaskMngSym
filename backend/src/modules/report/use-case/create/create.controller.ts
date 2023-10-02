@@ -17,8 +17,8 @@ import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 export class CreateReportController {
   constructor(private readonly reportService: ReportService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @ApiBody({ type: [CreateReportRequestDto] })
   @Post('add')
   async create(
