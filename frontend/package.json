@@ -11,13 +11,12 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@hookform/resolvers": "^3.3.1",
     "@mui/icons-material": "^5.14.8",
     "@mui/lab": "^5.0.0-alpha.145",
     "@mui/material": "^5.14.8",
     "@mui/x-data-grid": "^6.13.0",
     "@mui/x-data-grid-generator": "^6.13.0",
-    "@mui/x-date-pickers": "^6.14.0",
+    "@mui/x-date-pickers": "^6.15.0",
     "@types/node": "20.6.0",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
@@ -28,9 +27,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.46.2",
-    "swr": "^2.2.4",
-    "typescript": "5.2.2",
-    "yup": "^1.2.0"
+    "typescript": "5.2.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.7.3",

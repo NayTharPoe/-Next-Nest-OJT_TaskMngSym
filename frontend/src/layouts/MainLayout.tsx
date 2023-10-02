@@ -23,8 +23,10 @@ const MainLayout = (props: any) => {
   };
 
   const container = window !== undefined ? () => window().document.body : undefined;
+  const container = window !== undefined ? () => window().document.body : undefined;
 
   return (
+    <Box sx={{ display: 'flex' }}>
     <Box sx={{ display: 'flex' }}>
       <AppBar
         position="fixed"
@@ -41,7 +43,11 @@ const MainLayout = (props: any) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' }, color: (theme: any) => `${theme.palette.charcoal.main}` }}
+            sx={{
+              mr: 2,
+              display: { md: 'none' },
+              color: (theme: any) => `${theme.palette.charcoal.main}`,
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -66,6 +72,9 @@ const MainLayout = (props: any) => {
             display: { xs: 'block', md: 'none' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
             },
           }}
           PaperProps={{
@@ -80,6 +89,9 @@ const MainLayout = (props: any) => {
         <Drawer
           variant="permanent"
           sx={{
+            display: { xs: 'none', md: 'block' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
             display: { xs: 'none', md: 'block' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
@@ -103,7 +115,8 @@ const MainLayout = (props: any) => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          height: '100vh',
+          minHeight: '100vh',
+          overflow: 'auto',
           backgroundColor: (theme) => `${theme.palette.background.paper}`,
         }}
       >

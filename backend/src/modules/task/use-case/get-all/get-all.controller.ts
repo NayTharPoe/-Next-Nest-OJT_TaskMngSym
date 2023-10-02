@@ -17,8 +17,8 @@ import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto
 export class GetAllController {
   constructor(private taskService: TaskService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Get('list')
   async getAllTask(
     @Response() res,
