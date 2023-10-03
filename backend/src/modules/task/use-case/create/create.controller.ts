@@ -17,8 +17,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class CreateController {
   constructor(private taskService: TaskService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Post('add')
   async create(
     @Response() res,
@@ -26,7 +26,9 @@ export class CreateController {
   ): Promise<CreateTaskResponseDto> {
     try {
       const data = await this.taskService.createTask(payload);
-      return res.status(200).json({ message: 'New task created', data });
+      return res
+        .status(200)
+        .json({ message: 'Task Created Successfully!', data });
     } catch (err) {
       throw new NotFoundException(err.message);
     }

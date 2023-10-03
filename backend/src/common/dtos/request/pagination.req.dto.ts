@@ -7,19 +7,15 @@ const defaultPageNumber = paginate.DEFAULT_PAGE_NUMBER;
 const defaultLimit = paginate.DEFAULT_LIMIT;
 
 export class PaginationRequestDto {
-  @ApiProperty({ required: false, default: 1 })
+  @ApiProperty({ required: false })
   @IsNumber()
-  @Transform((params) =>
-    params.value == null ? defaultPageNumber : Number(params.value),
-  )
+  @Transform((params) => params.value == null ?? Number(params.value))
   @IsOptional()
-  page?: number = defaultPageNumber;
+  page?: any = defaultPageNumber;
 
-  @ApiProperty({ required: false, default: 5 })
+  @ApiProperty({ required: false })
   @IsNumber()
-  @Transform((params) =>
-    params.value == null ? defaultLimit : Number(params.value),
-  )
+  @Transform((params) => params.value == null ?? Number(params.value))
   @IsOptional()
   limit?: number = defaultLimit;
 }

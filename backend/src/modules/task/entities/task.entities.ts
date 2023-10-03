@@ -15,22 +15,22 @@ export class TaskEntity {
   @Prop({ required: true })
   title: string;
 
-  @Prop({ required: true })
+  @Prop()
   description: string;
 
   @Prop({ required: true })
   estimateHour: number;
 
-  @Prop({ default: true })
+  @Prop()
   actualHour: number;
 
-  @Prop({ required: true })
+  @Prop()
   status: string;
 
-  @Prop()
+  @Prop({ required: true })
   estimate_start_date: string;
 
-  @Prop()
+  @Prop({ required: true })
   estimate_finish_date: string;
 
   @Prop()
