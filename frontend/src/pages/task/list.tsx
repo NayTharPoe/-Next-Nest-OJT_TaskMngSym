@@ -30,6 +30,7 @@ import Loading from "@/components/loading";
 import TaskDownload from "@/components/taskDownload";
 import ProjectSearchBox from "@/components/ProjectSearchBox";
 
+
 interface Data {
   _id: string;
   num: string;
@@ -364,7 +365,7 @@ const TaskList: NextPageWithLayout = () => {
     setIsLoading(true);
     const taskApi = async () => {
       const taskApi = await axios.get("http://localhost:8080/tasks/list");
-      const projectApi = await axios.get("http://localhost:8080/projects/list");
+      const projectApi = await axios.get("http://localhost:8080/projects/list?page=1&limit=2000");
       const employeeApi = await axios.get(
         "http://localhost:8080/employees/list"
       );
