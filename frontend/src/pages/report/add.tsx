@@ -30,6 +30,7 @@ import palette from '@/theme/palette';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { ReportSchema } from '@/lib/validation/reportSchema';
 import { socket } from '../../socket';
 
 const PreviewDialog = styled(Dialog)(({ theme }) => ({
@@ -131,32 +132,6 @@ const columns: readonly Column[] = [
   { id: 'action', label: 'Action', minWidth: 140, align: 'left' },
 ];
 
-const schema = yup.object().shape({
-  reportTo: yup.string().required('Please select an admin.'),
-  problem_feeling: yup.string(),
-  reports: yup.array().of(
-    yup.object().shape({
-      taskId: yup.string().required('Task ID is required.'),
-      taskTitle: yup.string().required('Task title is required.'),
-      project: yup.string().required('Project is required.'),
-      percentage: yup
-        .number()
-        .typeError('Percentage must be a number')
-        .min(1, 'percentage must be greater than 0')
-        .max(100, 'percentage must be less than or equal to 100')
-        .required('Percentage is required.'),
-      types: yup.string().required('Types is required.'),
-      status: yup.string().required('Status is required.'),
-      hours: yup
-        .number()
-        .typeError('Hours must be a number')
-        .min(0, 'hours must be greater than or equal to 0')
-        .max(8, 'hours must be less than or equal to 8')
-        .required('Hours is required'),
-    })
-  ),
-});
-
 const ReportAddPage = () => {
   const [openPreviewDialog, setOpenPreviewDialog] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -197,7 +172,7 @@ const ReportAddPage = () => {
     formState: { errors },
     setValue,
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(ReportSchema),
     defaultValues: {
       reportTo: '',
       problem_feeling: '',
@@ -238,7 +213,7 @@ const ReportAddPage = () => {
     try {
       const res = await axios.get('http://localhost:8080/employees/list').then((res) => res.data);
       const adminRoles = res.data
-        ?.filter((e: { position: string }) => e.position !== '0')
+        ?.filter((e: { position: string, _id: any }) => e.position !== '0' && e._id !== currentUserData?._id)
         .map((employee: any) => ({
           value: employee._id,
           label: employee.employeeName,

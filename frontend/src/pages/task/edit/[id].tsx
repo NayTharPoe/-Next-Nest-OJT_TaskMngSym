@@ -127,8 +127,22 @@ const TaskEdit = () => {
       );
       socket.emit('taskUpdated', notificationResponse?.data?.data);
 
-      router.push('/task/list');
-    });
+      setOpen(true);
+      setIsLoading(false);
+      setStatusText(res.statusText);
+      setMessage(res.data?.message);
+    }).catch((err) => {
+      setOpen(true);
+      setIsLoading(false);
+      setMessage(err.response?.data.message);
+    });;
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (statusText === "OK") {
+      router.push("/task/list");
+    }
   };
 
   const CommonButton = (props: any) => {
