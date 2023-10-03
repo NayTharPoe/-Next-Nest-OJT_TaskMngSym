@@ -23,11 +23,15 @@ import dayjs from "dayjs";
 import Loading from "@/components/loading";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { TaskEditSchema } from "@/utils/taskValidate";
+import AuthDialog from "@/components/authDialog";
 
 const TaskEdit = () => {
   const [selectProject, setSelectProject] = useState([]);
   const [selectEmployee, setSelectEmployee] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [statusText, setStatusText] = useState("");
   const router = useRouter();
 
   const {
@@ -49,11 +53,9 @@ const TaskEdit = () => {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      const projectApi = await axios.get(
-        "http://localhost:8080/projects/list?limit=30"
-      );
+      const projectApi = await axios.get("http://localhost:8080/projects/list");
       const employeeApi = await axios.get(
-        "http://localhost:8080/employees/list?limit=30"
+        "http://localhost:8080/employees/list"
       );
       setSelectProject(
         projectApi.data.data.map((project: any) => ({
@@ -70,7 +72,7 @@ const TaskEdit = () => {
     };
     if (router.query.id) {
       axios
-        .get(`http://localhost:8080/task/detail/${router.query.id}?limit=30`)
+        .get(`http://localhost:8080/task/detail/${router.query.id}`)
         .then((res) => {
           setValue("project", res.data.data.project?._id);
           setValue("assignedEmployee", res.data.data.assignedEmployee?._id);
@@ -90,6 +92,7 @@ const TaskEdit = () => {
   }, [router.query.id]);
 
   const onSubmit = (data: any): void => {
+    setIsLoading(true);
     const result = {
       ...data,
       estimateHour: Number(data.estimateHour),
@@ -109,7 +112,24 @@ const TaskEdit = () => {
     };
     axios
       .put(`http://localhost:8080/task/edit/${router.query.id}`, result)
-      .then((res) => router.push("/task/list"));
+      .then((res) => {
+        setOpen(true);
+        setIsLoading(false);
+        setStatusText(res.statusText);
+        setMessage(res.data?.message);
+      })
+      .catch((err) => {
+        setOpen(true);
+        setIsLoading(false);
+        setMessage(err.response?.data.message);
+      });
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (statusText === "OK") {
+      router.push("/task/list");
+    }
   };
 
   const CommonButton = (props: any) => {
@@ -453,6 +473,9 @@ const TaskEdit = () => {
             <CommonButton text="save">Save</CommonButton>
           </Stack>
         </form>
+        <AuthDialog statusText={statusText} open={open} close={handleClose}>
+          {message}
+        </AuthDialog>
       </Box>
     </>
   );

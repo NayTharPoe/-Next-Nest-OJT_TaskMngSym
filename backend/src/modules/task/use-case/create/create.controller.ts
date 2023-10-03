@@ -26,7 +26,9 @@ export class CreateController {
   ): Promise<CreateTaskResponseDto> {
     try {
       const data = await this.taskService.createTask(payload);
-      return res.status(200).json({ message: 'New task created', data });
+      return res
+        .status(200)
+        .json({ message: 'Task Created Successfully!', data });
     } catch (err) {
       throw new NotFoundException(err.message);
     }

@@ -27,10 +27,10 @@ export class TaskEntity {
   @Prop()
   status: string;
 
-  @Prop()
+  @Prop({ required: true })
   estimate_start_date: string;
 
-  @Prop()
+  @Prop({ required: true })
   estimate_finish_date: string;
 
   @Prop()

@@ -25,25 +25,11 @@ export class CreateTaskRequestDto {
   @IsNotEmpty()
   estimateHour: number;
 
-  // @IsNumber()
-  // @ApiProperty()
-  // @IsNotEmpty()
-  // actualHour: number;
-
-  // @IsString()
-  // @ApiProperty()
-  // @IsNotEmpty()
-  // status: string;
-
   @ApiProperty()
+  @IsNotEmpty()
   estimate_start_date: string;
 
   @ApiProperty()
+  @IsNotEmpty()
   estimate_finish_date: string;
-
-  // @ApiProperty()
-  // actual_start_date: string;
-
-  // @ApiProperty()
-  // actual_finish_date: string;
 }
