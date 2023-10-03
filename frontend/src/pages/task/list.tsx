@@ -363,14 +363,10 @@ const TaskList: NextPageWithLayout = () => {
   useEffect(() => {
     setIsLoading(true);
     const taskApi = async () => {
-      const taskApi = await axios.get(
-        "http://localhost:8080/tasks/list?limit=30"
-      );
-      const projectApi = await axios.get(
-        "http://localhost:8080/projects/list?limit=30"
-      );
+      const taskApi = await axios.get("http://localhost:8080/tasks/list");
+      const projectApi = await axios.get("http://localhost:8080/projects/list");
       const employeeApi = await axios.get(
-        "http://localhost:8080/employees/list?limit=30"
+        "http://localhost:8080/employees/list"
       );
       const taskData = taskApi.data.data.map((task: any, index: any) => {
         const statusValue = statusOption.find(

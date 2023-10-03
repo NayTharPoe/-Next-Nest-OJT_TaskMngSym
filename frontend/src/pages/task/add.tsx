@@ -22,19 +22,23 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import dayjs from "dayjs";
 import { TaskAddSchema } from "@/utils/taskValidate";
+import AuthDialog from "@/components/authDialog";
+import Loading from "@/components/loading";
 
 const TaskCreate = () => {
   const [selectProject, setSelectProject] = useState([]);
   const [selectEmployee, setSelectEmployee] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [statusText, setStatusText] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
-      const projectApi = await axios.get(
-        "http://localhost:8080/projects/list?limit=30"
-      );
+      const projectApi = await axios.get("http://localhost:8080/projects/list");
       const employeeApi = await axios.get(
-        "http://localhost:8080/employees/list?limit=30"
+        "http://localhost:8080/employees/list"
       );
       setSelectProject(
         projectApi.data.data.map((project: any) => ({
@@ -61,6 +65,7 @@ const TaskCreate = () => {
   });
 
   const onSubmit = (data: any): void => {
+    setIsLoading(true);
     const result = {
       ...data,
       estimateHour: Number(data.estimateHour),
@@ -74,7 +79,24 @@ const TaskCreate = () => {
     };
     axios
       .post("http://localhost:8080/task/add", result)
-      .then((res) => router.push("/task/list"));
+      .then((res) => {
+        setOpen(true);
+        setIsLoading(false);
+        setStatusText(res.statusText);
+        setMessage(res.data?.message);
+      })
+      .catch((err) => {
+        setOpen(true);
+        setIsLoading(false);
+        setMessage(err.response?.data.message);
+      });
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (statusText === "OK") {
+      router.push("/task/list");
+    }
   };
 
   const CommonButton = (props: any) => {
@@ -112,6 +134,7 @@ const TaskCreate = () => {
 
   return (
     <>
+      {isLoading && <Loading />}
       <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
@@ -245,7 +268,9 @@ const TaskCreate = () => {
               />
             </Grid>
             <Grid item sm={6} xs={12}>
-              <InputLabel>Estimate Start</InputLabel>
+              <InputLabel>
+                Estimate Start <span style={{ color: "red" }}>*</span>
+              </InputLabel>
               <Controller
                 name="estimate_start_date"
                 control={control}
@@ -262,6 +287,8 @@ const TaskCreate = () => {
                         textField: {
                           fullWidth: true,
                           variant: "outlined",
+                          error: !!errors.estimate_start_date,
+                          helperText: errors.estimate_start_date?.message,
                         },
                       }}
                     />
@@ -270,7 +297,9 @@ const TaskCreate = () => {
               />
             </Grid>
             <Grid item sm={6} xs={12}>
-              <InputLabel>Estimate Finish</InputLabel>
+              <InputLabel>
+                Estimate Finish <span style={{ color: "red" }}>*</span>
+              </InputLabel>
               <Controller
                 name="estimate_finish_date"
                 control={control}
@@ -308,6 +337,9 @@ const TaskCreate = () => {
             <CommonButton text="save">Save</CommonButton>
           </Stack>
         </form>
+        <AuthDialog statusText={statusText} open={open} close={handleClose}>
+          {message}
+        </AuthDialog>
       </Box>
     </>
   );
