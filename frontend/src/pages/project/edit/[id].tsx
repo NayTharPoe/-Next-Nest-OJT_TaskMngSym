@@ -1,18 +1,18 @@
 import React from 'react';
+import type { NextPageWithLayout } from '@/pages/_app';
 import { yupResolver } from '@hookform/resolvers/yup';
 import MainLayout from '@/layouts/MainLayout';
 import { ReactElement } from 'react';
-import type { NextPageWithLayout } from '../_app';
 import { Grid, TextField, Button, Paper, FormLabel, Stack } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import palette from '@/theme/palette';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useRouter } from 'next/navigation';
 import { ProjectSchema } from '@/lib/validation/projectSchema';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import axios from 'axios';
 
-const CreateFormButton = (props: any) => {
+const UpdateFormButton = (props: any) => {
   return (
     <Button
       fullWidth
@@ -54,7 +54,9 @@ const CancelFormButton = (props: any) => {
   );
 };
 
-const AddNewProjectPage: NextPageWithLayout = () => {
+const fetcher = (url: RequestInfo | URL) => fetch(url).then((res) => res.json());
+
+const EditProjectPage: NextPageWithLayout = ({ project }: any) => {
   const router = useRouter();
   const {
     handleSubmit,
@@ -63,17 +65,17 @@ const AddNewProjectPage: NextPageWithLayout = () => {
   } = useForm({
     resolver: yupResolver(ProjectSchema),
     defaultValues: {
-      projectName: '',
-      language: '',
-      description: '',
-      startDate: null || undefined,
-      endDate: null || undefined,
+      projectName: project?.data?.projectName || '',
+      language: project?.data?.language || '',
+      description: project?.data?.description || '',
+      startDate: project?.data?.startDate && dayjs(project.data.startDate),
+      endDate: project?.data?.endDate && dayjs(project.data.endDate),
     },
   });
 
   const onSubmit = async (payload: any) => {
     try {
-      const res = await axios.post('http://localhost:8080/project/add', {
+      const res = await axios.patch(`http://localhost:8080/project/edit/${project?.data._id}`, {
         ...payload,
         starDate: dayjs(payload.starDate).format('YYYY-MM-DD'),
         endDate: dayjs(payload.endDate).format('YYYY-MM-DD'),
@@ -84,16 +86,11 @@ const AddNewProjectPage: NextPageWithLayout = () => {
     }
   };
 
-  const isWeekend = (date: Dayjs) => {
-    const day = date.day();
-    return day === 0 || day === 6;
-  };
-
   return (
     <Paper
       elevation={0}
       sx={{
-        maxWidth: '780px',
+        maxWidth: '760px',
         m: '0 auto',
         mt: 10,
         p: 5,
@@ -199,8 +196,7 @@ const AddNewProjectPage: NextPageWithLayout = () => {
                 render={({ field }) => (
                   <DatePicker
                     {...field}
-                    value={field.value ? dayjs(field.value) : null}
-                    shouldDisableDate={isWeekend}
+                    value={field.value}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -209,8 +205,8 @@ const AddNewProjectPage: NextPageWithLayout = () => {
                         helperText: errors.startDate?.message,
                       },
                     }}
-                    onChange={(date) => {
-                      field.onChange(date?.toDate());
+                    onChange={(value) => {
+                      field.onChange(value);
                     }}
                     sx={{
                       'MuiDateCalendar-root': {
@@ -239,8 +235,7 @@ const AddNewProjectPage: NextPageWithLayout = () => {
                 render={({ field }) => (
                   <DatePicker
                     {...field}
-                    value={field.value ? dayjs(field.value) : null}
-                    shouldDisableDate={isWeekend}
+                    value={field.value}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -249,8 +244,8 @@ const AddNewProjectPage: NextPageWithLayout = () => {
                         helperText: errors.endDate?.message,
                       },
                     }}
-                    onChange={(date) => {
-                      field.onChange(date?.toDate());
+                    onChange={(value) => {
+                      field.onChange(value);
                     }}
                     sx={{
                       'MuiDateCalendar-root': {
@@ -272,7 +267,7 @@ const AddNewProjectPage: NextPageWithLayout = () => {
             <CancelFormButton onClick={() => router.back()}>Cancel</CancelFormButton>
           </Grid>
           <Grid item xs={12} sm={6} sx={{ mt: 1 }}>
-            <CreateFormButton>Create</CreateFormButton>
+            <UpdateFormButton>Update</UpdateFormButton>
           </Grid>
         </Grid>
       </form>
@@ -280,8 +275,20 @@ const AddNewProjectPage: NextPageWithLayout = () => {
   );
 };
 
-AddNewProjectPage.getLayout = function getLayout(page: ReactElement) {
+EditProjectPage.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export default AddNewProjectPage;
+export default EditProjectPage;
+
+export async function getServerSideProps(context: { query: { id: any } }) {
+  const { id } = context.query;
+  const res = await fetch(`http://localhost:8080/project/detail/${id}`);
+  const project = await res.json();
+
+  return {
+    props: {
+      project,
+    },
+  };
+}

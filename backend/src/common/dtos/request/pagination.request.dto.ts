@@ -15,7 +15,7 @@ export class PaginationRequestDto {
   @IsOptional()
   page?: number = defaultPageNumber;
 
-  @ApiProperty({ required: false, default: 5 })
+  @ApiProperty({ required: false })
   @IsNumber()
   @Transform((params) =>
     params.value == null ? defaultLimit : Number(params.value),

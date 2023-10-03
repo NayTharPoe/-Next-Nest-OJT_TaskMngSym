@@ -236,9 +236,7 @@ const ReportAddPage = () => {
 
   const fetchRoles = async () => {
     try {
-      const res = await axios
-        .get('http://localhost:8080/employees/list?page=1&limit=1000')
-        .then((res) => res.data);
+      const res = await axios.get('http://localhost:8080/employees/list').then((res) => res.data);
       const adminRoles = res.data
         ?.filter((e: { position: string }) => e.position !== '0')
         .map((employee: any) => ({
@@ -253,9 +251,7 @@ const ReportAddPage = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios
-        .get('http://localhost:8080/tasks/list?page=1&limit=1000')
-        .then((res) => res.data);
+      const res = await axios.get('http://localhost:8080/tasks/list').then((res) => res.data);
       const taskOptions = res.data?.map((task: { _id: any }, index: number) => ({
         value: task._id,
         label: index + 1,

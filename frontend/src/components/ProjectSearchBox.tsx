@@ -19,9 +19,9 @@ export const StyledIconButton = styled(ButtonBase)(({ theme }) => ({
   },
 }));
 
-export const Search = styled('div')(({ theme } : any) => ({
+export const Search = styled('div')(({ theme }: any) => ({
   position: 'relative',
-  borderRadius: '.4rem',
+  borderRadius: '.6rem',
   border: `1px solid ${theme.palette.grey[400]}`,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': {
@@ -32,11 +32,11 @@ export const Search = styled('div')(({ theme } : any) => ({
   [theme.breakpoints.up('sm')]: {
     width: 'auto',
   },
-  overflow:'hidden',
+  overflow: 'hidden',
 }));
 
 export const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 1),
+  padding: theme.spacing(0, 2),
   height: '100%',
   position: 'absolute',
   pointerEvents: 'none',
@@ -65,8 +65,8 @@ export const ClearIconWrapper = styled('div')(({ theme }) => ({
 export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(3)})`,
+    padding: theme.spacing(1.8, 1.8, 1.8, 2),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     paddingRight: `calc(1em + ${theme.spacing(2)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
@@ -77,25 +77,14 @@ export const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function ProjectSearchBox({
-  value,
-  inputSearch,
-}: {
-  value: string;
-  inputSearch: any;
-}) {
-
+export default function ProjectSearchBox({ value, inputSearch }: { value: string; inputSearch: any }) {
   return (
     <Stack direction="row">
       <Search>
         <SearchIconWrapper>
           <SearchIcon />
         </SearchIconWrapper>
-        <StyledInputBase
-          value={value}
-          onChange={inputSearch}
-          placeholder="Search…"
-        />
+        <StyledInputBase value={value} onChange={inputSearch} placeholder="Search…" />
       </Search>
     </Stack>
   );

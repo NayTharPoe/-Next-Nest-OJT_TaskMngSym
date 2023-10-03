@@ -30,7 +30,17 @@ export class SocketIoGateway
   }
 
   @SubscribeMessage('reportCreated')
-  handleMessage(client: Socket, data: any) {
+  handleReportCreateMessage(client: Socket, data: any) {
     this.server.emit('createReportNotifications', data);
+  }
+
+  @SubscribeMessage('taskCreated')
+  handleTaskCreateMessage(client: Socket, data: any) {
+    this.server.emit('createTaskNotifications', data);
+  }
+
+  @SubscribeMessage('taskUpdated')
+  handleTaskUpdateMessage(client: Socket, data: any) {
+    this.server.emit('updateTaskNotifications', data);
   }
 }

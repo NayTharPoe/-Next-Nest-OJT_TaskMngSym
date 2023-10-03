@@ -1,6 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 import Typography from './typograph';
 import Palette from './palette';
+// import ComponentOverrides from './overrides';
 
 const themeOptions: any = {
   palette: Palette,

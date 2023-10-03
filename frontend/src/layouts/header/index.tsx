@@ -37,6 +37,8 @@ const Header = () => {
   const [filterNotificationData, setFilterNotificationData] = useState([]);
   const [notificationBadgeCount, setNotificationBadgeCount] = useState(0);
   const [loggedInUser, setLoggedInUser] = useState<any>({});
+  const router = useRouter();
+  const location = useRouter();
 
   const logoutApi = () => {
     localStorage.removeItem('user');
@@ -70,7 +72,6 @@ const Header = () => {
     setShowMessageBox((prevShowMessageBox) => !prevShowMessageBox);
   };
 
-  const router = useRouter();
   const routePath = router.pathname.split('/')[1];
   let pageTitle = '';
   switch (routePath) {
@@ -126,7 +127,7 @@ const Header = () => {
           !row.read.includes(curr_user?._id) &&
           row.createdByWhom !== curr_user?._id
         ) {
-          return curr_user?.position === '0' || row.sendTo === curr_user?._id;
+          return curr_user?.position === '1' || row.sendTo === curr_user?._id;
         }
         return false;
       });
@@ -139,7 +140,11 @@ const Header = () => {
   };
 
   useEffect(() => {
-    const eventNames: string[] = ['createReportNotifications'];
+    const eventNames: string[] = [
+      'createReportNotifications',
+      'createTaskNotifications',
+      'updateTaskNotifications',
+    ];
 
     const handleCreateNotifications = async () => {
       await fetchAllNotifications();
@@ -165,6 +170,10 @@ const Header = () => {
   useEffect(() => {
     setLoggedInUser(JSON.parse(localStorage.getItem('user') ?? '{}'));
   }, []);
+
+  useEffect(() => {
+    fetchAllNotifications();
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

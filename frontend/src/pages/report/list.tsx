@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ClearIcon from '@mui/icons-material/Clear';
-import AddNewBtn from '@/components/addNewBtn';
+import AddNewBtn from '@/components/button/addNewBtn';
 import palette from '@/theme/palette';
 import dayjs from 'dayjs';
 import Loading from '@/components/loading';
