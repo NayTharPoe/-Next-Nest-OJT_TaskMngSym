@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Chip,
@@ -32,11 +32,11 @@ dayjs.extend(relativeTime);
 
 const Header = () => {
   const [showMessageBox, setShowMessageBox] = useState(false);
+  const notificationIconRef = useRef<any>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [filterNotificationData, setFilterNotificationData] = useState([]);
   const [notificationBadgeCount, setNotificationBadgeCount] = useState(0);
   const [loggedInUser, setLoggedInUser] = useState<any>({});
-  const theme = useTheme();
 
   const logoutApi = () => {
     localStorage.removeItem('user');
@@ -97,8 +97,10 @@ const Header = () => {
       );
 
       setNotificationBadgeCount((prevCount) => Math.max(prevCount - 1, 0));
-      const res = await axios.patch(`http://localhost:8080/notification/edit/${id}`, { read: [loggedInUser?._id] });
-      console.log(res)
+      const res = await axios.patch(`http://localhost:8080/notification/edit/${id}`, {
+        read: [loggedInUser?._id],
+      });
+      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -164,6 +166,23 @@ const Header = () => {
     setLoggedInUser(JSON.parse(localStorage.getItem('user') ?? '{}'));
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showMessageBox && notificationIconRef.current) {
+        const notificationBox = document.querySelector('.notification-box');
+        if (notificationBox && !notificationBox.contains(event.target as Node)) {
+          setShowMessageBox(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMessageBox]);
+
   return (
     <Box
       sx={{
@@ -182,8 +201,8 @@ const Header = () => {
       </Box>
       <Box sx={{ width: 'max-content', display: 'flex', gap: 3 }}>
         <Box sx={{ position: 'relative' }}>
-          <IconButton onClick={handleNotificationBox}>
-            <Badge color='primary' variant="dot" invisible={notificationBadgeCount <= 0}>
+          <IconButton onClick={handleNotificationBox} ref={notificationIconRef}>
+            <Badge color="primary" variant="dot" invisible={notificationBadgeCount <= 0}>
               <NotificationsIcon />
             </Badge>
           </IconButton>
@@ -199,8 +218,9 @@ const Header = () => {
                 borderRadius: '.75rem',
                 p: 1,
                 pt: 0,
-                boxShadow: 'rgba(0, 0, 0, 0.09) 0px 3px 12px'
+                boxShadow: 'rgba(0, 0, 0, 0.09) 0px 3px 12px',
               }}
+              className="notification-box"
             >
               <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
                 <Typography variant="h4" color={palette.text.primary}>
@@ -227,7 +247,13 @@ const Header = () => {
                     >
                       <g fill="none" fillRule="evenodd">
                         <g transform="translate(24 31.67)">
-                          <ellipse className="ant-empty-img-5" cx="67.797" cy="106.89" rx="67.797" ry="12.668" />
+                          <ellipse
+                            className="ant-empty-img-5"
+                            cx="67.797"
+                            cy="106.89"
+                            rx="67.797"
+                            ry="12.668"
+                          />
                           <path
                             className="ant-empty-img-1"
                             d="M122.034 69.674L98.109 40.229c-1.148-1.386-2.826-2.225-4.593-2.225h-51.44c-1.766 0-3.444.839-4.592 2.225L13.56 69.674v15.383h108.475V69.674z"
@@ -251,11 +277,17 @@ const Header = () => {
                         </g>
                       </g>
                     </svg>
-                    <Box sx={{ mt: 2, color: palette.text.primary, fontSize: '.85rem' }}>No Notifications</Box>
+                    <Box sx={{ mt: 2, color: palette.text.primary, fontSize: '.85rem' }}>
+                      No Notifications
+                    </Box>
                   </StyledGridOverlay>
                 ) : (
                   filterNotificationData?.map((notification: any) => (
-                    <ListItem key={notification._id} alignItems="flex-start" onClick={() => handleEditNotification(notification?._id)}>
+                    <ListItem
+                      key={notification._id}
+                      alignItems="flex-start"
+                      onClick={() => handleEditNotification(notification?._id)}
+                    >
                       <ListItemButton sx={{ flexDirection: 'column', borderRadius: '.65rem' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <ListItemAvatar>
@@ -272,12 +304,11 @@ const Header = () => {
                           />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', mt: 1 }}>
-                          <AccessTimeFilledIcon fontSize='small' color='primary' />
-                          <Typography
-                            sx={{ color: palette.text.primary, fontSize: '0.75rem', ml: 0.5 }}
-                          >
+                          <AccessTimeFilledIcon fontSize="small" color="primary" />
+                          <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', ml: 0.5 }}>
                             {dayjs(notification?.createdAt).fromNow()}
-                          </Typography></Box>
+                          </Typography>
+                        </Box>
                       </ListItemButton>
                     </ListItem>
                   ))
@@ -295,10 +326,11 @@ const Header = () => {
           </Tooltip>
           <Menu
             sx={{
-              mt: '45px', '.MuiPaper-elevation': {
+              mt: '45px',
+              '.MuiPaper-elevation': {
                 boxShadow: 'rgba(0, 0, 0, 0.09) 0px 3px 12px',
                 backgroundColor: palette.common.white,
-              }
+              },
             }}
             id="menu-appbar"
             anchorEl={anchorElUser}

@@ -68,7 +68,7 @@ const ReportListPage = ({ reports, isLoading }: any) => {
     router.push(`${router.pathname}?page=1&limit=2000${reportToParam}${reportByParam}${dateParam}`);
   };
 
-  if (isLoading) return <Loading />
+  if (isLoading) return <Loading />;
 
   return (
     <Box sx={{ height: 400, width: '100%', my: 4 }}>
@@ -291,9 +291,9 @@ export async function getServerSideProps(context: any) {
     );
     const reports = await res.json();
 
-    return { props: { reports, isLoading: false } };
+    return { props: { reports } };
   } catch (error) {
-    console.error("Error fetching data:", error);
-    return { props: { reports: null, isLoading: false } };
+    console.error('Error fetching data:', error);
+    return { props: { reports: null } };
   }
 }
