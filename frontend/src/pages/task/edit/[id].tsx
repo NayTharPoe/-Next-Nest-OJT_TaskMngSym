@@ -11,25 +11,105 @@ import {
   FormHelperText,
   FormControl,
 } from "@mui/material";
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import palette from "@/theme/palette";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useRouter } from "next/router";
+import axios from "axios";
+import dayjs from "dayjs";
+import Loading from "@/components/loading";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { TaskEditSchema } from "@/utils/taskValidate";
 
 const TaskEdit = () => {
+  const [selectProject, setSelectProject] = useState([]);
+  const [selectEmployee, setSelectEmployee] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(TaskEditSchema),
+  });
+
+  const statusOption = [
+    { value: "0", label: "Opened" },
+    { value: "1", label: "In progress" },
+    { value: "2", label: "Finished" },
+    { value: "3", label: "Closed" },
+  ];
+
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchData = async () => {
+      const projectApi = await axios.get(
+        "http://localhost:8080/projects/list?limit=30"
+      );
+      const employeeApi = await axios.get(
+        "http://localhost:8080/employees/list?limit=30"
+      );
+      setSelectProject(
+        projectApi.data.data.map((project: any) => ({
+          value: project._id,
+          label: project.projectName,
+        }))
+      );
+      setSelectEmployee(
+        employeeApi.data.data.map((employee: any) => ({
+          value: employee._id,
+          label: employee.employeeName,
+        }))
+      );
+    };
+    if (router.query.id) {
+      axios
+        .get(`http://localhost:8080/task/detail/${router.query.id}?limit=30`)
+        .then((res) => {
+          setValue("project", res.data.data.project?._id);
+          setValue("assignedEmployee", res.data.data.assignedEmployee?._id);
+          setValue("description", res.data.data.description);
+          setValue("title", res.data.data.title);
+          setValue("status", res.data.data.status);
+          setValue("estimateHour", res.data.data.estimateHour);
+          setValue("actualHour", res.data.data.actualHour);
+          setValue("estimate_start_date", res.data.data.estimate_start_date);
+          setValue("estimate_finish_date", res.data.data.estimate_finish_date);
+          setValue("actual_start_date", res.data.data.actual_start_date);
+          setValue("actual_finish_date", res.data.data.actual_finish_date);
+          setIsLoading(false);
+        });
+    }
+    fetchData();
+  }, [router.query.id]);
 
   const onSubmit = (data: any): void => {
-    console.log(data);
+    const result = {
+      ...data,
+      estimateHour: Number(data.estimateHour),
+      actualHour: Number(data.actualHour),
+      estimate_start_date: data.estimate_start_date
+        ? dayjs(data.estimate_start_date).format("MM-DD-YYYY")
+        : "",
+      estimate_finish_date: data.estimate_finish_date
+        ? dayjs(data.estimate_finish_date).format("MM-DD-YYYY")
+        : "",
+      actual_start_date: data.actual_start_date
+        ? dayjs(data.actual_start_date).format("MM-DD-YYYY")
+        : "",
+      actual_finish_date: data.actual_finish_date
+        ? dayjs(data.actual_finish_date).format("MM-DD-YYYY")
+        : "",
+    };
+    axios
+      .put(`http://localhost:8080/task/edit/${router.query.id}`, result)
+      .then((res) => router.push("/task/list"));
   };
 
   const CommonButton = (props: any) => {
@@ -67,6 +147,7 @@ const TaskEdit = () => {
 
   return (
     <>
+      {isLoading && <Loading />}
       <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
@@ -76,7 +157,6 @@ const TaskEdit = () => {
               </InputLabel>
               <Controller
                 name="project"
-                rules={{ required: "Project is required" }}
                 control={control}
                 render={({ field }) => (
                   <>
@@ -84,13 +164,15 @@ const TaskEdit = () => {
                       {...field}
                       fullWidth
                       id="project"
-                      value={field.value}
+                      value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       error={!!errors.project}
                     >
-                      <MenuItem value="0">project01</MenuItem>
-                      <MenuItem value="1">project02</MenuItem>
-                      <MenuItem value="2">project03</MenuItem>
+                      {selectProject.map((option: any) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
                     </Select>
                     <FormHelperText error>
                       {errors.project?.message as string}
@@ -104,25 +186,27 @@ const TaskEdit = () => {
                 Assign Employee <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
-                name="employee"
+                name="assignedEmployee"
                 rules={{ required: "Assign employee is required" }}
                 control={control}
                 render={({ field }) => (
                   <>
                     <Select
                       {...field}
-                      id="employee"
-                      value={field.value}
+                      id="assignedEmployee"
+                      value={field.value || ""}
                       placeholder="Assign Employee"
                       onChange={(e) => field.onChange(e.target.value)}
                       fullWidth
                     >
-                      <MenuItem value="0">james</MenuItem>
-                      <MenuItem value="1">john</MenuItem>
-                      <MenuItem value="2">mgmg</MenuItem>
+                      {selectEmployee.map((option: any) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
                     </Select>
                     <FormHelperText error>
-                      {errors.employee?.message as string}
+                      {errors.assignedEmployee?.message as string}
                     </FormHelperText>
                   </>
                 )}
@@ -176,7 +260,7 @@ const TaskEdit = () => {
                 Status <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
-                name="statuss"
+                name="status"
                 rules={{ required: "Status is required" }}
                 control={control}
                 render={({ field }) => (
@@ -184,18 +268,20 @@ const TaskEdit = () => {
                     <Select
                       {...field}
                       id="status"
-                      value={field.value}
+                      value={field.value || ""}
                       placeholder="Status"
                       onChange={(e) => field.onChange(e.target.value)}
+                      error={!!errors.status}
                       fullWidth
                     >
-                      <MenuItem value="0">Opened</MenuItem>
-                      <MenuItem value="1">In progress</MenuItem>
-                      <MenuItem value="2">Finished</MenuItem>
-                      <MenuItem value="3">Closed</MenuItem>
+                      {statusOption.map((option: any) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
                     </Select>
                     <FormHelperText error>
-                      {errors.employee?.message as string}
+                      {errors.status?.message as string}
                     </FormHelperText>
                   </>
                 )}
@@ -213,6 +299,7 @@ const TaskEdit = () => {
                   <TextField
                     {...field}
                     id="actualHour"
+                    type="number"
                     value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
@@ -237,6 +324,7 @@ const TaskEdit = () => {
                   <TextField
                     {...field}
                     id="estimateHour"
+                    type="number"
                     value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
@@ -252,16 +340,22 @@ const TaskEdit = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Estimate Start</InputLabel>
               <Controller
-                name="estimateStart"
+                name="estimate_start_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value || null}
+                      value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                        },
                       }}
                     />
                   </LocalizationProvider>
@@ -271,16 +365,24 @@ const TaskEdit = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Estimate Finish</InputLabel>
               <Controller
-                name="estimateFinish"
+                name="estimate_finish_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value || null}
+                      value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                          error: !!errors.estimate_finish_date,
+                          helperText: errors.estimate_finish_date?.message,
+                        },
                       }}
                     />
                   </LocalizationProvider>
@@ -290,16 +392,22 @@ const TaskEdit = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Actual Start</InputLabel>
               <Controller
-                name="actualStart"
+                name="actual_start_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value || null}
+                      value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                        },
                       }}
                     />
                   </LocalizationProvider>
@@ -309,16 +417,24 @@ const TaskEdit = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Actual Finish</InputLabel>
               <Controller
-                name="actualFinish"
+                name="actual_finish_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value || null}
+                      value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                          error: !!errors.actual_finish_date,
+                          helperText: errors.actual_finish_date?.message,
+                        },
                       }}
                     />
                   </LocalizationProvider>

@@ -11,25 +11,70 @@ import {
   FormHelperText,
   FormControl,
 } from "@mui/material";
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import palette from "@/theme/palette";
 import { DatePicker } from "@mui/x-date-pickers";
-import { useRouter } from "next/navigation";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useRouter } from "next/router";
+import axios from "axios";
+import dayjs from "dayjs";
+import { TaskAddSchema } from "@/utils/taskValidate";
 
 const TaskCreate = () => {
+  const [selectProject, setSelectProject] = useState([]);
+  const [selectEmployee, setSelectEmployee] = useState([]);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const projectApi = await axios.get(
+        "http://localhost:8080/projects/list?limit=30"
+      );
+      const employeeApi = await axios.get(
+        "http://localhost:8080/employees/list?limit=30"
+      );
+      setSelectProject(
+        projectApi.data.data.map((project: any) => ({
+          value: project._id,
+          label: project.projectName,
+        }))
+      );
+      setSelectEmployee(
+        employeeApi.data.data.map((employee: any) => ({
+          value: employee._id,
+          label: employee.employeeName,
+        }))
+      );
+    };
+    fetchData();
+  }, []);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(TaskAddSchema),
+  });
 
   const onSubmit = (data: any): void => {
-    console.log(data);
+    const result = {
+      ...data,
+      estimateHour: Number(data.estimateHour),
+      status: data.status ? data.status : "0",
+      estimate_start_date: data.estimate_start_date
+        ? dayjs(data.estimate_start_date).format("MM-DD-YYYY")
+        : "",
+      estimate_finish_date: data.estimate_finish_date
+        ? dayjs(data.estimate_finish_date).format("MM-DD-YYYY")
+        : "",
+    };
+    axios
+      .post("http://localhost:8080/task/add", result)
+      .then((res) => router.push("/task/list"));
   };
 
   const CommonButton = (props: any) => {
@@ -76,7 +121,6 @@ const TaskCreate = () => {
               </InputLabel>
               <Controller
                 name="project"
-                rules={{ required: "Project is required" }}
                 control={control}
                 render={({ field }) => (
                   <>
@@ -84,13 +128,15 @@ const TaskCreate = () => {
                       {...field}
                       fullWidth
                       id="project"
-                      value={field.value}
+                      value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       error={!!errors.project}
                     >
-                      <MenuItem value="0">project01</MenuItem>
-                      <MenuItem value="1">project02</MenuItem>
-                      <MenuItem value="2">project03</MenuItem>
+                      {selectProject.map((option: any) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
                     </Select>
                     <FormHelperText error>
                       {errors.project?.message as string}
@@ -104,25 +150,27 @@ const TaskCreate = () => {
                 Assign Employee <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
-                name="employee"
+                name="assignedEmployee"
                 rules={{ required: "Assign employee is required" }}
                 control={control}
                 render={({ field }) => (
                   <>
                     <Select
                       {...field}
-                      id="employee"
-                      value={field.value}
-                      placeholder="Assign Employee"
+                      id="assignedEmployee"
+                      value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
+                      error={!!errors.assignedEmployee}
                       fullWidth
                     >
-                      <MenuItem value="0">james</MenuItem>
-                      <MenuItem value="1">john</MenuItem>
-                      <MenuItem value="2">mgmg</MenuItem>
+                      {selectEmployee.map((option: any) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
                     </Select>
                     <FormHelperText error>
-                      {errors.employee?.message as string}
+                      {errors.assignedEmployee?.message as string}
                     </FormHelperText>
                   </>
                 )}
@@ -183,6 +231,7 @@ const TaskCreate = () => {
                   <TextField
                     {...field}
                     id="estimateHour"
+                    type="number"
                     value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
@@ -198,16 +247,22 @@ const TaskCreate = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Estimate Start</InputLabel>
               <Controller
-                name="estimateStart"
+                name="estimate_start_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value || null}
+                      value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                        },
                       }}
                     />
                   </LocalizationProvider>
@@ -217,16 +272,24 @@ const TaskCreate = () => {
             <Grid item sm={6} xs={12}>
               <InputLabel>Estimate Finish</InputLabel>
               <Controller
-                name="estimateFinish"
+                name="estimate_finish_date"
                 control={control}
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       sx={{ width: "100%" }}
                       {...field}
-                      value={field.value || null}
+                      value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
-                        field.onChange(date);
+                        field.onChange(date?.toDate());
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          variant: "outlined",
+                          error: !!errors.estimate_finish_date,
+                          helperText: errors.estimate_finish_date?.message,
+                        },
                       }}
                     />
                   </LocalizationProvider>
