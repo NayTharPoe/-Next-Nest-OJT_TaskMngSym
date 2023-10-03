@@ -17,8 +17,8 @@ import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 export class GetAllReportController {
   constructor(private readonly reportService: ReportService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Get('/list')
   @ApiQuery({
     name: 'limit',

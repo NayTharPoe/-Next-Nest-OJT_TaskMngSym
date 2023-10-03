@@ -23,11 +23,17 @@ export class GetAllProjectController {
     name: 'limit',
     type: Number,
     description: 'Number of items per page',
+    required: false,
   })
-  @ApiQuery({ name: 'page', type: Number, description: 'Page number' })
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    description: 'Page number',
+    required: false,
+  })
   async findAll(
     @Res() response,
-    @Query() query: PaginationRequestDto,
+    @Query() query?: PaginationRequestDto,
   ): Promise<GetAllProjectResponseDto[]> {
     try {
       const result = await this.projectService.findAll(query);

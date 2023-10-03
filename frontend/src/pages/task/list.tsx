@@ -21,7 +21,6 @@ import MainLayout from "@/layouts/MainLayout";
 import AddIcon from "@mui/icons-material/Add";
 import type { NextPageWithLayout } from "../_app";
 import TableBtn from "@/components/tableBtn";
-import ProjectSearchBox from "@/components/project-search-input";
 import ConfirmDialog from "@/components/commonDialog";
 import palette from "@/theme/palette";
 import { useRouter } from "next/navigation";
@@ -29,6 +28,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import Loading from "@/components/loading";
 import TaskDownload from "@/components/taskDownload";
+import ProjectSearchBox from "@/components/ProjectSearchBox";
 
 interface Data {
   _id: string;

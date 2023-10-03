@@ -75,7 +75,7 @@ export default function ConfirmDialog(props: any) {
   return (
     <div>
       <Dialog
-        open={open}
+        open={props.open}
         TransitionComponent={Transition}
         // onClose={onClose}
         aria-labelledby="responsive-dialog-title"

@@ -15,8 +15,8 @@ import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 export class DeleteProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Delete('delete/:id')
   async remove(@Res() response, @Param('id') id: string): Promise<any> {
     try {
