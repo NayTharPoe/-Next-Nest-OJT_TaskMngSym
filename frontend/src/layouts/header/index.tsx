@@ -211,7 +211,7 @@ const Header = () => {
       <Box sx={{ width: 'max-content', display: 'flex', gap: 3 }}>
         <Box sx={{ position: 'relative' }}>
           <IconButton onClick={handleNotificationBox} ref={notificationIconRef}>
-            <Badge color="primary" variant="dot" invisible={notificationBadgeCount <= 0}>
+            <Badge color="error" variant="dot" invisible={notificationBadgeCount <= 0}>
               <NotificationsIcon />
             </Badge>
           </IconButton>

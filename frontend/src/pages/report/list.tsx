@@ -71,7 +71,7 @@ const ReportListPage = ({ reports, isLoading }: any) => {
   if (isLoading) return <Loading />;
 
   return (
-    <Box sx={{ height: 400, width: '100%', my: 4 }}>
+    <Box sx={{ width: '100%', my: 4 }}>
       <Grid
         container
         spacing={2}

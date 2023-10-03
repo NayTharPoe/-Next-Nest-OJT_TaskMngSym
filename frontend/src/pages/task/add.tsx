@@ -38,9 +38,7 @@ const TaskCreate = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const projectApi = await axios.get('http://localhost:8080/projects/list');
-      const employeeApi = await axios.get('http://localhost:8080/employees/list');
-      const projectApi = await axios.get('http://localhost:8080/projects/list');
+      const projectApi = await axios.get('http://localhost:8080/projects/list?page=1&limit=2000');
       const employeeApi = await axios.get('http://localhost:8080/employees/list');
       setSelectProject(
         projectApi.data.data.map((project: any) => ({
@@ -79,31 +77,48 @@ const TaskCreate = () => {
         ? dayjs(data.estimate_finish_date).format('MM-DD-YYYY')
         : '',
     };
-    axios.post('http://localhost:8080/task/add', result).then(async (res) => {
-      const task = res?.data?.data;
-      const assignedEmployeeName = selectEmployee.find(
-        (option: any) => option.value === task.assignedEmployee
-      )?.label;
+    axios
+      .post('http://localhost:8080/task/add', result)
+      .then(async (res) => {
+        const task = res?.data?.data;
+        const assignedEmployeeName = selectEmployee.find(
+          (option: any) => option.value === task.assignedEmployee
+        )?.label;
 
-      const notificationPayload = {
-        tag: 'TASK',
-        createdByWhom: currentUserData?._id,
-        profile: currentUserData?.profile,
-        sendTo: task?.assignedEmployee,
-        message: `
+        const notificationPayload = {
+          tag: 'TASK',
+          createdByWhom: currentUserData?._id,
+          profile: currentUserData?.profile,
+          sendTo: task?.assignedEmployee,
+          message: `
           A <span class='task-name'>${task?.title}</span> task has been created and assigned for
           <span>${assignedEmployeeName} </span>
          `,
-      };
+        };
 
-      const notificationResponse = await axios.post(
-        'http://localhost:8080/notification/add',
-        notificationPayload
-      );
-      socket.emit('taskCreated', notificationResponse?.data?.data);
+        const notificationResponse = await axios.post(
+          'http://localhost:8080/notification/add',
+          notificationPayload
+        );
+        socket.emit('taskCreated', notificationResponse?.data?.data);
 
+        setOpen(true);
+        setIsLoading(false);
+        setStatusText(res.statusText);
+        setMessage(res.data?.message);
+      })
+      .catch((err) => {
+        setOpen(true);
+        setIsLoading(false);
+        setMessage(err.response?.data.message);
+      });
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (statusText === 'OK') {
       router.push('/task/list');
-    });
+    }
   };
 
   const CommonButton = (props: any) => {
