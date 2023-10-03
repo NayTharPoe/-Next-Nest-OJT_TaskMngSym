@@ -24,12 +24,16 @@ import Loading from '@/components/loading';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { TaskEditSchema } from '@/utils/taskValidate';
 import { socket } from '../../../socket';
+import AuthDialog from '@/components/authDialog';
 
 const TaskEdit = () => {
   const [selectProject, setSelectProject] = useState([]);
   const [selectEmployee, setSelectEmployee] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentUserData, setCurrentUserData] = useState<any>({});
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [statusText, setStatusText] = useState('');
   const router = useRouter();
 
   const {
@@ -67,7 +71,7 @@ const TaskEdit = () => {
       );
     };
     if (router.query.id) {
-      axios.get(`http://localhost:8080/task/detail/${router.query.id}?limit=30`).then((res) => {
+      axios.get(`http://localhost:8080/task/detail/${router.query.id}`).then((res) => {
         setValue('project', res.data.data.project?._id);
         setValue('assignedEmployee', res.data.data.assignedEmployee?._id);
         setValue('description', res.data.data.description);
@@ -86,6 +90,7 @@ const TaskEdit = () => {
   }, [router.query.id]);
 
   const onSubmit = (data: any): void => {
+    setIsLoading(true);
     const result = {
       ...data,
       estimateHour: Number(data.estimateHour),
@@ -451,6 +456,9 @@ const TaskEdit = () => {
             <CommonButton text="save">Save</CommonButton>
           </Stack>
         </form>
+        <AuthDialog statusText={statusText} open={open} close={handleClose}>
+          {message}
+        </AuthDialog>
       </Box>
     </>
   );

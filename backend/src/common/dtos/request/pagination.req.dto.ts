@@ -17,5 +17,5 @@ export class PaginationRequestDto {
   @IsNumber()
   @Transform((params) => params.value == null ?? Number(params.value))
   @IsOptional()
-  limit?: any = defaultLimit;
+  limit?: number = defaultLimit;
 }

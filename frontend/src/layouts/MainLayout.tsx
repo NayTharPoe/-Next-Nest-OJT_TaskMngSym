@@ -108,7 +108,6 @@ const MainLayout = (props: any) => {
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           minHeight: '100vh',
-          overflow: 'auto',
           backgroundColor: (theme) => `${theme.palette.background.paper}`,
         }}
       >
