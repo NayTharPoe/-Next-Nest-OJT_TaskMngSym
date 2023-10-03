@@ -17,8 +17,8 @@ import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 export class CreateProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Post('add')
   async create(
     @Res() response,

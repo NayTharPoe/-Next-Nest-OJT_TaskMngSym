@@ -89,9 +89,9 @@ const WARNING = {
 };
 
 const ERROR = {
-  lighter: Tokens.colors.error['100'],
+  lighter: Tokens.colors.error['200'],
   light: Tokens.colors.error['300'],
-  main: Tokens.colors.error['600'],
+  main: Tokens.colors.error.base,
   dark: Tokens.colors.error['800'],
   darker: Tokens.colors.error['900'],
   contrastText: Tokens.colors.error['50'],

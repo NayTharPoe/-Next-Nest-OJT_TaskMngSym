@@ -40,7 +40,7 @@ export class ReportService {
     }
 
     if (reportBy) {
-      query.reportBy = {
+      query['reportBy.employeeName']  = {
         $regex: new RegExp(reportBy, 'i'),
       };
     }

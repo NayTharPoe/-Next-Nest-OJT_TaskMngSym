@@ -18,8 +18,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class UpdateController {
   constructor(private taskService: TaskService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Put('edit/:id')
   async update(
     @Body() payload: UpdateTaskRequestDto,

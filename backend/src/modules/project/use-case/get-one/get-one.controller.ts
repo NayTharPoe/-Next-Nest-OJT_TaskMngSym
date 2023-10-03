@@ -16,8 +16,8 @@ import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 export class GetDetailProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Get('detail/:id')
   async findOne(
     @Res() response,

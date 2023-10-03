@@ -27,10 +27,17 @@ export class ReportEntity extends Document {
   status: number;
 
   @Prop({ required: true })
-  hour: number;
+  hours: number;
 
-  @Prop({ required: true })
-  reportBy: string;
+  @Prop({
+    required: true,
+    type: {
+      employeeName: String,
+      profile: String,
+      position: String,
+    },
+  })
+  reportBy: { employeeName: string; profile: string; position: string };
 
   @Prop()
   problemFeeling: string;

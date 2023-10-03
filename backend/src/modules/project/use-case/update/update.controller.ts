@@ -18,8 +18,8 @@ import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 export class UpdateProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Patch('edit/:id')
   async update(
     @Res() response,

@@ -9,12 +9,18 @@ import { TaskEntity, taskSchema } from './entities/task.entities';
 import { JwtModule } from '@nestjs/jwt';
 import { SECRET_KEY } from 'src/common/constants/constant';
 import { TokenService } from '../auth/tokens/service/token.service';
-import { TokenEntity, tokenSchema } from '../auth/tokens/entities/token.entities';
+import {
+  TokenEntity,
+  tokenSchema,
+} from '../auth/tokens/entities/token.entities';
+import { DeleteController } from './use-case/delete/delete.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: TaskEntity.name, schema: taskSchema }]),
-    MongooseModule.forFeature([{ name: TokenEntity.name, schema: tokenSchema }]),
+    MongooseModule.forFeature([
+      { name: TokenEntity.name, schema: tokenSchema },
+    ]),
     JwtModule.register({
       secret: SECRET_KEY,
       signOptions: { expiresIn: '1D' },
@@ -25,6 +31,7 @@ import { TokenEntity, tokenSchema } from '../auth/tokens/entities/token.entities
     CreateController,
     GetOneController,
     UpdateController,
+    DeleteController,
   ],
   providers: [TaskService, TokenService],
 })

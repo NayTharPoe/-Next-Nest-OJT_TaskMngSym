@@ -1,465 +1,328 @@
-import * as React from 'react';
-import { ReactElement, useState } from 'react';
-import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import { visuallyHidden } from '@mui/utils';
+import React, { ReactElement, useState, useRef, useEffect } from 'react';
 import MainLayout from '@/layouts/MainLayout';
-import type { NextPageWithLayout } from '../_app';
-import BpCheckbox, { BpCheckedIcon } from '../../components/checkbox'
-import { BpIcon } from '../../components/checkbox';
-import TableBtn from '../../components/tableBtn'
-import ProjectSearchBox from '../../components/project-search-input'
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Box, Button, InputAdornment, TablePagination, TextField, styled } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+import AddNewBtn from '@/components/button/addNewBtn';
+import TableBtn from '@/components/tableBtn';
 import ConfirmDialog from '@/components/commonDialog';
-import AddNewBtn from '@/components/addNewBtn';
 import palette from '@/theme/palette';
+import { useRouter } from 'next/navigation';
+import SearchIcon from '@mui/icons-material/Search';
+import dayjs from 'dayjs';
+import axios from 'axios';
 
-interface Data {
-  projectName: string,
-  language: string,
-  description: string,
-  startDate: string,
-  endDate: string,
-}
-
-function createData(
-  projectName: string,
-  language: string,
-  description: string,
-  startDate: string,
-  endDate: string,
-): Data {
-  return {
-    projectName,
-    language,
-    description,
-    startDate,
-    endDate,
-  };
-}
-
-const rows = [
-  createData('Cupcake', 'ReactJS', 'bah bah blah sheet', '2023-08-23', '2023-09-7'),
-  createData('Donut', 'Python', 'bah bah blah sheet', '2023-08-23', '2023-09-7'),
-  createData('Eclair', 'node', 'bah bah blah sheet', '2023-08-23', '2023-09-7'),
-  createData('Frozen yoghurt', 'Golang', 'bah bah blah sheet', '2023-08-23', '2023-09-7'),
-  createData('Gingerbread', 'Nuxt', 'bah bah blah sheet', '2023-08-23', '2023-09-7'),
-  createData('Honeycomb', 'Next', 'bah bah blah sheet', '2023-08-23', '2023-09-7'),
-  createData('Ice cream sandwich', 'Flutter', 'bah bah blah sheet', '2023-08-23', '2023-09-7'),
-  createData('Jelly Bean', 'Dart', 'bah bah blah sheet', '2023-08-23', '2023-09-7'),
-];
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-type Order = 'asc' | 'desc';
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key,
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
-) => number {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-interface HeadCell {
-  disablePadding: boolean;
-  id: any;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: 'projectName',
-    numeric: false,
-    disablePadding: true,
-    label: 'Project Name',
+const secondaryColor = palette.secondary.main;
+const errorColor = palette.error.light;
+const EditButton = styled(Button)({
+  boxShadow: 'none',
+  textTransform: 'none',
+  fontSize: 13,
+  padding: '3px 20px',
+  border: '1px solid',
+  borderRadius: '20px',
+  backgroundColor: secondaryColor,
+  color: palette.text.primary,
+  borderColor: secondaryColor,
+  marginRight: '10px',
+  '&:hover': {
+    backgroundColor: secondaryColor,
+    borderColor: secondaryColor,
+    boxShadow: 'none',
   },
-  {
-    id: 'language',
-    numeric: false,
-    disablePadding: false,
-    label: 'Language',
+  '&:active': {
+    boxShadow: 'none',
+    backgroundColor: secondaryColor,
+    borderColor: secondaryColor,
   },
-  {
-    id: 'description',
-    numeric: false,
-    disablePadding: false,
-    label: 'Description',
-  },
-  {
-    id: 'startDate',
-    numeric: false,
-    disablePadding: false,
-    label: 'Start Date',
-  },
-  {
-    id: 'endDate',
-    numeric: false,
-    disablePadding: false,
-    label: 'End Date',
-  },
-  {
-    id: 'actions',
-    numeric: false,
-    disablePadding: false,
-    label: 'Actions',
-  },
-];
+});
 
-interface EnhancedTableProps {
-  numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
+const RemoveButton = styled(Button)({
+  boxShadow: 'none',
+  textTransform: 'none',
+  fontSize: 13,
+  padding: '3px 20px',
+  border: '1px solid',
+  borderRadius: '20px',
+  backgroundColor: errorColor,
+  color: palette.text.primary,
+  borderColor: errorColor,
+  marginRight: '10px',
+  '&:hover': {
+    backgroundColor: errorColor,
+    borderColor: errorColor,
+    boxShadow: 'none',
+  },
+  '&:active': {
+    boxShadow: 'none',
+    backgroundColor: errorColor,
+    borderColor: errorColor,
+  },
+});
 
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-    props;
-  const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
+const StyledGridOverlay = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%',
+  '& .ant-empty-img-1': {
+    fill: theme.palette.mode === 'light' ? '#aeb8c2' : '#262626',
+  },
+  '& .ant-empty-img-2': {
+    fill: theme.palette.mode === 'light' ? '#f5f5f7' : '#595959',
+  },
+  '& .ant-empty-img-3': {
+    fill: theme.palette.mode === 'light' ? '#dce0e6' : '#434343',
+  },
+  '& .ant-empty-img-4': {
+    fill: theme.palette.mode === 'light' ? '#fff' : '#1c1c1c',
+  },
+  '& .ant-empty-img-5': {
+    fillOpacity: theme.palette.mode === 'light' ? '0.8' : '0.08',
+    fill: theme.palette.mode === 'light' ? '#f5f5f5' : '#fff',
+  },
+}));
+
+const CustomNoRowsOverlay = () => {
+  return (
+    <StyledGridOverlay>
+      <svg
+        style={{ flexShrink: 0 }}
+        width="240"
+        height="150"
+        viewBox="0 0 184 152"
+        aria-hidden
+        focusable="false"
+      >
+        <g fill="none" fillRule="evenodd">
+          <g transform="translate(24 31.67)">
+            <ellipse className="ant-empty-img-5" cx="67.797" cy="106.89" rx="67.797" ry="12.668" />
+            <path
+              className="ant-empty-img-1"
+              d="M122.034 69.674L98.109 40.229c-1.148-1.386-2.826-2.225-4.593-2.225h-51.44c-1.766 0-3.444.839-4.592 2.225L13.56 69.674v15.383h108.475V69.674z"
+            />
+            <path
+              className="ant-empty-img-2"
+              d="M33.83 0h67.933a4 4 0 0 1 4 4v93.344a4 4 0 0 1-4 4H33.83a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z"
+            />
+            <path
+              className="ant-empty-img-3"
+              d="M42.678 9.953h50.237a2 2 0 0 1 2 2V36.91a2 2 0 0 1-2 2H42.678a2 2 0 0 1-2-2V11.953a2 2 0 0 1 2-2zM42.94 49.767h49.713a2.262 2.262 0 1 1 0 4.524H42.94a2.262 2.262 0 0 1 0-4.524zM42.94 61.53h49.713a2.262 2.262 0 1 1 0 4.525H42.94a2.262 2.262 0 0 1 0-4.525zM121.813 105.032c-.775 3.071-3.497 5.36-6.735 5.36H20.515c-3.238 0-5.96-2.29-6.734-5.36a7.309 7.309 0 0 1-.222-1.79V69.675h26.318c2.907 0 5.25 2.448 5.25 5.42v.04c0 2.971 2.37 5.37 5.277 5.37h34.785c2.907 0 5.277-2.421 5.277-5.393V75.1c0-2.972 2.343-5.426 5.25-5.426h26.318v33.569c0 .617-.077 1.216-.221 1.789z"
+            />
+          </g>
+          <path
+            className="ant-empty-img-3"
+            d="M149.121 33.292l-6.83 2.65a1 1 0 0 1-1.317-1.23l1.937-6.207c-2.589-2.944-4.109-6.534-4.109-10.408C138.802 8.102 148.92 0 161.402 0 173.881 0 184 8.102 184 18.097c0 9.995-10.118 18.097-22.599 18.097-4.528 0-8.744-1.066-12.28-2.902z"
+          />
+          <g className="ant-empty-img-4" transform="translate(149.65 15.383)">
+            <ellipse cx="20.654" cy="3.167" rx="2.849" ry="2.815" />
+            <path d="M5.698 5.63H0L2.898.704zM9.259.704h4.985V5.63H9.259z" />
+          </g>
+        </g>
+      </svg>
+      <Box sx={{ mt: 1 }}>No Data</Box>
+    </StyledGridOverlay>
+  );
+};
+
+const ProjectListPage = ({ projects }: any) => {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [IdToDelete, setIdToDelete] = useState(null);
+  const [IdToEdit, setIdToEdit] = useState(null);
+  const [searchText, setSearchText] = useState('');
+  const [filteredRows, setFilteredRows] = useState([]);
+
+  const router = useRouter();
+
+  const columns: GridColDef[] = [
+    {
+      field: 'displayId',
+      headerName: 'ID',
+      flex: 1,
+      disableColumnMenu: true,
+      headerAlign: 'center',
+      align: 'center',
+    },
+    {
+      field: 'projectName',
+      headerName: 'Project Name',
+      flex: 2,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'language',
+      headerName: 'Language',
+      flex: 2,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
+      flex: 3,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'startDate',
+      headerName: 'Start Date',
+      flex: 2,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'endDate',
+      headerName: 'End Date',
+      flex: 2,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      sortable: false,
+      flex: 3,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        const row = params.row;
+        return (
+          <>
+            <EditButton onClick={() => handleEditOpenDialog(row._id)}>Edit</EditButton>
+            <RemoveButton onClick={() => handleDeleteOpenDialog(row._id)}>Remove</RemoveButton>
+          </>
+        );
+      },
+    },
+  ];
+
+  const rows: any = projects?.data?.map((row: any, index: number) => ({
+    _id: row._id,
+    displayId: index + 1,
+    projectName: row.projectName,
+    language: row.language,
+    description: row.description,
+    startDate: dayjs(row.startDate).format('YYYY-MM-DD'),
+    endDate: dayjs(row.endDate).format('YYYY-MM-DD'),
+  }));
+
+  useEffect(() => {
+    const filterRows: any = (rows: any[], searchText: string) => {
+      return rows?.filter((row) => {
+        const { projectName, language, description, startDate, endDate } = row;
+
+        return (
+          projectName?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
+          language?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
+          description?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
+          startDate?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
+          endDate?.toLowerCase().includes(searchText.toLowerCase().trim())
+        );
+      });
     };
 
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <BpCheckbox
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-            sx={{".MuiTableSortLabel-root": {fontSize: '1.02rem'}}}
-          >
-            {headCell.id === 'actions' ? (
-                <TableSortLabel sx={{".MuiSvgIcon-root": {display: 'none'}}}>{headCell.label}</TableSortLabel>
-              ) : (
-                <TableSortLabel
-                  active={orderBy === headCell.id}
-                  direction={orderBy === headCell.id ? order : 'asc'}
-                  onClick={createSortHandler(headCell.id)}
-                >
-                  {headCell.label}
-                  {orderBy === headCell.id ? (
-                    <Box component="span" sx={visuallyHidden}>
-                      {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                    </Box>
-                  ) : null}
-                </TableSortLabel>
-              )}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
+    setFilteredRows(filterRows(rows, searchText));
+  }, [searchText]);
 
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-  searchText: string;
-  onSearchChange: (newSearchText: string) => void;
-}
-
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, searchText, onSearchChange } = props;
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const handleOpenDialog = () => {
-    setDialogOpen(true);
+  const handleEditProject = (id: any) => {
+    setEditDialogOpen(false);
+    router.push(`/project/edit/${id}`);
   };
 
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
+  const handleEditOpenDialog = (id: any) => {
+    setEditDialogOpen(true);
+    setIdToEdit(id);
   };
 
-  const handleSearchInputChange = (event: { target: { value: any; }; }) => {
-    const newSearchText = event.target.value;
-    onSearchChange(newSearchText)
-  }
-
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme: any) =>
-            alpha(theme.palette.charcoal.main, theme.palette.action.activatedOpacity),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          <ProjectSearchBox value={searchText} inputSearch={handleSearchInputChange} />
-        </Typography>
-      )}
-      {numSelected > 0 ? (
-        <>
-          <IconButton onClick={handleOpenDialog}>
-            <DeleteIcon />
-          </IconButton>
-          <ConfirmDialog open={dialogOpen} onClose={handleCloseDialog}/>
-        </>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-}
-
-const ProjectListPage: NextPageWithLayout = () => {
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('projectName');
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [searchText, setSearchText] = useState<string>('')
-
-  const handleSearchChange = (newSearchText: string) => {
-    setSearchText(newSearchText);
+  const handleDeleteOpenDialog = (id: any) => {
+    setDeleteDialogOpen(true);
+    setIdToDelete(id);
   };
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data,
-  ) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) : void => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.projectName);
-      setSelected(newSelected);
-      return;
+  const handleDeleteProject = async (id: any) => {
+    try {
+      setFilteredRows((prevFilteredRows) => prevFilteredRows.filter((row: { _id: any }) => row._id !== id));
+      setDeleteDialogOpen(false);
+      await axios.delete(`http://localhost:8080/project/delete/${id}`);
+    } catch (error) {
+      console.log(error);
     }
-    setSelected([]);
   };
-
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: readonly string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
-
-  function filterRows(rows: Data[], searchText: string): Data[] {
-    const filteredRows = rows.filter((row) => {
-      const { projectName, language, description, startDate, endDate } = row;
-
-      return (
-        projectName.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        language.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        description.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        startDate.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        endDate.toLowerCase().includes(searchText.toLowerCase().trim())
-      );
-    });
-
-    return filteredRows;
-  }
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-  const visibleRows = React.useMemo(
-    () =>
-      stableSort(filterRows(rows, searchText), getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage,
-      ),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [order, orderBy, page, rowsPerPage, rows, searchText],
-  );
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{display: 'flex',justifyContent:'flex-end', mt:2}}>
-        <AddNewBtn AddNewBtnText='Add New Project' path={'/project/add'}/>
+    <Box sx={{ height: 500, width: '100%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, mb: 3 }}>
+        <TextField
+          name="search"
+          id="search"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Search ...."
+          variant="outlined"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+            endAdornment: searchText && (
+              <InputAdornment position="end" onClick={() => setSearchText('')} style={{ cursor: 'pointer' }}>
+                <ClearIcon fontSize="small" />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            '.MuiInputBase-root': {
+              borderRadius: '.4rem',
+            },
+            '.MuiOutlinedInput-input': {
+              p: '11.5px 14px',
+              pl: 0,
+            },
+          }}
+        />
+        <AddNewBtn AddNewBtnText="Add New Project" path={'/project/add'} />
       </Box>
-      <Paper sx={{ width: '100%', mb: 2, mt: 3,p: 2, background: palette.common.white }}>
-        <EnhancedTableToolbar
-        numSelected={selected.length}
-        searchText={searchText}
-        onSearchChange={handleSearchChange}
-        />
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.projectName);
-                const labelId = `enhanced-table-checkbox-${index}`;
-
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.projectName)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.projectName}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell padding="checkbox">
-                      <BpCheckbox
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                      sx={{fontSize: '.9rem'}}
-                    >
-                      {row.projectName}
-                    </TableCell>
-                    <TableCell sx={{fontSize: '.9rem'}}>{row.language}</TableCell>
-                    <TableCell sx={{fontSize: '.9rem'}}>{row.description}</TableCell>
-                    <TableCell sx={{fontSize: '.9rem'}}>{row.startDate}</TableCell>
-                    <TableCell sx={{fontSize: '.9rem'}}>{row.endDate}</TableCell>
-                    <TableCell>
-                      <TableBtn tableBtnText='Edit'/>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
-                <TableRow>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+      <DataGrid
+        rows={filteredRows}
+        columns={columns}
+        getRowId={(row) => row._id}
+        getRowHeight={() => 'auto'}
+        slots={{ noRowsOverlay: CustomNoRowsOverlay }}
+        sx={{
+          backgroundColor: palette.common.white,
+          borderRadius: '.7rem',
+          '.MuiDataGrid-cell': { py: '20px' },
+          '.MuiDataGrid-cell:focus,.MuiDataGrid-columnHeader:focus,.MuiDataGrid-cell:focus-within,.MuiDataGrid-columnHeader:focus-within':
+            {
+              outline: 'none',
+            },
+          '.MuiDataGrid-columnHeaders': { fontSize: '.95rem', py: '2.3rem' },
+          '.MuiDataGrid-cellContent': { fontSize: '.85rem' },
+          '.MuiDataGrid-footerContainer': { display: 'none' },
+        }}
+      />
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onClick={() => handleDeleteProject(IdToDelete)}
+        status="delete"
+      />
+      <ConfirmDialog
+        open={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+        onClick={() => handleEditProject(IdToEdit)}
+        status="edit"
+      />
     </Box>
   );
-}
+};
 
+export default ProjectListPage;
 ProjectListPage.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export default ProjectListPage
+export async function getServerSideProps() {
+  const res = await fetch(`http://localhost:8080/projects/list`);
+  const projects = await res.json();
+
+  return { props: { projects } };
+}
