@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import MainLayout from "@/layouts/MainLayout";
 import {
   Avatar,
@@ -8,6 +8,7 @@ import {
   CardContent,
   Grid,
   IconButton,
+  Pagination,
   Stack,
   Typography,
 } from "@mui/material";
@@ -25,6 +26,7 @@ import useSWR from "swr";
 import ConfirmDialog from "@/components/commonDialog";
 import Loading from "@/components/loading";
 import { apiClient } from "@/services/apiClient";
+import PaginationComponent from "@/components/pagination";
 
 const EmployeeList = () => {
   const [searchText, setSearchText] = useState("");
@@ -32,16 +34,34 @@ const EmployeeList = () => {
   const [onClose, setOnClose] = useState(false);
   const [deleteId, setDeleteId] = useState("");
   const [employeeList, setEmployeeList] = useState<any>([]);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(3);
+  const [totalEmployee, setTotalEmployee] = useState(0);
 
-  const fetcher = async () => {
-    const res = await apiClient.get(
-      "http://localhost:8080/employees/list?limit=30"
-    );
-    setEmployeeList(res.data.data);
-    return res;
-  };
+  // const fetcher = async () => {
+  //   const res = await apiClient.get(
+  //     `http://localhost:8080/employees/list?page=${page}&limit=${limit}`
+  //   );
+  //   setEmployeeList(res.data.data);
+  //   setTotalEmployee(res.data.totalEmployee);
+  //   return res;
+  // };
 
-  const { data, error, isLoading } = useSWR("/employees/list", fetcher);
+  // useEffect(() => {
+  //   const { data, error, isLoading } = useSWR("/employees/list", fetcher);
+  // }, []);
+
+  useEffect(() => {
+    apiClient
+      .get(`http://localhost:8080/employees/list?page=${page}&limit=${limit}`)
+      .then((res) => {
+        setEmployeeList(res.data.data);
+        setTotalEmployee(res.data.totalEmployee);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [page, limit]);
 
   const router = useRouter();
 
@@ -94,9 +114,13 @@ const EmployeeList = () => {
     );
   };
 
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
   return (
     <>
-      {isLoading && <Loading />}
+      {/* {isLoading && <Loading />} */}
       <Stack
         direction={{ xs: "column", sm: "row" }}
         sx={{
@@ -291,6 +315,12 @@ const EmployeeList = () => {
           );
         })}
       </Grid>
+      <PaginationComponent
+        totalItems={totalEmployee}
+        itemsPerPage={limit}
+        currentPage={page}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 };
