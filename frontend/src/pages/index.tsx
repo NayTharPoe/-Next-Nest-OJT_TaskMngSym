@@ -2,7 +2,7 @@ import React, { ReactElement, useState } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import { useRouter } from 'next/router';
 import type { NextPageWithLayout } from './_app';
-import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { Box, Card, CardContent, Grid, Typography, Chip, Button } from '@mui/material';
 import palette from '@/theme/palette';
 import ProjectIcon from '@/components/icons/ProjectIcon';
 import ReportIcon from '@/components/icons/ReportIcon';
@@ -11,7 +11,6 @@ import TaskIcon from '@/components/icons/TaskIcon';
 import axios from 'axios';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { StyledGridOverlay } from '@/components/styledGridOverlay';
-import TableBtn from '@/components/tableBtn';
 
 const CustomNoRowsOverlay = () => {
   return (
@@ -56,10 +55,10 @@ const CustomNoRowsOverlay = () => {
 };
 
 const statusOption = [
-  { value: "0", label: "Opened" },
-  { value: "1", label: "In progress" },
-  { value: "2", label: "Finished" },
-  { value: "3", label: "Closed" },
+  { value: '0', label: 'Opened' },
+  { value: '1', label: 'In progress' },
+  { value: '2', label: 'Finished' },
+  { value: '3', label: 'Closed' },
 ];
 
 const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
@@ -75,92 +74,168 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
     {
       field: 'title',
       headerName: 'Title',
+      width: 160,
       disableColumnMenu: true,
     },
     {
       field: 'description',
       headerName: 'Description',
+      width: 180,
       disableColumnMenu: true,
     },
     {
       field: 'project',
       headerName: 'Project Name',
+      width: 150,
       disableColumnMenu: true,
     },
     {
       field: 'assignedEmployee',
       headerName: 'Assigned Employee',
+      width: 160,
       disableColumnMenu: true,
     },
     {
       field: 'estimateHour',
       headerName: 'Estimate Hour',
       disableColumnMenu: true,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'actualHour',
       disableColumnMenu: true,
       headerName: 'Actual Hour',
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'status',
       headerName: 'Status',
+      width: 150,
       disableColumnMenu: true,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params: { row: any }) => {
+        const row = params.row;
+        let hex;
+        let bgHex;
+        let border;
+        let label;
+        switch (row.status) {
+          case '0':
+            hex = '#2499ef';
+            bgHex = '#2499ef33';
+            border = '#2499ef33';
+            label = 'Opened';
+            break;
+          case '1':
+            hex = '#c6a808';
+            bgHex = '#ffcb1f33';
+            border = '#ffe90033';
+            label = 'In progress';
+            break;
+          case '2':
+            hex = '#52c41a';
+            bgHex = '#8fff8f4d';
+            border = '#8fff8f4d';
+            label = 'Finished';
+            break;
+        }
+        return (
+          <Chip
+            label={label}
+            sx={{ color: hex, backgroundColor: bgHex, borderColor: border }}
+            variant="outlined"
+          />
+        );
+      },
     },
     {
       field: 'estimate_start_date',
       headerName: 'Estimate Start Date',
+      width: 180,
       disableColumnMenu: true,
+      align: 'center',
     },
     {
       field: 'estimate_finish_date',
       headerName: 'Estimate Finish Date',
+      width: 180,
       disableColumnMenu: true,
+      align: 'center',
     },
     {
       field: 'actual_start_date',
       headerName: 'Actual Start Date',
+      width: 180,
       disableColumnMenu: true,
+      align: 'center',
     },
     {
       field: 'actual_finish_date',
       headerName: 'Actual Finish Date',
+      width: 180,
       disableColumnMenu: true,
+      align: 'center',
     },
     {
       field: 'action',
       headerName: 'Action',
       sortable: false,
       disableColumnMenu: true,
-      renderCell: (params: { row: any; }) => {
+      renderCell: (params: { row: any }) => {
         const row = params.row;
         return (
-          <>
-            <TableBtn onClick={() => router.push(`/task/edit/${row._id}`)}>Edit</TableBtn>
-            <TableBtn onClick={() => router.push(`/task/delete/${row._id}`)}>Remove</TableBtn>
-          </>
+          <Button
+            sx={{
+              boxShadow: 'none',
+              textTransform: 'none',
+              fontSize: 13,
+              padding: '3px 20px',
+              border: '1px solid',
+              borderRadius: '20px',
+              backgroundColor: palette.secondary.main,
+              color: palette.text.primary,
+              borderColor: palette.secondary.main,
+              marginRight: '10px',
+              '&:hover': {
+                backgroundColor: palette.secondary.main,
+                borderColor: palette.secondary.main,
+                boxShadow: 'none',
+              },
+              '&:active': {
+                boxShadow: 'none',
+                backgroundColor: palette.secondary.main,
+                borderColor: palette.secondary.main,
+              },
+            }}
+            onClick={() => router.push(`/task/edit/${row._id}`)}
+          >
+            Edit
+          </Button>
         );
       },
     },
   ];
 
-  console.log('all tasks', taskData.data)
-
-  const rows = taskData.data.filter((task: any) => task.staus !== '3').map((task: any, index: number) => ({
-    _id: task._id,
-    displayId: index + 1,
-    title: task.title,
-    description: task.description ? task.description : '-',
-    project: task.project.projectName,
-    assignedEmployee: task.assignedEmployee.employeeName,
-    estimateHour: task.estimateHour ? task.estimateHour : '-',
-    actualHour: task.actualHour ? task.actualHour : '-',
-    status: statusOption.find((status) => status.value === task.status)?.label,
-    estimate_start_date: task.estimate_start_date ? task.estimate_start_date : '-',
-    estimate_finish_date: task.estimate_finish_date ? task.estimate_finish_date : '-',
-    actual_start_date: task.actual_start_date ? task.actual_start_date : '-',
-    actual_finish_date: task.actual_finish_date ? task.actual_finish_date : '-',
-  }))
+  const rows = taskData.data
+    .filter((task: any) => task.status !== '3')
+    .map((task: any, index: number) => ({
+      _id: task._id,
+      displayId: index + 1,
+      title: task.title,
+      description: task.description ? task.description : '-',
+      project: task.project.projectName,
+      assignedEmployee: task.assignedEmployee.employeeName,
+      estimateHour: task.estimateHour ? task.estimateHour + ' hrs' : '-',
+      actualHour: task.actualHour ? task.actualHour + ' hrs' : '-',
+      status: task.status,
+      estimate_start_date: task.estimate_start_date ? task.estimate_start_date : 'N/A',
+      estimate_finish_date: task.estimate_finish_date ? task.estimate_finish_date : 'N/A',
+      actual_start_date: task.actual_start_date ? task.actual_start_date : 'N/A',
+      actual_finish_date: task.actual_finish_date ? task.actual_finish_date : 'N/A',
+    }));
 
   return (
     <>
@@ -179,9 +254,9 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
               <Box
                 sx={{
                   borderRadius: '50%',
-                  backgroundColor: palette.primary.main,
-                  width: '50px',
-                  height: '50px',
+                  backgroundColor: '#ff977733',
+                  width: '60px',
+                  height: '60px',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -214,9 +289,9 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
               <Box
                 sx={{
                   borderRadius: '50%',
-                  backgroundColor: '#78b3ea',
-                  width: '50px',
-                  height: '50px',
+                  backgroundColor: '#a798ff33',
+                  width: '60px',
+                  height: '60px',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -249,9 +324,9 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
               <Box
                 sx={{
                   borderRadius: '50%',
-                  backgroundColor: '#909eab',
-                  width: '50px',
-                  height: '50px',
+                  backgroundColor: '#ff6b9333',
+                  width: '60px',
+                  height: '60px',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -284,9 +359,9 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
               <Box
                 sx={{
                   borderRadius: '50%',
-                  backgroundColor: '#89c6bd',
-                  width: '50px',
-                  height: '50px',
+                  backgroundColor: '#2499ef33',
+                  width: '60px',
+                  height: '60px',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -306,8 +381,10 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
           </Card>
         </Grid>
       </Grid>
-      <Box sx={{ height: 500, width: '100%', my: 5 }}>
-        <Typography variant='h2' sx={{ textAlign: 'center', mb: 2 }}>Top Not Closed Tasks</Typography>
+      <Box sx={{ width: '100%', my: 5 }}>
+        <Typography variant="h2" sx={{ textAlign: 'center', mb: 3 }}>
+          Top Not Closed Tasks
+        </Typography>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -319,14 +396,38 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
             borderRadius: '.7rem',
             '.MuiDataGrid-cell': { py: '20px' },
             '.MuiDataGrid-cell:focus,.MuiDataGrid-columnHeader:focus,.MuiDataGrid-cell:focus-within,.MuiDataGrid-columnHeader:focus-within':
-            {
-              outline: 'none',
-            },
+              {
+                outline: 'none',
+              },
             '.MuiDataGrid-columnHeaders': { fontSize: '.95rem', py: '2.3rem' },
             '.MuiDataGrid-cellContent': { fontSize: '.85rem' },
             '.MuiDataGrid-footerContainer': { display: 'none' },
           }}
         />
+        <Box sx={{ textAlign: 'center' }}>
+          <Button
+            sx={{
+              padding: '10px 30px',
+              mt: '2rem',
+              backgroundColor: palette.primary.main,
+              color: palette.text.primary,
+              borderColor: palette.primary.border,
+              '&:hover': {
+                backgroundColor: palette.primary.main,
+                borderColor: palette.primary.border,
+                boxShadow: 'none',
+              },
+              '&:active': {
+                boxShadow: 'none',
+                backgroundColor: palette.primary.main,
+                borderColor: palette.primary.border,
+              },
+            }}
+            onClick={() => router.push('/task/list')}
+          >
+            View All
+          </Button>
+        </Box>
       </Box>
     </>
   );
@@ -355,8 +456,8 @@ export async function getServerSideProps() {
     };
 
     const taskData = {
-      data: tasksRes.data.data
-    }
+      data: tasksRes.data.data,
+    };
 
     return {
       props: {
@@ -378,5 +479,3 @@ export async function getServerSideProps() {
     };
   }
 }
-
-
