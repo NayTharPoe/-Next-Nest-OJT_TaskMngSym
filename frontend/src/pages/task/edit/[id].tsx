@@ -18,12 +18,12 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import palette from "@/theme/palette";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useRouter } from "next/router";
-import axios from "axios";
 import dayjs from "dayjs";
 import Loading from "@/components/loading";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { TaskEditSchema } from "@/utils/taskValidate";
 import AuthDialog from "@/components/authDialog";
+import { apiClient } from "@/services/apiClient";
 
 const TaskEdit = () => {
   const [selectProject, setSelectProject] = useState([]);
@@ -53,8 +53,10 @@ const TaskEdit = () => {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      const projectApi = await axios.get("http://localhost:8080/projects/list");
-      const employeeApi = await axios.get(
+      const projectApi = await apiClient.get(
+        "http://localhost:8080/projects/list"
+      );
+      const employeeApi = await apiClient.get(
         "http://localhost:8080/employees/list"
       );
       setSelectProject(
@@ -71,7 +73,7 @@ const TaskEdit = () => {
       );
     };
     if (router.query.id) {
-      axios
+      apiClient
         .get(`http://localhost:8080/task/detail/${router.query.id}`)
         .then((res) => {
           setValue("project", res.data.data.project?._id);
@@ -110,7 +112,7 @@ const TaskEdit = () => {
         ? dayjs(data.actual_finish_date).format("MM-DD-YYYY")
         : "",
     };
-    axios
+    apiClient
       .put(`http://localhost:8080/task/edit/${router.query.id}`, result)
       .then((res) => {
         setOpen(true);

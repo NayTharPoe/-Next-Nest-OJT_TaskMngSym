@@ -19,11 +19,11 @@ import palette from "@/theme/palette";
 import { DatePicker } from "@mui/x-date-pickers";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
-import axios from "axios";
 import dayjs from "dayjs";
 import { TaskAddSchema } from "@/utils/taskValidate";
 import AuthDialog from "@/components/authDialog";
 import Loading from "@/components/loading";
+import { apiClient } from "@/services/apiClient";
 
 const TaskCreate = () => {
   const [selectProject, setSelectProject] = useState([]);
@@ -36,8 +36,10 @@ const TaskCreate = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const projectApi = await axios.get("http://localhost:8080/projects/list");
-      const employeeApi = await axios.get(
+      const projectApi = await apiClient.get(
+        "http://localhost:8080/projects/list"
+      );
+      const employeeApi = await apiClient.get(
         "http://localhost:8080/employees/list"
       );
       setSelectProject(
@@ -77,7 +79,7 @@ const TaskCreate = () => {
         ? dayjs(data.estimate_finish_date).format("MM-DD-YYYY")
         : "",
     };
-    axios
+    apiClient
       .post("http://localhost:8080/task/add", result)
       .then((res) => {
         setOpen(true);

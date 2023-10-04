@@ -8,7 +8,6 @@ import {
   CardContent,
   Grid,
   IconButton,
-  Pagination,
   Stack,
   Typography,
 } from "@mui/material";
@@ -27,6 +26,7 @@ import ConfirmDialog from "@/components/commonDialog";
 import Loading from "@/components/loading";
 import { apiClient } from "@/services/apiClient";
 import PaginationComponent from "@/components/pagination";
+import AuthDialog from "@/components/authDialog";
 
 const EmployeeList = () => {
   const [searchText, setSearchText] = useState("");
@@ -35,35 +35,34 @@ const EmployeeList = () => {
   const [deleteId, setDeleteId] = useState("");
   const [employeeList, setEmployeeList] = useState<any>([]);
   const [page, setPage] = useState(1);
-  const [limit] = useState(3);
+  const [limit] = useState(4);
   const [totalEmployee, setTotalEmployee] = useState(0);
-
-  // const fetcher = async () => {
-  //   const res = await apiClient.get(
-  //     `http://localhost:8080/employees/list?page=${page}&limit=${limit}`
-  //   );
-  //   setEmployeeList(res.data.data);
-  //   setTotalEmployee(res.data.totalEmployee);
-  //   return res;
-  // };
-
-  // useEffect(() => {
-  //   const { data, error, isLoading } = useSWR("/employees/list", fetcher);
-  // }, []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [message, setMessage] = useState("");
+  const [statusText, setStatusText] = useState("");
 
   useEffect(() => {
+    setIsLoading(true);
     apiClient
       .get(`http://localhost:8080/employees/list?page=${page}&limit=${limit}`)
       .then((res) => {
         setEmployeeList(res.data.data);
         setTotalEmployee(res.data.totalEmployee);
+        setIsLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        setOpenDialog(true);
+        setIsLoading(false);
+        setMessage(err.response?.data.message);
       });
   }, [page, limit]);
 
   const router = useRouter();
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
 
   const handleDelete = () => {
     apiClient.delete(`http://localhost:8080/employee/${deleteId}`);
@@ -114,13 +113,13 @@ const EmployeeList = () => {
     );
   };
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: any) => {
     setPage(newPage);
   };
 
   return (
     <>
-      {/* {isLoading && <Loading />} */}
+      {isLoading && <Loading />}
       <Stack
         direction={{ xs: "column", sm: "row" }}
         sx={{
@@ -315,12 +314,17 @@ const EmployeeList = () => {
           );
         })}
       </Grid>
-      <PaginationComponent
-        totalItems={totalEmployee}
-        itemsPerPage={limit}
-        currentPage={page}
-        onPageChange={handlePageChange}
-      />
+      <AuthDialog statusText={statusText} open={openDialog} close={handleClose}>
+        {message}
+      </AuthDialog>
+      {!isLoading && (
+        <PaginationComponent
+          totalItems={totalEmployee}
+          itemsPerPage={limit}
+          currentPage={page}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 };
