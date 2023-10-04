@@ -21,7 +21,6 @@ import palette from "@/theme/palette";
 import EmployeeSearchBox from "@/components/employee-search-input";
 import { useRouter } from "next/router";
 import { theme } from "@/theme";
-import useSWR from "swr";
 import ConfirmDialog from "@/components/commonDialog";
 import Loading from "@/components/loading";
 import { apiClient } from "@/services/apiClient";
@@ -37,32 +36,27 @@ const EmployeeList = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(4);
   const [totalEmployee, setTotalEmployee] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [message, setMessage] = useState("");
-  const [statusText, setStatusText] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [searchErr, setSearchErr] = useState("");
 
   useEffect(() => {
-    setIsLoading(true);
     apiClient
-      .get(`http://localhost:8080/employees/list?page=${page}&limit=${limit}`)
+      .get(
+        `http://localhost:8080/employees/list?page=${page}&limit=${limit}&keyword=${keyword}`
+      )
       .then((res) => {
         setEmployeeList(res.data.data);
         setTotalEmployee(res.data.totalEmployee);
-        setIsLoading(false);
+        setSearchErr("");
       })
       .catch((err) => {
-        setOpenDialog(true);
-        setIsLoading(false);
-        setMessage(err.response?.data.message);
+        if (err.response?.status === 404) {
+          setSearchErr(err.response?.data.message);
+        }
       });
-  }, [page, limit]);
+  }, [page, limit, keyword]);
 
   const router = useRouter();
-
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
 
   const handleDelete = () => {
     apiClient.delete(`http://localhost:8080/employee/${deleteId}`);
@@ -74,6 +68,7 @@ const EmployeeList = () => {
 
   const handleInputChange = (event: any) => {
     setSearchText(event.target.value);
+    setKeyword(event.target.value);
   };
 
   const filterEmployeeData = employeeList?.filter((row: any) => {
@@ -119,7 +114,6 @@ const EmployeeList = () => {
 
   return (
     <>
-      {isLoading && <Loading />}
       <Stack
         direction={{ xs: "column", sm: "row" }}
         sx={{
@@ -314,16 +308,22 @@ const EmployeeList = () => {
           );
         })}
       </Grid>
-      <AuthDialog statusText={statusText} open={openDialog} close={handleClose}>
-        {message}
-      </AuthDialog>
-      {!isLoading && (
+      <Typography
+        color="primary"
+        variant="h4"
+        sx={{ textAlign: "center", margin: "50px 0" }}
+      >
+        {searchErr}
+      </Typography>
+      {searchErr === "" ? (
         <PaginationComponent
           totalItems={totalEmployee}
           itemsPerPage={limit}
           currentPage={page}
           onPageChange={handlePageChange}
         />
+      ) : (
+        ""
       )}
     </>
   );

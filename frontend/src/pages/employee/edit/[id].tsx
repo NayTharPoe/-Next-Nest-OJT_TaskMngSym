@@ -242,6 +242,7 @@ const EmployeeEdit = () => {
                 control={control}
                 render={({ field }) => (
                   <TextField
+                    disabled
                     {...field}
                     fullWidth
                     id="email"

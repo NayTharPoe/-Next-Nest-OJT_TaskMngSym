@@ -37,10 +37,10 @@ const TaskCreate = () => {
   useEffect(() => {
     const fetchData = async () => {
       const projectApi = await apiClient.get(
-        "http://localhost:8080/projects/list"
+        "http://localhost:8080/projects/list?page=1&limit=100"
       );
       const employeeApi = await apiClient.get(
-        "http://localhost:8080/employees/list"
+        "http://localhost:8080/employees/list?page=1&limit=100"
       );
       setSelectProject(
         projectApi.data.data.map((project: any) => ({

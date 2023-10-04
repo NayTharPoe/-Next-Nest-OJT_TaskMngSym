@@ -38,7 +38,7 @@ export class EmployeeService {
       options = {
         $or: [
           { employeeName: new RegExp(keyword.toString(), 'i') },
-          { position: new RegExp(keyword.toString(), 'i') },
+          { email: new RegExp(keyword.toString(), 'i') },
         ],
       };
     }
@@ -52,7 +52,7 @@ export class EmployeeService {
       .skip(limit * (page - 1));
 
     if (data.length === 0) {
-      throw new NotFoundException(`No item with this ${keyword}`);
+      throw new NotFoundException(`No item with this '${keyword}'`);
     }
 
     return { data, totalEmployee };
