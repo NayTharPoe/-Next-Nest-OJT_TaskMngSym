@@ -211,16 +211,21 @@ const ReportAddPage = () => {
 
   const fetchRoles = async () => {
     try {
-      const res = await axios.get('http://localhost:8080/employees/list').then((res) => res.data);
-      const adminRoles = res.data
-        ?.filter(
-          (e: { position: string; _id: any }) => e?.position !== '0' && e?._id !== currentUserData?._id
-        )
-        .map((employee: any) => ({
-          value: employee._id,
-          label: employee.employeeName,
-        }));
-      setRoleOptions(adminRoles);
+      const user = localStorage.getItem('user');
+      if (user) {
+        const currentUserData = JSON.parse(user);
+        setCurrentUserData(currentUserData);
+
+        await axios.get('http://localhost:8080/employees/list').then((res) => {
+          const adminRoles = res?.data?.data
+            ?.filter((e: any) => e?.position !== '0' && e?._id !== currentUserData?._id)
+            .map((employee: any) => ({
+              value: employee._id,
+              label: employee.employeeName,
+            }));
+          setRoleOptions(adminRoles);
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -313,10 +318,6 @@ const ReportAddPage = () => {
   useEffect(() => {
     fetchRoles();
     fetchTasks();
-    const user = localStorage.getItem('user');
-    if (user) {
-      setCurrentUserData(JSON.parse(user));
-    }
   }, []);
 
   return (
