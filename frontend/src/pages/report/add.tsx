@@ -213,7 +213,9 @@ const ReportAddPage = () => {
     try {
       const res = await axios.get('http://localhost:8080/employees/list').then((res) => res.data);
       const adminRoles = res.data
-        ?.filter((e: { position: string, _id: any }) => e.position !== '0' && e._id !== currentUserData?._id)
+        ?.filter(
+          (e: { position: string; _id: any }) => e?.position !== '0' && e?._id !== currentUserData?._id
+        )
         .map((employee: any) => ({
           value: employee._id,
           label: employee.employeeName,

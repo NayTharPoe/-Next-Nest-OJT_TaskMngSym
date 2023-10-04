@@ -6,11 +6,9 @@ import {
   Box,
   Button,
   Card,
-  CardActions,
   CardContent,
   Chip,
   Grid,
-  IconButton,
   InputAdornment,
   Stack,
   TextField,
@@ -21,11 +19,11 @@ import ClearIcon from '@mui/icons-material/Clear';
 import AddNewBtn from '@/components/button/addNewBtn';
 import palette from '@/theme/palette';
 import dayjs from 'dayjs';
-import Loading from '@/components/loading';
 import { useRouter } from 'next/router';
 import { StyledGridOverlay } from '@/components/styledGridOverlay';
+import ExcelDownloadButton from '@/components/reportExcelDownload';
 
-const ReportListPage = ({ reports, isLoading }: any) => {
+const ReportListPage = ({ reports }: any) => {
   const [formData, setFormData] = useState({
     reportTo: '',
     reportBy: '',
@@ -67,8 +65,6 @@ const ReportListPage = ({ reports, isLoading }: any) => {
     const dateParam = formData.selectedDate ? `&date=${formattedDate}` : '';
     router.push(`${router.pathname}?page=1&limit=2000${reportToParam}${reportByParam}${dateParam}`);
   };
-
-  if (isLoading) return <Loading />;
 
   return (
     <Box sx={{ width: '100%', my: 4 }}>
@@ -172,6 +168,7 @@ const ReportListPage = ({ reports, isLoading }: any) => {
         </Grid>
         <Grid item>
           <AddNewBtn AddNewBtnText="Add Report" path="/report/add" />
+          <ExcelDownloadButton data={reports?.data} fileName="report-list" />
         </Grid>
       </Grid>
       <Grid
@@ -285,15 +282,10 @@ ReportListPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getServerSideProps(context: any) {
-  try {
-    const res = await fetch(
-      `http://localhost:8080/reports/list?${new URLSearchParams(context.query).toString()}`
-    );
-    const reports = await res.json();
+  const res = await fetch(
+    `http://localhost:8080/reports/list?${new URLSearchParams(context.query).toString()}`
+  );
+  const reports = await res.json();
 
-    return { props: { reports } };
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return { props: { reports: null } };
-  }
+  return { props: { reports } };
 }
