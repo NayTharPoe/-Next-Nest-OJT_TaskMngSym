@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import { useRouter } from 'next/router';
 import type { NextPageWithLayout } from './_app';
@@ -54,14 +54,9 @@ const CustomNoRowsOverlay = () => {
   );
 };
 
-const statusOption = [
-  { value: '0', label: 'Opened' },
-  { value: '1', label: 'In progress' },
-  { value: '2', label: 'Finished' },
-  { value: '3', label: 'Closed' },
-];
-
 const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
+  const [filterRow, setFilterRow] = useState([]);
+  const [loggedInUser, setLoggedInUser] = useState<any>({});
   const router = useRouter();
   const columns: GridColDef[] = [
     {
@@ -219,7 +214,7 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
     },
   ];
 
-  const rows = taskData.data
+  const formattedRow = taskData.data
     .filter((task: any) => task.status !== '3')
     .map((task: any, index: number) => ({
       _id: task._id,
@@ -237,11 +232,36 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
       actual_finish_date: task.actual_finish_date ? task.actual_finish_date : 'N/A',
     }));
 
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      const currentUserData = JSON.parse(user);
+      setLoggedInUser(currentUserData);
+
+      if (currentUserData?.position !== '1') {
+        const result = formattedRow.filter(
+          (task: any) => task?.assignedEmployee === currentUserData?.employeeName
+        );
+        setFilterRow(result);
+      } else {
+        setFilterRow(formattedRow);
+      }
+    }
+  }, []);
+
   return (
     <>
       <Grid container spacing={3} sx={{ mt: 2, justifyContent: 'center' }}>
         <Grid item xs={12} sm={5.5} md={3}>
-          <Card sx={{ borderRadius: '1.2rem', backgroundColor: palette.common.white, boxShadow: 'none' }}>
+          <Card
+            onClick={() => router.push('/employee/list')}
+            sx={{
+              borderRadius: '1.2rem',
+              backgroundColor: palette.common.white,
+              boxShadow: 'none',
+              cursor: 'pointer',
+            }}
+          >
             <CardContent
               sx={{
                 display: 'flex',
@@ -276,7 +296,15 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
           </Card>
         </Grid>
         <Grid item xs={12} sm={5.5} md={3}>
-          <Card sx={{ borderRadius: '1.2rem', backgroundColor: palette.common.white, boxShadow: 'none' }}>
+          <Card
+            onClick={() => router.push('/project/list')}
+            sx={{
+              borderRadius: '1.2rem',
+              backgroundColor: palette.common.white,
+              boxShadow: 'none',
+              cursor: 'pointer',
+            }}
+          >
             <CardContent
               sx={{
                 display: 'flex',
@@ -311,7 +339,15 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
           </Card>
         </Grid>
         <Grid item xs={12} sm={5.5} md={3}>
-          <Card sx={{ borderRadius: '1.2rem', backgroundColor: palette.common.white, boxShadow: 'none' }}>
+          <Card
+            onClick={() => router.push('/task/list')}
+            sx={{
+              borderRadius: '1.2rem',
+              backgroundColor: palette.common.white,
+              boxShadow: 'none',
+              cursor: 'pointer',
+            }}
+          >
             <CardContent
               sx={{
                 display: 'flex',
@@ -346,7 +382,15 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
           </Card>
         </Grid>
         <Grid item xs={12} sm={5.5} md={3}>
-          <Card sx={{ borderRadius: '1.2rem', backgroundColor: palette.common.white, boxShadow: 'none' }}>
+          <Card
+            onClick={() => router.push('/report/list')}
+            sx={{
+              borderRadius: '1.2rem',
+              backgroundColor: palette.common.white,
+              boxShadow: 'none',
+              cursor: 'pointer',
+            }}
+          >
             <CardContent
               sx={{
                 display: 'flex',
@@ -386,7 +430,7 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
           Top Not Closed Tasks
         </Typography>
         <DataGrid
-          rows={rows}
+          rows={filterRow}
           columns={columns}
           getRowId={(row) => row._id}
           getRowHeight={() => 'auto'}
@@ -442,8 +486,8 @@ export default DashboardPage;
 export async function getServerSideProps() {
   try {
     const [employeesRes, tasksRes, projectsRes, reportsRes] = await Promise.all([
-      axios.get('http://localhost:8080/employees/list'),
-      axios.get('http://localhost:8080/tasks/list'),
+      axios.get('http://localhost:8080/employees/list?page=1&limit=2000'),
+      axios.get('http://localhost:8080/tasks/list?page=1&limit=2000'),
       axios.get('http://localhost:8080/projects/list?page=1&limit=2000'),
       axios.get('http://localhost:8080/reports/list?page=1&limit=2000'),
     ]);
