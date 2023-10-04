@@ -13,6 +13,9 @@ import {
   Stack,
   TextField,
   Typography,
+  Pagination,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -29,6 +32,7 @@ const ReportListPage = ({ reports }: any) => {
     reportBy: '',
     selectedDate: null,
   });
+  const [limit, setLimit] = useState(5);
   const router = useRouter();
 
   const statusOptions = [
@@ -53,6 +57,25 @@ const ReportListPage = ({ reports }: any) => {
     });
   };
 
+  const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    const newUrl = `${router.pathname}?page=${page}&limit=${limit}`;
+    router.push(newUrl);
+  };
+
+  const handleLimitChange: any = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const newLimit = event.target.value as number;
+    setLimit(newLimit);
+
+    const currentPathname = router.pathname;
+    const currentQuery = { ...router.query };
+    currentQuery.limit = newLimit.toString();
+
+    router.push({
+      pathname: currentPathname,
+      query: currentQuery,
+    });
+  };
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -63,7 +86,7 @@ const ReportListPage = ({ reports }: any) => {
     const reportToParam = formData.reportTo ? `&reportTo=${formattedReportTo}` : '';
     const reportByParam = formData.reportBy ? `&reportBy=${formattedBy}` : '';
     const dateParam = formData.selectedDate ? `&date=${formattedDate}` : '';
-    router.push(`${router.pathname}?page=1&limit=2000${reportToParam}${reportByParam}${dateParam}`);
+    router.push(`${router.pathname}?page=1&limit=${limit}${reportToParam}${reportByParam}${dateParam}`);
   };
 
   return (
@@ -272,6 +295,18 @@ const ReportListPage = ({ reports }: any) => {
           })
         )}
       </Grid>
+      <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* <Typography>Rows per page: </Typography> */}
+          <Select label="Items per page" value={limit} size="small" onChange={handleLimitChange}>
+            <MenuItem value={5}>5 results per page</MenuItem>
+            <MenuItem value={10}>10 results per page</MenuItem>
+            <MenuItem value={25}>25 results per page</MenuItem>
+          </Select>
+        </Box>
+        <Pagination count={Math.ceil(reports?.count / limit)} onChange={handlePageChange} />
+        <Typography>1-20 / 944 results</Typography>
+      </Box>
     </Box>
   );
 };
