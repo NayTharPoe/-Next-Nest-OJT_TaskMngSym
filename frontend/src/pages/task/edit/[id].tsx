@@ -27,8 +27,9 @@ import { apiClient } from "@/services/apiClient";
 
 const TaskEdit = () => {
   const [selectProject, setSelectProject] = useState([]);
-  const [selectEmployee, setSelectEmployee] = useState([]);
+  const [selectEmployee, setSelectEmployee] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentUserData, setCurrentUserData] = useState<any>({});
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [statusText, setStatusText] = useState("");
@@ -166,6 +167,10 @@ const TaskEdit = () => {
       </Button>
     );
   };
+
+  useEffect(() => {
+    setCurrentUserData(JSON.parse(localStorage.getItem("user") ?? "{}"));
+  }, []);
 
   return (
     <>

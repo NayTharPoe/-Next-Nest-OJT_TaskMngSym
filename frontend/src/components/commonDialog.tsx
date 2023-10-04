@@ -9,7 +9,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import palette from "@/theme/palette";
-import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -21,16 +20,16 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export default function ConfirmDialog(props: any) {
-  const { open, id, onClose, onClick, onCancel } = props;
+  const { open, onClose, onCancel, status } = props;
   return (
     <div>
       <Dialog
-        open={props.open}
+        open={open}
         TransitionComponent={Transition}
-        // onClose={onClose}
+        onClose={onClose}
         aria-labelledby="responsive-dialog-title"
         BackdropProps={{
-          sx: { backgroundColor: "rgba(0, 0, 0, 0.2)" }, // Set the backdrop color with transparency
+          sx: { backgroundColor: "rgba(0, 0, 0, 0.2)" },
         }}
         sx={{
           ".MuiPaper-root": {
@@ -53,19 +52,21 @@ export default function ConfirmDialog(props: any) {
         </DialogContent>
         <DialogActions sx={{ pb: 3 }}>
           <Button
-            onClick={onCancel}
+            onClick={onClose}
             autoFocus
             sx={{ color: palette.primary.dark, fontSize: "0.95rem" }}
           >
             Cancel
           </Button>
-          <Button
-            onClick={onClick}
-            autoFocus
-            sx={{ color: palette.primary.dark, fontSize: "0.95rem" }}
-          >
-            Delete
-          </Button>
+          {status === 'edit' ? (
+            <Button autoFocus sx={{ color: palette.primary.dark, fontSize: '0.95rem' }} {...props}>
+              Edit
+            </Button>
+          ) : (
+            <Button autoFocus sx={{ color: palette.primary.dark, fontSize: '0.95rem' }} {...props}>
+              Delete
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </div>

@@ -291,9 +291,9 @@ const ProjectListPage = ({ projects }: any) => {
           borderRadius: '.7rem',
           '.MuiDataGrid-cell': { py: '20px' },
           '.MuiDataGrid-cell:focus,.MuiDataGrid-columnHeader:focus,.MuiDataGrid-cell:focus-within,.MuiDataGrid-columnHeader:focus-within':
-            {
-              outline: 'none',
-            },
+          {
+            outline: 'none',
+          },
           '.MuiDataGrid-columnHeaders': { fontSize: '.95rem', py: '2.3rem' },
           '.MuiDataGrid-cellContent': { fontSize: '.85rem' },
           '.MuiDataGrid-footerContainer': { display: 'none' },

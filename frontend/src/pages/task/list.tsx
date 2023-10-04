@@ -350,7 +350,6 @@ const TaskList: NextPageWithLayout = () => {
   const [taskList, setTaskList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [onClose, setOnClose] = useState(false);
   const router = useRouter();
 
   const statusOption = [
@@ -572,9 +571,8 @@ const TaskList: NextPageWithLayout = () => {
                       </TableBtn>
                       <ConfirmDialog
                         open={open}
-                        onClose={onClose}
+                        onClose={() => setOpen(false)}
                         onClick={handleDelete}
-                        onCancel={() => setOpen(false)}
                         id={row._id}
                       />
                     </TableCell>

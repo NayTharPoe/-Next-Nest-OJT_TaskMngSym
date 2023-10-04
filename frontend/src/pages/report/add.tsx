@@ -30,6 +30,8 @@ import palette from '@/theme/palette';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { ReportSchema } from '@/lib/validation/reportSchema';
+import { socket } from '../../socket';
 
 const PreviewDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -130,32 +132,6 @@ const columns: readonly Column[] = [
   { id: 'action', label: 'Action', minWidth: 140, align: 'left' },
 ];
 
-const schema = yup.object().shape({
-  reportTo: yup.string().required('Please select an admin.'),
-  problem_feeling: yup.string(),
-  reports: yup.array().of(
-    yup.object().shape({
-      taskId: yup.string().required('Task ID is required.'),
-      taskTitle: yup.string().required('Task title is required.'),
-      project: yup.string().required('Project is required.'),
-      percentage: yup
-        .number()
-        .typeError('Percentage must be a number')
-        .min(0, 'percentage must be greater than or equal to 0')
-        .max(100, 'percentage must be less than or equal to 100')
-        .required('Percentage is required.'),
-      types: yup.string().required('Types is required.'),
-      status: yup.string().required('Status is required.'),
-      hours: yup
-        .number()
-        .typeError('Hours must be a number')
-        .min(0, 'hours must be greater than or equal to 0')
-        .max(8, 'hours must be less than or equal to 8')
-        .required('Hours is required'),
-    })
-  ),
-});
-
 const ReportAddPage = () => {
   const [openPreviewDialog, setOpenPreviewDialog] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -196,7 +172,7 @@ const ReportAddPage = () => {
     formState: { errors },
     setValue,
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(ReportSchema),
     defaultValues: {
       reportTo: '',
       problem_feeling: '',
@@ -235,16 +211,21 @@ const ReportAddPage = () => {
 
   const fetchRoles = async () => {
     try {
-      const res = await axios
-        .get('http://localhost:8080/employees/list?page=1&limit=1000')
-        .then((res) => res.data);
-      const adminRoles = res.data
-        ?.filter((e: { position: string }) => e.position !== '1')
-        .map((employee: any) => ({
-          value: employee._id,
-          label: employee.employeeName,
-        }));
-      setRoleOptions(adminRoles);
+      const user = localStorage.getItem('user');
+      if (user) {
+        const currentUserData = JSON.parse(user);
+        setCurrentUserData(currentUserData);
+
+        await axios.get('http://localhost:8080/employees/list').then((res) => {
+          const adminRoles = res?.data?.data
+            ?.filter((e: any) => e?.position !== '0' && e?._id !== currentUserData?._id)
+            .map((employee: any) => ({
+              value: employee._id,
+              label: employee.employeeName,
+            }));
+          setRoleOptions(adminRoles);
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -252,9 +233,7 @@ const ReportAddPage = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios
-        .get('http://localhost:8080/tasks/list?page=1&limit=1000')
-        .then((res) => res.data);
+      const res = await axios.get('http://localhost:8080/tasks/list').then((res) => res.data);
       const taskOptions = res.data?.map((task: { _id: any }, index: number) => ({
         value: task._id,
         label: index + 1,
@@ -310,7 +289,26 @@ const ReportAddPage = () => {
           problemFeeling: data.problem_feeling,
         }));
 
-        await axios.post('http://localhost:8080/report/add', payload);
+        const reportResponse = await axios.post('http://localhost:8080/report/add', payload);
+
+        const notificationPayload = reportResponse.data?.data.map((row: any) => ({
+          tag: 'REPORT',
+          createdByWhom: currentUserData?._id,
+          profile: currentUserData?.profile,
+          sendTo: previewAdmin,
+          message: `
+          <span class="report-by">${row.reportBy.employeeName}</span> reported on
+          <span class="project-name"> ${row.project} </span> &
+          <span class="task-title">${row.taskTitle} </span>
+          <span class="types">(${row.types})</span>
+         `,
+        }));
+
+        const notificationResponse = await axios.post(
+          'http://localhost:8080/notification/add',
+          notificationPayload
+        );
+        socket.emit('reportCreated', notificationResponse.data);
       } catch (error) {
         console.log(error);
       }
@@ -320,10 +318,6 @@ const ReportAddPage = () => {
   useEffect(() => {
     fetchRoles();
     fetchTasks();
-    const user = localStorage.getItem('user');
-    if (user) {
-      setCurrentUserData(JSON.parse(user));
-    }
   }, []);
 
   return (
