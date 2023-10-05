@@ -46,6 +46,7 @@ const CancelFormButton = (props: any) => {
         padding: '10px',
         borderRadius: '.5rem',
         border: `1px solid ${palette.primary.main}`,
+        color: palette.primary.darker,
       }}
       {...props}
     >

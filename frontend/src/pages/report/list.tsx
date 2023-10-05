@@ -90,7 +90,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
     const reportToParam = formData.reportTo ? `&reportTo=${formattedReportTo}` : '';
     const reportByParam = formData.reportBy ? `&reportBy=${formattedBy}` : '';
     const dateParam = formData.selectedDate ? `&date=${formattedDate}` : '';
-    router.push(`${router.pathname}?page=1&limit=${limit}${reportToParam}${reportByParam}${dateParam}`);
+    router.push(`${router.pathname}?page=${page}&limit=${limit}${reportToParam}${reportByParam}${dateParam}`);
   };
 
   return (
@@ -308,7 +308,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
         sx={{
           mt: 5,
           display: 'flex',
-          justifyContent: 'space-around',
+          justifyContent: 'space-between',
           alignItems: 'center',
           mb: 5,
         }}
@@ -350,9 +350,13 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
               backgroundColor: palette.primary.main,
               borderColor: palette.primary.main,
               color: palette.common.white,
+              '&:hover': {
+                backgroundColor: palette.primary.dark,
+                color: palette.common.white,
+              },
             },
             '.Mui-focusVisible': {
-              color: palette.common.white,
+              color: palette.text.primary,
               backgroundColor: palette.primary.main,
             },
             '.MuiPaginationItem-ellipsis': {

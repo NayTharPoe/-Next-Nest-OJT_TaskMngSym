@@ -31,6 +31,12 @@ export class GetAllProjectController {
     description: 'Page number',
     required: false,
   })
+  @ApiQuery({
+    name: 'search',
+    type: String,
+    description: 'Search projectName, language and desc ..',
+    required: false,
+  })
   async findAll(
     @Res() response,
     @Query() query?: PaginationRequestDto,

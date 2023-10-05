@@ -1,13 +1,24 @@
 import React, { ReactElement, useState, useRef, useEffect } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, Button, InputAdornment, TablePagination, TextField, styled } from '@mui/material';
+import {
+  Box,
+  Button,
+  InputAdornment,
+  MenuItem,
+  Select,
+  TablePagination,
+  TextField,
+  styled,
+  Pagination,
+  Typography,
+} from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import AddNewBtn from '@/components/button/addNewBtn';
 import TableBtn from '@/components/tableBtn';
 import ConfirmDialog from '@/components/commonDialog';
 import palette from '@/theme/palette';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import SearchIcon from '@mui/icons-material/Search';
 import dayjs from 'dayjs';
 import axios from 'axios';
@@ -126,14 +137,13 @@ const CustomNoRowsOverlay = () => {
   );
 };
 
-const ProjectListPage = ({ projects }: any) => {
+const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [IdToDelete, setIdToDelete] = useState(null);
   const [IdToEdit, setIdToEdit] = useState(null);
   const [searchText, setSearchText] = useState('');
-  const [filteredRows, setFilteredRows] = useState([]);
-
+  const [limit, setLimit] = useState(5);
   const router = useRouter();
 
   const columns: GridColDef[] = [
@@ -203,24 +213,6 @@ const ProjectListPage = ({ projects }: any) => {
     endDate: dayjs(row.endDate).format('YYYY-MM-DD'),
   }));
 
-  useEffect(() => {
-    const filterRows: any = (rows: any[], searchText: string) => {
-      return rows?.filter((row) => {
-        const { projectName, language, description, startDate, endDate } = row;
-
-        return (
-          projectName?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-          language?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-          description?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-          startDate?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-          endDate?.toLowerCase().includes(searchText.toLowerCase().trim())
-        );
-      });
-    };
-
-    setFilteredRows(filterRows(rows, searchText));
-  }, [searchText]);
-
   const handleEditProject = (id: any) => {
     setEditDialogOpen(false);
     router.push(`/project/edit/${id}`);
@@ -246,15 +238,49 @@ const ProjectListPage = ({ projects }: any) => {
     }
   };
 
+  const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    const newUrl = `${router.pathname}?page=${page}&limit=${limit}`;
+    router.push(newUrl);
+  };
+
+  const handleLimitChange: any = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const newLimit = event.target.value as number;
+    setLimit(newLimit);
+
+    const currentPathname = router.pathname;
+    const currentQuery = { ...router.query };
+    currentQuery.limit = newLimit.toString();
+
+    router.push({
+      pathname: currentPathname,
+      query: currentQuery,
+    });
+  };
+
+  const startIndex = (page - 1) * rowPerPage + 1;
+  const endIndex = Math.min(page * rowPerPage, projects?.count);
+
+  const handleSearchText: any = (value: string) => {
+    setSearchText(value);
+    const formattedSearchParam = value ? value.toLowerCase().trim() : '';
+    const searchParam = value ? `&search=${formattedSearchParam}` : '';
+    router.push(`${router.pathname}?page=${page}&limit=${limit}${searchParam}`);
+  };
+
+  const handleClearSearchText = () => {
+    setSearchText('');
+    router.push(`${router.pathname}?page=${page}&limit=${limit}`);
+  };
+
   return (
-    <Box sx={{ height: 500, width: '100%' }}>
+    <Box sx={{ height: 450, width: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, mb: 3 }}>
         <TextField
           name="search"
           id="search"
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          placeholder="Search ...."
+          onChange={(e) => handleSearchText(e.target.value)}
+          placeholder="Name, Language, Desc ..."
           variant="outlined"
           InputProps={{
             startAdornment: (
@@ -263,7 +289,7 @@ const ProjectListPage = ({ projects }: any) => {
               </InputAdornment>
             ),
             endAdornment: searchText && (
-              <InputAdornment position="end" onClick={() => setSearchText('')} style={{ cursor: 'pointer' }}>
+              <InputAdornment position="end" onClick={handleClearSearchText} style={{ cursor: 'pointer' }}>
                 <ClearIcon fontSize="small" />
               </InputAdornment>
             ),
@@ -281,7 +307,7 @@ const ProjectListPage = ({ projects }: any) => {
         <AddNewBtn AddNewBtnText="Add New Project" path={'/project/add'} />
       </Box>
       <DataGrid
-        rows={filteredRows}
+        rows={rows}
         columns={columns}
         getRowId={(row) => row._id}
         getRowHeight={() => 'auto'}
@@ -291,14 +317,85 @@ const ProjectListPage = ({ projects }: any) => {
           borderRadius: '.7rem',
           '.MuiDataGrid-cell': { py: '20px' },
           '.MuiDataGrid-cell:focus,.MuiDataGrid-columnHeader:focus,.MuiDataGrid-cell:focus-within,.MuiDataGrid-columnHeader:focus-within':
-          {
-            outline: 'none',
-          },
+            {
+              outline: 'none',
+            },
           '.MuiDataGrid-columnHeaders': { fontSize: '.95rem', py: '2.3rem' },
           '.MuiDataGrid-cellContent': { fontSize: '.85rem' },
           '.MuiDataGrid-footerContainer': { display: 'none' },
         }}
       />
+      <Box
+        sx={{
+          mt: 5,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 5,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Select
+            value={limit}
+            size="small"
+            onChange={handleLimitChange}
+            sx={{
+              borderRadius: '4rem',
+              backgroundColor: palette.common.white,
+            }}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  backgroundColor: palette.common.white,
+                  borderRadius: '0.6rem',
+                },
+              },
+            }}
+          >
+            <MenuItem value={5}>5 results per page</MenuItem>
+            <MenuItem value={10}>10 results per page</MenuItem>
+            <MenuItem value={25}>25 results per page</MenuItem>
+          </Select>
+        </Box>
+        <Pagination
+          shape="rounded"
+          count={Math.ceil(projects?.count / limit)}
+          onChange={handlePageChange}
+          sx={{
+            '.MuiPaginationItem-root': {
+              border: `1px solid ${palette.accent.light}`,
+              borderRadius: '0.95rem',
+              padding: '0 1.2rem',
+            },
+            '.MuiPaginationItem-root.Mui-selected': {
+              backgroundColor: palette.primary.main,
+              borderColor: palette.primary.main,
+              color: palette.common.white,
+              '&:hover': {
+                backgroundColor: palette.primary.dark,
+                color: palette.common.white,
+              },
+            },
+            '.Mui-focusVisible': {
+              color: palette.text.primary,
+              backgroundColor: palette.primary.main,
+            },
+            '.MuiPaginationItem-ellipsis': {
+              border: 'none',
+              backgroundColor: 'transparent',
+            },
+            '.MuiPaginationItem-previousNext': {
+              border: 'none',
+            },
+          }}
+        />
+        <Typography>
+          <strong>
+            {startIndex} - {endIndex}
+          </strong>{' '}
+          / {projects?.count} results
+        </Typography>
+      </Box>
       <ConfirmDialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
@@ -320,9 +417,13 @@ ProjectListPage.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export async function getServerSideProps() {
-  const res = await fetch(`http://localhost:8080/projects/list`);
+export async function getServerSideProps(context: any) {
+  const page = context.query.page || 1;
+  const rowPerPage = context.query.limit || 5;
+  const res = await fetch(
+    `http://localhost:8080/projects/list?${new URLSearchParams(context.query).toString()}`
+  );
   const projects = await res.json();
 
-  return { props: { projects } };
+  return { props: { projects, page, rowPerPage } };
 }
