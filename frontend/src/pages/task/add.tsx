@@ -1,4 +1,4 @@
-import MainLayout from '@/layouts/MainLayout';
+import MainLayout from "@/layouts/MainLayout";
 import {
   Box,
   Grid,
@@ -30,8 +30,8 @@ const TaskCreate = () => {
   const [selectEmployee, setSelectEmployee] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState('');
-  const [statusText, setStatusText] = useState('');
+  const [message, setMessage] = useState("");
+  const [statusText, setStatusText] = useState("");
   const [currentUserData, setCurrentUserData] = useState<any>({});
   const router = useRouter();
 
@@ -72,13 +72,13 @@ const TaskCreate = () => {
     const result = {
       ...data,
       estimateHour: Number(data.estimateHour),
-      status: data.status ? data.status : '0',
+      status: data.status ? data.status : "0",
       estimate_start_date: data.estimate_start_date
-        ? dayjs(data.estimate_start_date).format('MM-DD-YYYY')
-        : '',
+        ? dayjs(data.estimate_start_date).format("MM-DD-YYYY")
+        : "",
       estimate_finish_date: data.estimate_finish_date
-        ? dayjs(data.estimate_finish_date).format('MM-DD-YYYY')
-        : '',
+        ? dayjs(data.estimate_finish_date).format("MM-DD-YYYY")
+        : "",
     };
     apiClient
       .post("http://localhost:8080/task/add", result)
@@ -97,8 +97,8 @@ const TaskCreate = () => {
 
   const handleClose = () => {
     setOpen(false);
-    if (statusText === 'OK') {
-      router.push('/task/list');
+    if (statusText === "OK") {
+      router.push("/task/list");
     }
   };
 
@@ -106,18 +106,26 @@ const TaskCreate = () => {
     return (
       <Button
         fullWidth
-        type={props.text === 'save' ? 'submit' : 'button'}
+        type={props.text === "save" ? "submit" : "button"}
         variant="contained"
         sx={{
-          padding: '10px',
-          borderRadius: '.5rem',
-          boxShadow: 'none',
-          background: `${props.text === 'save' ? palette.primary.main : palette.secondary.main}`,
+          padding: "10px",
+          borderRadius: ".5rem",
+          boxShadow: "none",
+          background: `${
+            props.text === "save"
+              ? palette.primary.main
+              : palette.secondary.main
+          }`,
           color: palette.text.primary,
-          '&:hover': {
-            backgroundColor: `${props.text === 'save' ? palette.primary.main : palette.secondary.main}`,
+          "&:hover": {
+            backgroundColor: `${
+              props.text === "save"
+                ? palette.primary.main
+                : palette.secondary.main
+            }`,
             borderColor: palette.primary.border,
-            boxShadow: 'none',
+            boxShadow: "none",
           },
         }}
         {...props}
@@ -128,18 +136,18 @@ const TaskCreate = () => {
   };
 
   useEffect(() => {
-    setCurrentUserData(JSON.parse(localStorage.getItem('user') ?? '{}'));
+    setCurrentUserData(JSON.parse(localStorage.getItem("user") ?? "{}"));
   }, []);
 
   return (
     <>
       {isLoading && <Loading />}
-      <Box sx={{ width: { md: '70%', sm: '80%' }, margin: '0 auto' }}>
+      <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
             <Grid item md={6} sm={6} xs={12}>
               <InputLabel>
-                Project <span style={{ color: 'red' }}>*</span>
+                Project <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="project"
@@ -150,7 +158,7 @@ const TaskCreate = () => {
                       {...field}
                       fullWidth
                       id="project"
-                      value={field.value || ''}
+                      value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       error={!!errors.project}
                     >
@@ -160,25 +168,27 @@ const TaskCreate = () => {
                         </MenuItem>
                       ))}
                     </Select>
-                    <FormHelperText error>{errors.project?.message as string}</FormHelperText>
+                    <FormHelperText error>
+                      {errors.project?.message as string}
+                    </FormHelperText>
                   </>
                 )}
               />
             </Grid>
             <Grid item md={6} sm={6} xs={12}>
               <InputLabel>
-                Assign Employee <span style={{ color: 'red' }}>*</span>
+                Assign Employee <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="assignedEmployee"
-                rules={{ required: 'Assign employee is required' }}
+                rules={{ required: "Assign employee is required" }}
                 control={control}
                 render={({ field }) => (
                   <>
                     <Select
                       {...field}
                       id="assignedEmployee"
-                      value={field.value || ''}
+                      value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       error={!!errors.assignedEmployee}
                       fullWidth
@@ -189,7 +199,9 @@ const TaskCreate = () => {
                         </MenuItem>
                       ))}
                     </Select>
-                    <FormHelperText error>{errors.assignedEmployee?.message as string}</FormHelperText>
+                    <FormHelperText error>
+                      {errors.assignedEmployee?.message as string}
+                    </FormHelperText>
                   </>
                 )}
               />
@@ -203,7 +215,7 @@ const TaskCreate = () => {
                   <TextField
                     {...field}
                     id="description"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -215,17 +227,17 @@ const TaskCreate = () => {
             </Grid>
             <Grid item sm={6} xs={12}>
               <InputLabel>
-                Title <span style={{ color: 'red' }}>*</span>
+                Title <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="title"
-                rules={{ required: 'Title is required' }}
+                rules={{ required: "Title is required" }}
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     id="title"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -239,18 +251,18 @@ const TaskCreate = () => {
             </Grid>
             <Grid item sm={6} xs={12}>
               <InputLabel>
-                Estimate Hour <span style={{ color: 'red' }}>*</span>
+                Estimate Hour <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="estimateHour"
-                rules={{ required: 'Estimate hour is required' }}
+                rules={{ required: "Estimate hour is required" }}
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     id="estimateHour"
                     type="number"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -264,7 +276,7 @@ const TaskCreate = () => {
             </Grid>
             <Grid item sm={6} xs={12}>
               <InputLabel>
-                Estimate Start <span style={{ color: 'red' }}>*</span>
+                Estimate Start <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="estimate_start_date"
@@ -272,7 +284,7 @@ const TaskCreate = () => {
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      sx={{ width: '100%' }}
+                      sx={{ width: "100%" }}
                       {...field}
                       value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
@@ -281,7 +293,7 @@ const TaskCreate = () => {
                       slotProps={{
                         textField: {
                           fullWidth: true,
-                          variant: 'outlined',
+                          variant: "outlined",
                           error: !!errors.estimate_start_date,
                           helperText: errors.estimate_start_date?.message,
                         },
@@ -293,7 +305,7 @@ const TaskCreate = () => {
             </Grid>
             <Grid item sm={6} xs={12}>
               <InputLabel>
-                Estimate Finish <span style={{ color: 'red' }}>*</span>
+                Estimate Finish <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="estimate_finish_date"
@@ -301,7 +313,7 @@ const TaskCreate = () => {
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      sx={{ width: '100%' }}
+                      sx={{ width: "100%" }}
                       {...field}
                       value={field.value ? dayjs(field.value) : null}
                       onChange={(date) => {
@@ -310,7 +322,7 @@ const TaskCreate = () => {
                       slotProps={{
                         textField: {
                           fullWidth: true,
-                          variant: 'outlined',
+                          variant: "outlined",
                           error: !!errors.estimate_finish_date,
                           helperText: errors.estimate_finish_date?.message,
                         },
@@ -321,8 +333,14 @@ const TaskCreate = () => {
               />
             </Grid>
           </Grid>
-          <Stack mt={3} direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2, sm: 4 }}>
-            <CommonButton onClick={() => router.push('/task/list')}>Cancel</CommonButton>
+          <Stack
+            mt={3}
+            direction={{ xs: "column", sm: "row" }}
+            spacing={{ xs: 2, sm: 4 }}
+          >
+            <CommonButton onClick={() => router.push("/task/list")}>
+              Cancel
+            </CommonButton>
             <CommonButton text="save">Save</CommonButton>
           </Stack>
         </form>
