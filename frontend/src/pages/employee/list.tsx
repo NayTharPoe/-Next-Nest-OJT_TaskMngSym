@@ -15,17 +15,14 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import AddNewBtn from "@/components/addNewBtn";
-import CardBtn from "@/components/cardBtn";
 import palette from "@/theme/palette";
 import EmployeeSearchBox from "@/components/employee-search-input";
 import { useRouter } from "next/router";
 import { theme } from "@/theme";
 import ConfirmDialog from "@/components/commonDialog";
-import Loading from "@/components/loading";
 import { apiClient } from "@/services/apiClient";
 import PaginationComponent from "@/components/pagination";
-import AuthDialog from "@/components/authDialog";
+import CardBtn from "@/components/cardBtn";
 
 const EmployeeList = () => {
   const [searchText, setSearchText] = useState("");
@@ -189,9 +186,9 @@ const EmployeeList = () => {
                   </IconButton>
                   <ConfirmDialog
                     open={open}
-                    onClose={onClose}
+                    onClose={() => setOpen(false)}
                     onClick={handleDelete}
-                    onCancel={() => setOpen(false)}
+                    // onCancel={() => setOpen(false)}
                     id={row._id}
                   />
                 </div>
