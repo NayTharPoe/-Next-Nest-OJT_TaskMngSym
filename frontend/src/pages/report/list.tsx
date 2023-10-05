@@ -58,17 +58,12 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
     });
   };
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    page: number
-  ) => {
+  const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     const newUrl = `${router.pathname}?page=${page}&limit=${limit}`;
     router.push(newUrl);
   };
 
-  const handleLimitChange: any = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
+  const handleLimitChange: any = (event: React.ChangeEvent<{ value: unknown }>) => {
     const newLimit = event.target.value as number;
     setLimit(newLimit);
 
@@ -88,20 +83,14 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    const formattedDate = formData.selectedDate
-      ? dayjs(formData.selectedDate).format('YYYY-MM-DD')
-      : '';
+    const formattedDate = formData.selectedDate ? dayjs(formData.selectedDate).format('YYYY-MM-DD') : '';
     const formattedReportTo = formData.reportTo.toLowerCase().trim();
     const formattedBy = formData.reportBy.toLowerCase().trim();
 
-    const reportToParam = formData.reportTo
-      ? `&reportTo=${formattedReportTo}`
-      : '';
+    const reportToParam = formData.reportTo ? `&reportTo=${formattedReportTo}` : '';
     const reportByParam = formData.reportBy ? `&reportBy=${formattedBy}` : '';
     const dateParam = formData.selectedDate ? `&date=${formattedDate}` : '';
-    router.push(
-      `${router.pathname}?page=1&limit=${limit}${reportToParam}${reportByParam}${dateParam}`
-    );
+    router.push(`${router.pathname}?page=1&limit=${limit}${reportToParam}${reportByParam}${dateParam}`);
   };
 
   return (
@@ -114,7 +103,8 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
           justifyContent: 'space-between',
           alignItems: 'center',
           mb: 4,
-        }}>
+        }}
+      >
         <Grid item>
           <Box component="form" onSubmit={handleSubmit}>
             <Grid container spacing={2} sx={{ alignItems: 'center' }}>
@@ -154,7 +144,8 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                             reportBy: '',
                           })
                         }
-                        style={{ cursor: 'pointer' }}>
+                        style={{ cursor: 'pointer' }}
+                      >
                         <ClearIcon fontSize="small" />
                       </InputAdornment>
                     ),
@@ -199,7 +190,8 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                       backgroundColor: palette.primary.main,
                       boxShadow: 'none',
                     },
-                  }}>
+                  }}
+                >
                   Search
                 </Button>
               </Grid>
@@ -218,7 +210,8 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
         sx={{
           flexWrap: 'wrap',
           justifyContent: 'center',
-        }}>
+        }}
+      >
         {reports?.data?.length === 0 ? (
           <StyledGridOverlay>
             <svg
@@ -227,16 +220,11 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
               height="150"
               viewBox="0 0 184 152"
               aria-hidden
-              focusable="false">
+              focusable="false"
+            >
               <g fill="none" fillRule="evenodd">
                 <g transform="translate(24 31.67)">
-                  <ellipse
-                    className="ant-empty-img-5"
-                    cx="67.797"
-                    cy="106.89"
-                    rx="67.797"
-                    ry="12.668"
-                  />
+                  <ellipse className="ant-empty-img-5" cx="67.797" cy="106.89" rx="67.797" ry="12.668" />
                   <path
                     className="ant-empty-img-1"
                     d="M122.034 69.674L98.109 40.229c-1.148-1.386-2.826-2.225-4.593-2.225h-51.44c-1.766 0-3.444.839-4.592 2.225L13.56 69.674v15.383h108.475V69.674z"
@@ -254,9 +242,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                   className="ant-empty-img-3"
                   d="M149.121 33.292l-6.83 2.65a1 1 0 0 1-1.317-1.23l1.937-6.207c-2.589-2.944-4.109-6.534-4.109-10.408C138.802 8.102 148.92 0 161.402 0 173.881 0 184 8.102 184 18.097c0 9.995-10.118 18.097-22.599 18.097-4.528 0-8.744-1.066-12.28-2.902z"
                 />
-                <g
-                  className="ant-empty-img-4"
-                  transform="translate(149.65 15.383)">
+                <g className="ant-empty-img-4" transform="translate(149.65 15.383)">
                   <ellipse cx="20.654" cy="3.167" rx="2.849" ry="2.815" />
                   <path d="M5.698 5.63H0L2.898.704zM9.259.704h4.985V5.63H9.259z" />
                 </g>
@@ -278,7 +264,8 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                     '@media (min-width: 320px)': {
                       width: '335px',
                     },
-                  }}>
+                  }}
+                >
                   <CardContent>
                     <Box>
                       <Avatar
@@ -290,9 +277,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                         src={row.reportBy.profile}
                       />
                       <Typography sx={{ my: 1 }}>
-                        <Box
-                          component="span"
-                          sx={{ fontWeight: '600', fontSize: '1.2rem' }}>
+                        <Box component="span" sx={{ fontWeight: '600', fontSize: '1.2rem' }}>
                           {row.reportBy.employeeName}
                         </Box>{' '}
                         ({row.reportBy.position === '1' ? 'Member' : 'Admin'})
@@ -302,36 +287,14 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                       <Typography>Report To : {row.reportTo}</Typography>
                       <Typography>Project : {row.project}</Typography>
 
-                      <Typography>
-                        【所感】Problem : {row.problemFeeling}
-                      </Typography>
+                      <Typography>【所感】Problem : {row.problemFeeling}</Typography>
                       <Typography>【実績】- {row.taskTitle}</Typography>
-                      <Typography>
-                        Date : {dayjs(row.createdAt).format('YYYY-MM-DD')}
-                      </Typography>
-                      <Stack
-                        spacing={1}
-                        sx={{ mt: 1.75 }}
-                        direction={{ xs: 'column', sm: 'row' }}>
-                        <Chip
-                          label={row.percentage + '%'}
-                          sx={{ backgroundColor: '#D9D8DF' }}
-                        />
-                        <Chip
-                          label={row.types}
-                          sx={{ backgroundColor: '#DACEF2' }}
-                        />
-                        <Chip
-                          label={
-                            statusOptions.find(
-                              (option) => option.value === row.status
-                            )?.label
-                          }
-                        />
-                        <Chip
-                          label={row.hours + 'hrs'}
-                          sx={{ backgroundColor: '#F2CED6' }}
-                        />
+                      <Typography>Date : {dayjs(row.createdAt).format('YYYY-MM-DD')}</Typography>
+                      <Stack spacing={1} sx={{ mt: 1.75 }} direction={{ xs: 'column', sm: 'row' }}>
+                        <Chip label={row.percentage + '%'} sx={{ backgroundColor: '#D9D8DF' }} />
+                        <Chip label={row.types} sx={{ backgroundColor: '#DACEF2' }} />
+                        <Chip label={statusOptions.find((option) => option.value === row.status)?.label} />
+                        <Chip label={row.hours + 'hrs'} sx={{ backgroundColor: '#F2CED6' }} />
                       </Stack>
                     </Box>
                   </CardContent>
@@ -343,12 +306,13 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
       </Grid>
       <Box
         sx={{
-          mt: 2,
+          mt: 5,
           display: 'flex',
           justifyContent: 'space-around',
           alignItems: 'center',
-          marginBottom: '8rem',
-        }}>
+          mb: 5,
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Select
             value={limit}
@@ -357,7 +321,16 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
             sx={{
               borderRadius: '4rem',
               backgroundColor: palette.common.white,
-            }}>
+            }}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  backgroundColor: palette.common.white,
+                  borderRadius: '0.6rem',
+                },
+              },
+            }}
+          >
             <MenuItem value={5}>5 results per page</MenuItem>
             <MenuItem value={10}>10 results per page</MenuItem>
             <MenuItem value={25}>25 results per page</MenuItem>
@@ -373,9 +346,10 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
               borderRadius: '0.95rem',
               padding: '0 1.2rem',
             },
-            '.Mui-selected': {
+            '.MuiPaginationItem-root.Mui-selected': {
               backgroundColor: palette.primary.main,
               borderColor: palette.primary.main,
+              color: palette.common.white,
             },
             '.Mui-focusVisible': {
               color: palette.common.white,
@@ -410,9 +384,7 @@ export async function getServerSideProps(context: any) {
   const page = context.query.page || 1;
   const rowPerPage = context.query.limit || 5;
   const res = await fetch(
-    `http://localhost:8080/reports/list?${new URLSearchParams(
-      context.query
-    ).toString()}`
+    `http://localhost:8080/reports/list?${new URLSearchParams(context.query).toString()}`
   );
   const reports = await res.json();
 
