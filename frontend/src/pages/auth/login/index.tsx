@@ -3,8 +3,6 @@ import AuthButton from "@/components/authBtn";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
 import {
   Card,
   Grid,
@@ -16,7 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import AuthDialog from "@/components/authDialog";
 import Loading from "@/components/loading";
@@ -52,7 +50,7 @@ const Login = () => {
     setIsLoading(true);
     axios
       .post("http://localhost:8080/auth/login", data)
-      .then((res) => {
+      .then((res: any) => {
         const userData = res.data.result;
         localStorage.setItem("user", JSON.stringify(userData));
         setIsLoading(false);
@@ -112,7 +110,7 @@ const Login = () => {
                 padding: "20px",
               }}
             >
-              <Typography textAlign="center" variant="h5">
+              <Typography textAlign="center" variant="h4">
                 LogIn to TaskSphere
               </Typography>
               <Stack

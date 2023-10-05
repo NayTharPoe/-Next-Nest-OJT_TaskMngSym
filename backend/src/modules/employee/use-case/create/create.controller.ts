@@ -20,7 +20,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class CreateController {
   constructor(private employeeService: EmployeeService) {}
 
-  // @ApiBearerAuth(/
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   @Post('add')
   @ApiConsumes('multipart/form-data')
   @ApiBody({

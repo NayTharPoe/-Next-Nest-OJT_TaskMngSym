@@ -8,8 +8,6 @@ import {
   NotFoundException,
   UseInterceptors,
   UploadedFile,
-  ParseFilePipe,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { UpdateEmployeeResponseDto } from './update.response.dto';

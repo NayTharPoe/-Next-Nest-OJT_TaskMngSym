@@ -38,7 +38,7 @@ export class EmployeeService {
       options = {
         $or: [
           { employeeName: new RegExp(keyword.toString(), 'i') },
-          { position: new RegExp(keyword.toString(), 'i') },
+          { email: new RegExp(keyword.toString(), 'i') },
         ],
       };
     }
@@ -52,7 +52,7 @@ export class EmployeeService {
       .skip(limit * (page - 1));
 
     if (data.length === 0) {
-      throw new NotFoundException(`No item with this ${keyword}`);
+      throw new NotFoundException(`No item with this '${keyword}'`);
     }
 
     return { data, totalEmployee };
@@ -103,14 +103,14 @@ export class EmployeeService {
       ...employeeData,
       password: hashedPassword,
       token,
-      profile: profile ? cloudImg.data : undefined,
+      profile: profile ? cloudImg.data : '',
     };
 
     await this.employeeModel.create(data);
 
     const verifyLink = `${this.configService.get(
       'CLIENT_DOMAIN',
-    )}/verify?token=${token}`;
+    )}/auth/verify/${token}`;
 
     const template = this.verifyEmailService.verifyTemplate(
       employeeData.email,
@@ -143,7 +143,7 @@ export class EmployeeService {
 
     const data = {
       ...employee,
-      profile: profile ? cloudImg.data : undefined,
+      profile: profile ? cloudImg.data : employee.profile,
     };
 
     const employeeUpdate = await this.employeeModel.findByIdAndUpdate(

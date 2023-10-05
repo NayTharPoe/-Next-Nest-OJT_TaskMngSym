@@ -24,11 +24,11 @@ import TableBtn from "@/components/tableBtn";
 import ConfirmDialog from "@/components/commonDialog";
 import palette from "@/theme/palette";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import dayjs from "dayjs";
 import Loading from "@/components/loading";
 import TaskDownload from "@/components/taskDownload";
 import ProjectSearchBox from "@/components/ProjectSearchBox";
+import { apiClient } from "@/services/apiClient";
 
 interface Data {
   _id: string;
@@ -362,10 +362,14 @@ const TaskList: NextPageWithLayout = () => {
   useEffect(() => {
     setIsLoading(true);
     const taskApi = async () => {
-      const taskApi = await axios.get("http://localhost:8080/tasks/list");
-      const projectApi = await axios.get("http://localhost:8080/projects/list");
-      const employeeApi = await axios.get(
-        "http://localhost:8080/employees/list"
+      const taskApi = await apiClient.get(
+        "http://localhost:8080/tasks/list?page=1&limit=100"
+      );
+      const projectApi = await apiClient.get(
+        "http://localhost:8080/projects/list?page=1&limit=100"
+      );
+      const employeeApi = await apiClient.get(
+        "http://localhost:8080/employees/list?page=1&limit=100"
       );
       const taskData = taskApi.data.data.map((task: any, index: any) => {
         const statusValue = statusOption.find(
@@ -464,7 +468,7 @@ const TaskList: NextPageWithLayout = () => {
   };
 
   const handleDelete = () => {
-    axios.delete(`http://localhost:8080/task/${IdToDelete}`);
+    apiClient.delete(`http://localhost:8080/task/${IdToDelete}`);
     setTaskList((prevList: any) =>
       prevList?.filter((row: any) => row._id !== IdToDelete)
     );
