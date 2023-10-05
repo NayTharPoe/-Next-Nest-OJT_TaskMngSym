@@ -59,7 +59,12 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-    const newUrl = `${router.pathname}?page=${page}&limit=${limit}`;
+    const currentQuery = { ...router.query };
+    currentQuery.page = page.toString();
+    const newUrl = {
+      pathname: router.pathname,
+      query: currentQuery,
+    };
     router.push(newUrl);
   };
 

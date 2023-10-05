@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useRef, useEffect } from 'react';
+import React, { ReactElement, useState } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import AddNewBtn from '@/components/button/addNewBtn';
-import TableBtn from '@/components/tableBtn';
 import ConfirmDialog from '@/components/commonDialog';
 import palette from '@/theme/palette';
 import { useRouter } from 'next/router';
@@ -203,7 +202,7 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
     },
   ];
 
-  const rows: any = projects?.data?.map((row: any, index: number) => ({
+  let rows: any = projects?.data?.map((row: any, index: number) => ({
     _id: row._id,
     displayId: index + 1,
     projectName: row.projectName,
@@ -230,9 +229,9 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
 
   const handleDeleteProject = async (id: any) => {
     try {
-      setFilteredRows((prevFilteredRows) => prevFilteredRows.filter((row: { _id: any }) => row._id !== id));
       setDeleteDialogOpen(false);
       await axios.delete(`http://localhost:8080/project/delete/${id}`);
+      router.push(`${router.pathname}?page=${page}&limit=${limit}`);
     } catch (error) {
       console.log(error);
     }
@@ -420,10 +419,10 @@ ProjectListPage.getLayout = function getLayout(page: ReactElement) {
 export async function getServerSideProps(context: any) {
   const page = context.query.page || 1;
   const rowPerPage = context.query.limit || 5;
-  const res = await fetch(
+  const res = await axios.get(
     `http://localhost:8080/projects/list?${new URLSearchParams(context.query).toString()}`
   );
-  const projects = await res.json();
+  const projects = await res?.data;
 
   return { props: { projects, page, rowPerPage } };
 }

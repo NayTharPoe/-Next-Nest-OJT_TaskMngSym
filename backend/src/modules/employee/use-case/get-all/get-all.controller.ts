@@ -1,8 +1,7 @@
-import { Controller, Get, Response, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Response, Query } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { GetAllEmployeeResponseDto } from './getAll.response.dto';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { EmployeePaginationRequestDto } from 'src/common/dtos/request/employeePagination.req.dto';
 
 @Controller('employees')
@@ -10,8 +9,6 @@ import { EmployeePaginationRequestDto } from 'src/common/dtos/request/employeePa
 export class GetAllController {
   constructor(private employeeService: EmployeeService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
   @Get('list')
   @ApiQuery({
     name: 'limit',

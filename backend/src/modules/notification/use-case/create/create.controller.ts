@@ -1,24 +1,14 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpStatus,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpStatus, Res } from '@nestjs/common';
 import { NotificationService } from '../../service/notification.service';
 import { CreateNotificationRequestDto } from './create.request.dto';
 import { CreateNotificationResponseDto } from './create.response.dto';
-import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
+import { ApiTags, ApiBody } from '@nestjs/swagger';
 
 @Controller('notification')
 @ApiTags('Notification')
 export class CreateNotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
   @ApiBody({ type: [CreateNotificationRequestDto] })
   @Post('add')
   async create(

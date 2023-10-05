@@ -1,24 +1,14 @@
-import {
-  Controller,
-  Get,
-  Res,
-  HttpStatus,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Res, HttpStatus, Query } from '@nestjs/common';
 import { ReportService } from '../../services/report.service';
 import { GetAllReportResponseDto } from './get-all.response.dto';
 import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
-import { ApiTags, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
+import { ApiTags, ApiQuery } from '@nestjs/swagger';
 
 @Controller('reports')
 @ApiTags('Report')
 export class GetAllReportController {
   constructor(private readonly reportService: ReportService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
   @Get('/list')
   @ApiQuery({
     name: 'limit',

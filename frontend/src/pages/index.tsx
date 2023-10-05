@@ -214,7 +214,7 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
     },
   ];
 
-  const formattedRow = taskData.data
+  const formattedRow = taskData?.data
     .filter((task: any) => task.status !== '3')
     .map((task: any, index: number) => ({
       _id: task._id,
@@ -239,7 +239,7 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
       setLoggedInUser(currentUserData);
 
       if (currentUserData?.position !== '1') {
-        const result = formattedRow.filter(
+        const result = formattedRow?.filter(
           (task: any) => task?.assignedEmployee === currentUserData?.employeeName
         );
         setFilterRow(result);
@@ -493,14 +493,14 @@ export async function getServerSideProps() {
     ]);
 
     const dataCount = {
-      employees: employeesRes.data.data.length,
-      tasks: tasksRes.data.data.length,
-      projects: projectsRes.data.data.length,
-      reports: reportsRes.data.data.length,
+      employees: employeesRes?.data?.data?.length,
+      tasks: tasksRes?.data?.data?.length,
+      projects: projectsRes?.data?.data?.length,
+      reports: reportsRes?.data?.data?.length,
     };
 
     const taskData = {
-      data: tasksRes.data.data,
+      data: tasksRes?.data?.data,
     };
 
     return {

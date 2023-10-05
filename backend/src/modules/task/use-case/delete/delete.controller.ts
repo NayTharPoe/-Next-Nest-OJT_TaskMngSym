@@ -3,11 +3,9 @@ import {
   Response,
   Param,
   Delete,
-  UseGuards,
   NotFoundException,
 } from '@nestjs/common';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { TaskService } from '../../service/task.service';
 
 @Controller('task')
@@ -15,8 +13,6 @@ import { TaskService } from '../../service/task.service';
 export class DeleteController {
   constructor(private taskService: TaskService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
   @Delete(':id')
   async delTask(@Response() res, @Param('id') id: string) {
     try {
