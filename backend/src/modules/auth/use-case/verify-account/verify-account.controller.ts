@@ -17,7 +17,7 @@ export class VerifyAccountController {
   async accountVerify(@Response() res, @Param('token') token: string) {
     try {
       await this.authService.accountVerify(token);
-      return res.status(200).json({ message: 'Verify Account Successfully' });
+      return res.status(200).json({ message: 'Verify Account Successfully!' });
     } catch (err) {
       throw new NotFoundException(err.message);
     }

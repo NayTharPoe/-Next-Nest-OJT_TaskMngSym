@@ -1,8 +1,44 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button, Grid } from "@mui/material";
+import axios from "axios";
+import { useRouter } from "next/router";
+import AuthDialog from "@/components/authDialog";
 
 const VerifyAccount = () => {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [statusText, setStatusText] = useState("");
+
+  const router = useRouter();
+
+  const accountVerify = () => {
+    axios
+      .post(`http://localhost:8080/auth/verify/${router.query.token}`)
+      .then((res) => {
+        console.log(res);
+        setOpen(true);
+        setStatusText(res.statusText);
+        setMessage(res.data?.message);
+      })
+      .catch((err) => {
+        if (err.code === "ERR_NETWORK") {
+          setOpen(true);
+          setMessage(err.message);
+        } else {
+          setOpen(true);
+          setMessage(err.response?.data.message);
+        }
+      });
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (statusText === "OK") {
+      router.push("/auth/login");
+    }
+  };
+
   return (
     <>
       <Box sx={{ background: "#efeeec", height: "100vh" }}>
@@ -24,6 +60,7 @@ const VerifyAccount = () => {
             Please click the following button to verify your account!
           </Typography>
           <Button
+            onClick={accountVerify}
             variant="contained"
             sx={{
               background: "#5a5a64",
@@ -37,6 +74,9 @@ const VerifyAccount = () => {
           >
             Verify Account
           </Button>
+          <AuthDialog statusText={statusText} open={open} close={handleClose}>
+            {message}
+          </AuthDialog>
         </Box>
       </Box>
     </>

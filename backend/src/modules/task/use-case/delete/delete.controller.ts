@@ -15,8 +15,8 @@ import { TaskService } from '../../service/task.service';
 export class DeleteController {
   constructor(private taskService: TaskService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async delTask(@Response() res, @Param('id') id: string) {
     try {
