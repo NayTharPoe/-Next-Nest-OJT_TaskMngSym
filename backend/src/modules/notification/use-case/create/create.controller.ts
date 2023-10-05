@@ -17,8 +17,8 @@ import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 export class CreateNotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @ApiBody({ type: [CreateNotificationRequestDto] })
   @Post('add')
   async create(

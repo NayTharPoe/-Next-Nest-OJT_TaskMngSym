@@ -11,6 +11,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ReportModule } from './modules/report/report.module';
+import { SocketIoGateway } from './socket/socket.gateway';
 
 @Module({
   imports: [
@@ -31,6 +32,6 @@ import { ReportModule } from './modules/report/report.module';
     CloudinaryModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SocketIoGateway],
 })
 export class AppModule {}

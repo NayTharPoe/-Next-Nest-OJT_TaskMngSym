@@ -22,20 +22,24 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { TaskAddSchema } from '@/utils/taskValidate';
+import { socket } from '../../socket';
 import AuthDialog from '@/components/authDialog';
 import Loading from '@/components/loading';
 
 const TaskCreate = () => {
   const [selectProject, setSelectProject] = useState([]);
-  const [selectEmployee, setSelectEmployee] = useState([]);
+  const [selectEmployee, setSelectEmployee] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [statusText, setStatusText] = useState('');
+  const [currentUserData, setCurrentUserData] = useState<any>({});
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
+      const projectApi = await axios.get('http://localhost:8080/projects/list?page=1&limit=2000');
+      const employeeApi = await axios.get('http://localhost:8080/employees/list');
       const projectApi = await axios.get('http://localhost:8080/projects/list?page=1&limit=2000');
       const employeeApi = await axios.get('http://localhost:8080/employees/list?page=1&limit=2000');
       setSelectProject(
@@ -77,7 +81,29 @@ const TaskCreate = () => {
     };
     axios
       .post('http://localhost:8080/task/add', result)
-      .then((res) => {
+      .then(async (res) => {
+        const task = res?.data?.data;
+        const assignedEmployeeName = selectEmployee.find(
+          (option: any) => option.value === task.assignedEmployee
+        )?.label;
+
+        const notificationPayload = {
+          tag: 'TASK',
+          createdByWhom: currentUserData?._id,
+          profile: currentUserData?.profile,
+          sendTo: task?.assignedEmployee,
+          message: `
+          A <span class='task-name'>${task?.title}</span> task has been created and assigned for
+          <span>${assignedEmployeeName} </span>
+         `,
+        };
+
+        const notificationResponse = await axios.post(
+          'http://localhost:8080/notification/add',
+          notificationPayload
+        );
+        socket.emit('taskCreated', notificationResponse?.data?.data);
+
         setOpen(true);
         setIsLoading(false);
         setStatusText(res.statusText);
@@ -121,6 +147,10 @@ const TaskCreate = () => {
       </Button>
     );
   };
+
+  useEffect(() => {
+    setCurrentUserData(JSON.parse(localStorage.getItem('user') ?? '{}'));
+  }, []);
 
   return (
     <>
