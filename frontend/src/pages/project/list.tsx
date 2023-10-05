@@ -143,6 +143,7 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
   const [IdToEdit, setIdToEdit] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [limit, setLimit] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
   const columns: GridColDef[] = [
@@ -202,9 +203,11 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
     },
   ];
 
+  const offset = (currentPage - 1) * limit;
+
   let rows: any = projects?.data?.map((row: any, index: number) => ({
     _id: row._id,
-    displayId: index + 1,
+    displayId: index + 1 + offset,
     projectName: row.projectName,
     language: row.language,
     description: row.description,
@@ -240,6 +243,7 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     const newUrl = `${router.pathname}?page=${page}&limit=${limit}`;
     router.push(newUrl);
+    setCurrentPage(page);
   };
 
   const handleLimitChange: any = (event: React.ChangeEvent<{ value: unknown }>) => {
