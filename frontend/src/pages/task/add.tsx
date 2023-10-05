@@ -40,6 +40,8 @@ const TaskCreate = () => {
     const fetchData = async () => {
       const projectApi = await axios.get('http://localhost:8080/projects/list?page=1&limit=2000');
       const employeeApi = await axios.get('http://localhost:8080/employees/list');
+      const projectApi = await axios.get('http://localhost:8080/projects/list?page=1&limit=2000');
+      const employeeApi = await axios.get('http://localhost:8080/employees/list?page=1&limit=2000');
       setSelectProject(
         projectApi.data.data.map((project: any) => ({
           value: project._id,
