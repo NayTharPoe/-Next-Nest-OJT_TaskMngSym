@@ -9,7 +9,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { TaskService } from '../../service/task.service';
 
 @Controller('task')
-@ApiTags('task')
+@ApiTags('Task')
 export class DeleteController {
   constructor(private taskService: TaskService) {}
 
