@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
@@ -271,43 +271,74 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
     router.push(`${router.pathname}?page=${page}&limit=${limit}${searchParam}`);
   };
 
+  const handleInputSearch = () => {
+    const formattedSearchParam = searchText ? searchText.toLowerCase().trim() : '';
+    const searchParam = searchText ? `&search=${formattedSearchParam}` : '';
+    router.push(`${router.pathname}?page=${page}&limit=${limit}${searchParam}`);
+  };
+
   const handleClearSearchText = () => {
     setSearchText('');
     router.push(`${router.pathname}?page=${page}&limit=${limit}`);
   };
 
+  useEffect(() => {
+    const { query } = router;
+    const page = parseInt(query.page as string, 10) || 1;
+    setCurrentPage(page);
+  }, [router.query]);
+
   return (
     <Box sx={{ height: 450, width: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, mb: 3 }}>
-        <TextField
-          name="search"
-          id="search"
-          value={searchText}
-          onChange={(e) => handleSearchText(e.target.value)}
-          placeholder="Name, Language, Desc ..."
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            endAdornment: searchText && (
-              <InputAdornment position="end" onClick={handleClearSearchText} style={{ cursor: 'pointer' }}>
-                <ClearIcon fontSize="small" />
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            '.MuiInputBase-root': {
-              borderRadius: '.4rem',
-            },
-            '.MuiOutlinedInput-input': {
-              p: '11.5px 14px',
-              pl: 0,
-            },
-          }}
-        />
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <TextField
+            name="search"
+            id="search"
+            value={searchText}
+            onChange={(e) => handleSearchText(e.target.value)}
+            placeholder="Name, Language, Desc ..."
+            variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              endAdornment: searchText && (
+                <InputAdornment position="end" onClick={handleClearSearchText} style={{ cursor: 'pointer' }}>
+                  <ClearIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              '.MuiInputBase-root': {
+                borderRadius: '.4rem',
+              },
+              '.MuiOutlinedInput-input': {
+                p: '11.5px 14px',
+                pl: 0,
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            size="large"
+            type="submit"
+            onClick={handleInputSearch}
+            sx={{
+              backgroundColor: palette.primary.main,
+              color: palette.text.primary,
+              borderRadius: '.7rem',
+              '&:hover': {
+                backgroundColor: palette.primary.main,
+                boxShadow: 'none',
+              },
+            }}
+          >
+            Search
+          </Button>
+        </Box>
         <AddNewBtn AddNewBtnText="Add New Project" path={'/project/add'} />
       </Box>
       <DataGrid
@@ -364,6 +395,7 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
         <Pagination
           shape="rounded"
           count={Math.ceil(projects?.count / limit)}
+          page={currentPage}
           onChange={handlePageChange}
           sx={{
             '.MuiPaginationItem-root': {

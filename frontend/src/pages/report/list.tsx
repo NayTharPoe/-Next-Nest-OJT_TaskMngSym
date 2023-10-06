@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import {
   Avatar,
@@ -35,6 +35,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
     selectedDate: null,
   });
   const [limit, setLimit] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
   const statusOptions = [
@@ -68,6 +69,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
       query: currentQuery,
     };
     router.push(newUrl);
+    setCurrentPage(page);
   };
 
   const handleLimitChange: any = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -99,6 +101,12 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
     const dateParam = formData.selectedDate ? `&date=${formattedDate}` : '';
     router.push(`${router.pathname}?page=${page}&limit=${limit}${reportToParam}${reportByParam}${dateParam}`);
   };
+
+  useEffect(() => {
+    const { query } = router;
+    const page = parseInt(query.page as string, 10) || 1;
+    setCurrentPage(page);
+  }, [router.query]);
 
   return (
     <Box sx={{ width: '100%', my: 4 }}>
@@ -362,6 +370,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
         <Pagination
           shape="rounded"
           count={Math.ceil(reports?.count / limit)}
+          page={currentPage}
           onChange={handlePageChange}
           sx={{
             '.MuiPaginationItem-root': {
