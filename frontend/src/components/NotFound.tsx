@@ -15,7 +15,7 @@ const NotFoundPage = () => {
     >
       <Container maxWidth="md">
         <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-          <Grid xs={6}>
+          <Grid item xs={6}>
             <Typography sx={{ fontSize: '5em' }}>404</Typography>
             <Typography variant="h6" sx={{ mb: 2 }}>
               The page you’re looking for doesn’t exist.
@@ -24,7 +24,7 @@ const NotFoundPage = () => {
               Back Home
             </Button>
           </Grid>
-          <Grid xs={6}>
+          <Grid item xs={6}>
             <img
               src="https://img.freepik.com/free-vector/400-error-bad-request-concept-illustration_114360-1921.jpg?w=1060&t=st=1696561142~exp=1696561742~hmac=c089bc3fe77257583eef07f1ce19e2034ed83dbd6b223075f1d95885ed10e3bc"
               alt=""

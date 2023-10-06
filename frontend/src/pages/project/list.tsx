@@ -264,12 +264,12 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
   const startIndex = (page - 1) * rowPerPage + 1;
   const endIndex = Math.min(page * rowPerPage, projects?.count);
 
-  const handleSearchText: any = (value: string) => {
-    setSearchText(value);
-    const formattedSearchParam = value ? value.toLowerCase().trim() : '';
-    const searchParam = value ? `&search=${formattedSearchParam}` : '';
-    router.push(`${router.pathname}?page=${page}&limit=${limit}${searchParam}`);
-  };
+  // const handleSearchText: any = (value: string) => {
+  //   setSearchText(value);
+  //   const formattedSearchParam = value ? value.toLowerCase().trim() : '';
+  //   const searchParam = value ? `&search=${formattedSearchParam}` : '';
+  //   router.push(`${router.pathname}?page=${page}&limit=${limit}${searchParam}`);
+  // };
 
   const handleInputSearch = () => {
     const formattedSearchParam = searchText ? searchText.toLowerCase().trim() : '';
@@ -296,7 +296,7 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
             name="search"
             id="search"
             value={searchText}
-            onChange={(e) => handleSearchText(e.target.value)}
+            onChange={(e) => setSearchText(e.target.value)}
             placeholder="Name, Language, Desc ..."
             variant="outlined"
             InputProps={{
