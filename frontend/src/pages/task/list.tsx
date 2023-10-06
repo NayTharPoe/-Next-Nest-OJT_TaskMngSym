@@ -15,6 +15,9 @@ import {
   Typography,
   Paper,
   Button,
+  Select,
+  MenuItem,
+  Chip,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import MainLayout from "@/layouts/MainLayout";
@@ -338,6 +341,26 @@ const AddButton = (props: any) => {
   );
 };
 
+const ChipStatus = (props: any) => {
+  const { children } = props;
+  let bgColor = "";
+  let color = "";
+  if (children === "Opened") {
+    bgColor = "#2499ef33";
+    color = "#2499ef";
+  } else if (children === "In progress") {
+    bgColor = "#ffcb1f33";
+    color = "#c6a808";
+  } else if (children === "Finished") {
+    bgColor = "#8fff8f4d";
+    color = "#52c41a";
+  } else if (children === "Closed") {
+    bgColor = "#ffb8c5";
+    color = "crimson";
+  }
+  return <Chip label={children} sx={{ background: bgColor, color: color }} />;
+};
+
 const TaskList: NextPageWithLayout = () => {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("project");
@@ -345,11 +368,11 @@ const TaskList: NextPageWithLayout = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchText, setSearchText] = useState<string>("");
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [IdToDelete, setIdToDelete] = useState<string | number>("");
   const [taskList, setTaskList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [keyword, setKeyword] = useState(4);
   const router = useRouter();
 
   const statusOption = [
@@ -363,7 +386,9 @@ const TaskList: NextPageWithLayout = () => {
     setIsLoading(true);
     const taskApi = async () => {
       const taskApi = await apiClient.get(
-        "http://localhost:8080/tasks/list?page=1&limit=100"
+        `http://localhost:8080/tasks/list?page=1&limit=100&keyword=${
+          keyword == 4 ? "" : keyword
+        }`
       );
       const projectApi = await apiClient.get(
         "http://localhost:8080/projects/list?page=1&limit=100"
@@ -405,7 +430,7 @@ const TaskList: NextPageWithLayout = () => {
       setIsLoading(false);
     };
     taskApi();
-  }, []);
+  }, [keyword]);
 
   const handleSearchChange = (newSearchText: string) => {
     setSearchText(newSearchText);
@@ -440,9 +465,8 @@ const TaskList: NextPageWithLayout = () => {
         title?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
         project?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
         assignedEmployee
-          .toLowerCase()
-          .includes(searchText.toLowerCase().trim()) ||
-        status?.toLocaleLowerCase().includes(searchText.toLowerCase().trim())
+          ?.toLowerCase()
+          .includes(searchText.toLowerCase().trim())
       );
     });
     return filteredRows;
@@ -500,11 +524,26 @@ const TaskList: NextPageWithLayout = () => {
           borderRadius: "1.1rem",
         }}
       >
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          searchText={searchText}
-          onSearchChange={handleSearchChange}
-        />
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <EnhancedTableToolbar
+            numSelected={selected.length}
+            searchText={searchText}
+            onSearchChange={handleSearchChange}
+          />
+          <Select
+            sx={{ height: "50px", borderRadius: "8px" }}
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={keyword}
+            onChange={(e: any) => setKeyword(e.target.value)}
+          >
+            <MenuItem value={0}>Opened</MenuItem>
+            <MenuItem value={1}>In progress</MenuItem>
+            <MenuItem value={2}>Finished</MenuItem>
+            <MenuItem value={3}>Closed</MenuItem>
+            <MenuItem value={4}>All</MenuItem>
+          </Select>
+        </Box>
         <TableContainer>
           <Table sx={{}} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -512,79 +551,98 @@ const TaskList: NextPageWithLayout = () => {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
             />
-            <TableBody>
-              {visibleRows.map((row, _index) => {
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    key={row._id}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <TableCell sx={{ fontSize: ".9rem" }}>{row.num}</TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.title}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.description}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.project}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.assignedEmployee}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.estimateHour}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.actualHour}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.status}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.estimate_start_date}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.estimate_finish_date}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.actual_start_date}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: ".9rem" }}>
-                      {row.actual_finish_date}
-                    </TableCell>
-                    <TableCell sx={{ display: "flex" }}>
-                      <TableBtn
-                        onClick={() => handleEditTask(row._id.toString())}
-                      >
-                        Edit
-                      </TableBtn>
-                      <TableBtn
-                        onClick={() => {
-                          setOpen(true);
-                          setIdToDelete(row._id);
-                        }}
-                      >
-                        Remove
-                      </TableBtn>
-                      <ConfirmDialog
-                        open={open}
-                        onClose={() => setOpen(false)}
-                        onClick={handleDelete}
-                        id={row._id}
-                      />
-                    </TableCell>
+            {taskList.length > 0 && visibleRows.length > 0 ? (
+              <TableBody>
+                {visibleRows.map((row, _index) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      key={row._id}
+                      sx={{ cursor: "pointer" }}
+                    >
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.num}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.title}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.description}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.project}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.assignedEmployee}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.estimateHour}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.actualHour}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        <ChipStatus>{row.status}</ChipStatus>
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.estimate_start_date}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.estimate_finish_date}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.actual_start_date}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.actual_finish_date}
+                      </TableCell>
+                      <TableCell sx={{ display: "flex" }}>
+                        <TableBtn
+                          onClick={() => handleEditTask(row._id.toString())}
+                        >
+                          Edit
+                        </TableBtn>
+                        <TableBtn
+                          onClick={() => {
+                            setOpen(true);
+                            setIdToDelete(row._id);
+                          }}
+                        >
+                          Remove
+                        </TableBtn>
+                        <ConfirmDialog
+                          open={open}
+                          onClose={() => setOpen(false)}
+                          onClick={handleDelete}
+                          id={row._id}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+                {emptyRows > 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} />
                   </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
+                )}
+              </TableBody>
+            ) : (
+              <TableBody>
                 <TableRow>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={6}>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <img
+                        width={340}
+                        height={320}
+                        src="https://img.freepik.com/free-vector/no-data-concept-illustration_114360-536.jpg?w=740&t=st=1696498646~exp=1696499246~hmac=c254d88ac3bfbc180427bd2cfce42cf18e0c8d77e8a7cdef35e370adbffa9f55"
+                        alt=""
+                      />
+                    </div>
+                  </TableCell>
                 </TableRow>
-              )}
-            </TableBody>
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
         <TablePagination
