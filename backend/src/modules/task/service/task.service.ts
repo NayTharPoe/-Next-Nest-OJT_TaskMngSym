@@ -4,7 +4,7 @@ import { TaskDocument, TaskEntity } from '../entities/task.entities';
 import { Model } from 'mongoose';
 import { CreateTaskRequestDto } from '../use-case/create/create.request.dto';
 import { UpdateTaskRequestDto } from '../use-case/update/update.request.dto';
-import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
+import { EmployeePaginationRequestDto } from 'src/common/dtos/request/employeePagination.req.dto';
 
 @Injectable()
 export class TaskService {
@@ -12,10 +12,21 @@ export class TaskService {
     @InjectModel(TaskEntity.name) private taskModel: Model<TaskDocument>,
   ) {}
 
-  async getAllTaskList({ page, limit }: PaginationRequestDto): Promise<any> {
-    const totalTasks = await this.taskModel.countDocuments();
+  async getAllTaskList({
+    page,
+    limit,
+    keyword,
+  }: EmployeePaginationRequestDto): Promise<any> {
+    // console.log(keyword);
+    let options = {};
+    if (keyword) {
+      options = {
+        status: new RegExp(keyword.toString(), 'i'),
+      };
+    }
+    const totalTasks = await this.taskModel.countDocuments(options);
     const data = await this.taskModel
-      .find()
+      .find(options)
       .populate([
         {
           path: 'project',

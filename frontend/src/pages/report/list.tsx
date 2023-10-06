@@ -61,6 +61,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     const currentQuery = { ...router.query };
     currentQuery.page = page.toString();
+    currentQuery.limit = limit.toString();
     const newUrl = {
       pathname: router.pathname,
       query: currentQuery,
@@ -121,6 +122,22 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                   onChange={handleInputChange}
                   placeholder="Report To"
                   variant="outlined"
+                  InputProps={{
+                    endAdornment: formData.reportTo && (
+                      <InputAdornment
+                        position="end"
+                        onClick={() =>
+                          setFormData({
+                            ...formData,
+                            reportTo: '',
+                          })
+                        }
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <ClearIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
                   sx={{
                     '.MuiInputBase-root': {
                       borderRadius: '.4rem',
