@@ -24,6 +24,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { TaskEditSchema } from "@/utils/taskValidate";
 import AuthDialog from "@/components/authDialog";
 import { apiClient } from "@/services/apiClient";
+import config from "@/config";
 
 const TaskEdit = () => {
   const [selectProject, setSelectProject] = useState([]);
@@ -55,10 +56,10 @@ const TaskEdit = () => {
     setIsLoading(true);
     const fetchData = async () => {
       const projectApi = await apiClient.get(
-        "http://localhost:8080/projects/list?page=1&limit=100"
+        `${config.SERVER_DOMAIN}/projects/list?page=1&limit=100`
       );
       const employeeApi = await apiClient.get(
-        "http://localhost:8080/employees/list?page=1&limit=100"
+        `${config.SERVER_DOMAIN}/employees/list?page=1&limit=100`
       );
       setSelectProject(
         projectApi.data.data.map((project: any) => ({
@@ -75,7 +76,7 @@ const TaskEdit = () => {
     };
     if (router.query.id) {
       apiClient
-        .get(`http://localhost:8080/task/detail/${router.query.id}`)
+        .get(`${config.SERVER_DOMAIN}/task/detail/${router.query.id}`)
         .then((res) => {
           setValue("project", res.data.data.project?._id);
           setValue("assignedEmployee", res.data.data.assignedEmployee?._id);
@@ -114,7 +115,7 @@ const TaskEdit = () => {
         : "",
     };
     apiClient
-      .put(`http://localhost:8080/task/edit/${router.query.id}`, result)
+      .put(`${config.SERVER_DOMAIN}/task/edit/${router.query.id}`, result)
       .then((res) => {
         setOpen(true);
         setIsLoading(false);

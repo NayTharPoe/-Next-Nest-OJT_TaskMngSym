@@ -19,6 +19,7 @@ import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 import { useRouter } from "next/router";
 import { apiClient } from "@/services/apiClient";
 import Loading from "@/components/loading";
+import config from "@/config";
 
 const EmployeeList = () => {
   const router = useRouter();
@@ -30,7 +31,7 @@ const EmployeeList = () => {
     setIsLoading(true);
     if (router.query?.id) {
       apiClient
-        .get(`http://localhost:8080/employee/detail/${router.query.id}`)
+        .get(`${config.SERVER_DOMAIN}/employee/detail/${router.query.id}`)
         .then((res) => {
           setEmployeeData(res.data.data);
           setIsLoading(false);

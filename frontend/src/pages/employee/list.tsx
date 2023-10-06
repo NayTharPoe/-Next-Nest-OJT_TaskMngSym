@@ -23,6 +23,7 @@ import ConfirmDialog from "@/components/commonDialog";
 import { apiClient } from "@/services/apiClient";
 import PaginationComponent from "@/components/pagination";
 import CardBtn from "@/components/cardBtn";
+import config from "@/config";
 
 const EmployeeList = () => {
   const [searchText, setSearchText] = useState("");
@@ -39,7 +40,7 @@ const EmployeeList = () => {
   useEffect(() => {
     apiClient
       .get(
-        `http://localhost:8080/employees/list?page=${page}&limit=${limit}&keyword=${keyword}`
+        `${config.SERVER_DOMAIN}/employees/list?page=${page}&limit=${limit}&keyword=${keyword}`
       )
       .then((res) => {
         setEmployeeList(res.data.data);
@@ -56,7 +57,7 @@ const EmployeeList = () => {
   const router = useRouter();
 
   const handleDelete = () => {
-    apiClient.delete(`http://localhost:8080/employee/${deleteId}`);
+    apiClient.delete(`${config.SERVER_DOMAIN}/employee/${deleteId}`);
     setEmployeeList((prevList: any) =>
       prevList?.filter((row: any) => row._id !== deleteId)
     );

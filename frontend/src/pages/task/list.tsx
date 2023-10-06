@@ -32,6 +32,7 @@ import Loading from "@/components/loading";
 import TaskDownload from "@/components/taskDownload";
 import ProjectSearchBox from "@/components/ProjectSearchBox";
 import { apiClient } from "@/services/apiClient";
+import config from "@/config";
 
 interface Data {
   _id: string;
@@ -386,15 +387,15 @@ const TaskList: NextPageWithLayout = () => {
     setIsLoading(true);
     const taskApi = async () => {
       const taskApi = await apiClient.get(
-        `http://localhost:8080/tasks/list?page=1&limit=100&keyword=${
+        `${config.SERVER_DOMAIN}/tasks/list?page=1&limit=100&keyword=${
           keyword == 4 ? "" : keyword
         }`
       );
       const projectApi = await apiClient.get(
-        "http://localhost:8080/projects/list?page=1&limit=100"
+        `${config.SERVER_DOMAIN}/projects/list?page=1&limit=100`
       );
       const employeeApi = await apiClient.get(
-        "http://localhost:8080/employees/list?page=1&limit=100"
+        `${config.SERVER_DOMAIN}/employees/list?page=1&limit=100`
       );
       const taskData = taskApi.data.data.map((task: any, index: any) => {
         const statusValue = statusOption.find(
@@ -492,7 +493,7 @@ const TaskList: NextPageWithLayout = () => {
   };
 
   const handleDelete = () => {
-    apiClient.delete(`http://localhost:8080/task/${IdToDelete}`);
+    apiClient.delete(`${config.SERVER_DOMAIN}/task/${IdToDelete}`);
     setTaskList((prevList: any) =>
       prevList?.filter((row: any) => row._id !== IdToDelete)
     );

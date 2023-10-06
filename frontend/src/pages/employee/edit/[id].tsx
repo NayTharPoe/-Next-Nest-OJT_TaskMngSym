@@ -24,6 +24,7 @@ import axios from "axios";
 import Loading from "@/components/loading";
 import AuthDialog from "@/components/authDialog";
 import { apiClient } from "@/services/apiClient";
+import config from "@/config";
 
 const EmployeeEdit = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -50,7 +51,7 @@ const EmployeeEdit = () => {
     setIsLoading(true);
     if (router.query?.id) {
       apiClient
-        .get(`http://localhost:8080/employee/detail/${id}`)
+        .get(`${config.SERVER_DOMAIN}/employee/detail/${id}`)
         .then((res) => {
           setValue("employeeName", res.data.data.employeeName);
           setValue("email", res.data.data.email);
@@ -85,7 +86,7 @@ const EmployeeEdit = () => {
       formData.append("profile", "");
     }
     apiClient
-      .put(`http://localhost:8080/employee/edit/${router.query.id}`, formData)
+      .put(`${config.SERVER_DOMAIN}/employee/edit/${router.query.id}`, formData)
       .then((res) => {
         setOpen(true);
         setIsLoading(false);
