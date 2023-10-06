@@ -11,6 +11,7 @@ import TaskIcon from '@/components/icons/TaskIcon';
 import axios from 'axios';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { StyledGridOverlay } from '@/components/styledGridOverlay';
+import config from '@/config';
 
 const CustomNoRowsOverlay = () => {
   return (
@@ -437,7 +438,7 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
           slots={{ noRowsOverlay: CustomNoRowsOverlay }}
           sx={{
             backgroundColor: palette.common.white,
-            borderRadius: '.7rem',
+            borderRadius: '1rem',
             '.MuiDataGrid-cell': { py: '20px' },
             '.MuiDataGrid-cell:focus,.MuiDataGrid-columnHeader:focus,.MuiDataGrid-cell:focus-within,.MuiDataGrid-columnHeader:focus-within':
               {
@@ -486,17 +487,17 @@ export default DashboardPage;
 export async function getServerSideProps() {
   try {
     const [employeesRes, tasksRes, projectsRes, reportsRes] = await Promise.all([
-      axios.get('http://localhost:8080/employees/list?page=1&limit=2000'),
-      axios.get('http://localhost:8080/tasks/list?page=1&limit=2000'),
-      axios.get('http://localhost:8080/projects/list?page=1&limit=2000'),
-      axios.get('http://localhost:8080/reports/list?page=1&limit=2000'),
+      axios.get(`${config.SERVER_DOMAIN}/employees/list?page=1&limit=2000`),
+      axios.get(`${config.SERVER_DOMAIN}/tasks/list?page=1&limit=2000`),
+      axios.get(`${config.SERVER_DOMAIN}/projects/list?page=1&limit=2000`),
+      axios.get(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`),
     ]);
 
     const dataCount = {
-      employees: employeesRes?.data?.data?.length,
-      tasks: tasksRes?.data?.data?.length,
-      projects: projectsRes?.data?.data?.length,
-      reports: reportsRes?.data?.data?.length,
+      employees: employeesRes?.data?.totalEmployee,
+      tasks: tasksRes?.data?.totalTasks,
+      projects: projectsRes?.data?.count,
+      reports: reportsRes?.data?.count,
     };
 
     const taskData = {

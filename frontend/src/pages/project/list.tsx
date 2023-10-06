@@ -21,6 +21,7 @@ import { useRouter } from 'next/router';
 import SearchIcon from '@mui/icons-material/Search';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import config from '@/config';
 
 const secondaryColor = palette.secondary.main;
 const errorColor = palette.error.light;
@@ -233,7 +234,7 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
   const handleDeleteProject = async (id: any) => {
     try {
       setDeleteDialogOpen(false);
-      await axios.delete(`http://localhost:8080/project/delete/${id}`);
+      await axios.delete(`${config.SERVER_DOMAIN}/project/delete/${id}`);
       router.push(`${router.pathname}?page=${page}&limit=${limit}`);
     } catch (error) {
       console.log(error);
@@ -424,7 +425,7 @@ export async function getServerSideProps(context: any) {
   const page = context.query.page || 1;
   const rowPerPage = context.query.limit || 5;
   const res = await axios.get(
-    `http://localhost:8080/projects/list?${new URLSearchParams(context.query).toString()}`
+    `${config.SERVER_DOMAIN}/projects/list?${new URLSearchParams(context.query).toString()}`
   );
   const projects = await res?.data;
 

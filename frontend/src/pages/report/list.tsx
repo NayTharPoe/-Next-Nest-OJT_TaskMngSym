@@ -26,6 +26,7 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { StyledGridOverlay } from '@/components/styledGridOverlay';
 import ExcelDownloadButton from '@/components/reportExcelDownload';
+import config from '@/config';
 
 const ReportListPage = ({ reports, page, rowPerPage }: any) => {
   const [formData, setFormData] = useState({
@@ -410,7 +411,7 @@ export async function getServerSideProps(context: any) {
   const page = context.query.page || 1;
   const rowPerPage = context.query.limit || 5;
   const res = await fetch(
-    `http://localhost:8080/reports/list?${new URLSearchParams(context.query).toString()}`
+    `${config.SERVER_DOMAIN}/reports/list?${new URLSearchParams(context.query).toString()}`
   );
   const reports = await res.json();
 

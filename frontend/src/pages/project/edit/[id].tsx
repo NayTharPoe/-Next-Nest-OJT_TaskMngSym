@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { ProjectSchema } from '@/lib/validation/projectSchema';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import config from '@/config';
 
 const UpdateFormButton = (props: any) => {
   return (
@@ -76,7 +77,7 @@ const EditProjectPage: NextPageWithLayout = ({ project }: any) => {
 
   const onSubmit = async (payload: any) => {
     try {
-      const res = await axios.patch(`http://localhost:8080/project/edit/${project?.data._id}`, {
+      const res = await axios.patch(`${config.SERVER_DOMAIN}/project/edit/${project?.data._id}`, {
         ...payload,
         starDate: dayjs(payload.starDate).format('YYYY-MM-DD'),
         endDate: dayjs(payload.endDate).format('YYYY-MM-DD'),
@@ -284,7 +285,7 @@ export default EditProjectPage;
 
 export async function getServerSideProps(context: { query: { id: any } }) {
   const { id } = context.query;
-  const res = await fetch(`http://localhost:8080/project/detail/${id}`);
+  const res = await fetch(`${config.SERVER_DOMAIN}/project/detail/${id}`);
   const project = await res.json();
 
   return {

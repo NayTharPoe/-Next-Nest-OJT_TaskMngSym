@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { ProjectSchema } from '@/lib/validation/projectSchema';
 import dayjs, { Dayjs } from 'dayjs';
 import axios from 'axios';
+import config from '@/config';
 
 const CreateFormButton = (props: any) => {
   return (
@@ -74,7 +75,7 @@ const AddNewProjectPage: NextPageWithLayout = () => {
 
   const onSubmit = async (payload: any) => {
     try {
-      const res = await axios.post('http://localhost:8080/project/add', {
+      const res = await axios.post(`${config.SERVER_DOMAIN}/project/add`, {
         ...payload,
         starDate: dayjs(payload.starDate).format('YYYY-MM-DD'),
         endDate: dayjs(payload.endDate).format('YYYY-MM-DD'),

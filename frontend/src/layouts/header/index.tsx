@@ -28,6 +28,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { StyledGridOverlay } from '@/components/styledGridOverlay';
 import { apiClient } from '@/services/apiClient';
+import config from '@/config';
 
 dayjs.extend(relativeTime);
 
@@ -99,7 +100,7 @@ const Header = () => {
       );
 
       setNotificationBadgeCount((prevCount) => Math.max(prevCount - 1, 0));
-      const res = await apiClient.patch(`http://localhost:8080/notification/edit/${id}`, {
+      const res = await apiClient.patch(`${config.SERVER_DOMAIN}/notification/edit/${id}`, {
         read: [loggedInUser?._id],
       });
       console.log(res);
@@ -111,7 +112,7 @@ const Header = () => {
   const fetchAllNotifications = async () => {
     try {
       const curr_user = JSON.parse(localStorage.getItem('user') ?? '');
-      const res = await apiClient.get('http://localhost:8080/notifications/list');
+      const res = await apiClient.get(`${config.SERVER_DOMAIN}/notifications/list`);
       const allNotifications = res?.data?.data || [];
 
       const filteredNotifications = allNotifications.filter((row: any) => {
