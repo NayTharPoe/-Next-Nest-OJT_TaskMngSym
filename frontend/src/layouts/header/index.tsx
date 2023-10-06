@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import {
   Box,
   Chip,
@@ -9,26 +9,26 @@ import {
   ListItemButton,
   ListItemText,
   Paper,
-} from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
-import Tooltip from '@mui/material/Tooltip';
-import Avatar from '@mui/material/Avatar';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
-import Badge from '@mui/material/Badge';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { useTheme } from '@mui/material/styles';
-import palette from '@/theme/palette';
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import { socket } from '../../socket';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { StyledGridOverlay } from '@/components/styledGridOverlay';
-import { apiClient } from '@/services/apiClient';
-import config from '@/config';
+} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
+import Tooltip from "@mui/material/Tooltip";
+import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import Badge from "@mui/material/Badge";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import { useTheme } from "@mui/material/styles";
+import palette from "@/theme/palette";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { socket } from "../../socket";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { StyledGridOverlay } from "@/components/styledGridOverlay";
+import { apiClient } from "@/services/apiClient";
+import config from "@/config";
 
 dayjs.extend(relativeTime);
 
@@ -43,21 +43,21 @@ const Header = () => {
   const location = useRouter();
 
   const logoutApi = () => {
-    localStorage.removeItem('user');
-    router.push('/auth/login');
+    localStorage.removeItem("user");
+    router.push("/auth/login");
     setAnchorElUser(null);
   };
 
   const handleChangePassword = () => {
-    router.push('/auth/change-password');
+    router.push("/auth/change-password");
     setAnchorElUser(null);
   };
 
   const handleProfile = () => {
-    const loginUser = localStorage.getItem('user');
+    const loginUser = localStorage.getItem("user");
     if (loginUser) {
       const { _id } = JSON.parse(loginUser);
-      router.push(`employee/detail/${_id}`);
+      router.push(`/employee/detail/${_id}`);
     }
     setAnchorElUser(null);
   };
@@ -74,20 +74,20 @@ const Header = () => {
     setShowMessageBox((prevShowMessageBox) => !prevShowMessageBox);
   };
 
-  const routePath = router.pathname.split('/')[1];
-  let pageTitle = '';
+  const routePath = router.pathname.split("/")[1];
+  let pageTitle = "";
   switch (routePath) {
-    case 'project':
-      pageTitle = 'Projects';
+    case "project":
+      pageTitle = "Projects";
       break;
-    case 'employee':
-      pageTitle = 'Employees';
+    case "employee":
+      pageTitle = "Employees";
       break;
-    case 'task':
-      pageTitle = 'Tasks';
+    case "task":
+      pageTitle = "Tasks";
       break;
-    case 'report':
-      pageTitle = 'Reports';
+    case "report":
+      pageTitle = "Reports";
       break;
     default:
       break;
@@ -96,13 +96,18 @@ const Header = () => {
   const handleEditNotification = async (id: any) => {
     try {
       setFilterNotificationData((prevFilterNotificationData) =>
-        prevFilterNotificationData.filter((notification: any) => notification._id !== id)
+        prevFilterNotificationData.filter(
+          (notification: any) => notification._id !== id
+        )
       );
 
       setNotificationBadgeCount((prevCount) => Math.max(prevCount - 1, 0));
-      const res = await apiClient.patch(`${config.SERVER_DOMAIN}/notification/edit/${id}`, {
-        read: [loggedInUser?._id],
-      });
+      const res = await apiClient.patch(
+        `${config.SERVER_DOMAIN}/notification/edit/${id}`,
+        {
+          read: [loggedInUser?._id],
+        }
+      );
       console.log(res);
     } catch (error) {
       console.log(error);
@@ -111,13 +116,15 @@ const Header = () => {
 
   const fetchAllNotifications = async () => {
     try {
-      const curr_user = JSON.parse(localStorage.getItem('user') ?? '');
-      const res = await apiClient.get(`${config.SERVER_DOMAIN}/notifications/list`);
+      const curr_user = JSON.parse(localStorage.getItem("user") ?? "");
+      const res = await apiClient.get(
+        `${config.SERVER_DOMAIN}/notifications/list`
+      );
       const allNotifications = res?.data?.data || [];
 
       const filteredNotifications = allNotifications.filter((row: any) => {
         if (
-          row.tag === 'REPORT' &&
+          row.tag === "REPORT" &&
           row.createdByWhom !== curr_user?._id &&
           row.sendTo === curr_user?._id &&
           !row.read.includes(curr_user?._id)
@@ -125,11 +132,11 @@ const Header = () => {
           return true;
         }
         if (
-          row.tag === 'TASK' &&
+          row.tag === "TASK" &&
           !row.read.includes(curr_user?._id) &&
           row.createdByWhom !== curr_user?._id
         ) {
-          return curr_user?.position === '1' || row.sendTo === curr_user?._id;
+          return curr_user?.position === "1" || row.sendTo === curr_user?._id;
         }
         return false;
       });
@@ -143,9 +150,9 @@ const Header = () => {
 
   useEffect(() => {
     const eventNames: string[] = [
-      'createReportNotifications',
-      'createTaskNotifications',
-      'updateTaskNotifications',
+      "createReportNotifications",
+      "createTaskNotifications",
+      "updateTaskNotifications",
     ];
 
     const handleCreateNotifications = async () => {
@@ -164,13 +171,16 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    if (window.performance.navigation.type === window.performance.navigation.TYPE_RELOAD) {
+    if (
+      window.performance.navigation.type ===
+      window.performance.navigation.TYPE_RELOAD
+    ) {
       fetchAllNotifications();
     }
   }, []);
 
   useEffect(() => {
-    setLoggedInUser(JSON.parse(localStorage.getItem('user') ?? '{}'));
+    setLoggedInUser(JSON.parse(localStorage.getItem("user") ?? "{}"));
   }, []);
 
   useEffect(() => {
@@ -180,29 +190,32 @@ const Header = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (showMessageBox && notificationIconRef.current) {
-        const notificationBox = document.querySelector('.notification-box');
-        if (notificationBox && !notificationBox.contains(event.target as Node)) {
+        const notificationBox = document.querySelector(".notification-box");
+        if (
+          notificationBox &&
+          !notificationBox.contains(event.target as Node)
+        ) {
           setShowMessageBox(false);
         }
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMessageBox]);
 
   return (
     <Box
       sx={{
-        width: '100%',
-        display: { xs: 'none', md: 'flex', gap: 15 },
+        width: "100%",
+        display: { xs: "none", md: "flex", gap: 15 },
         mt: 3,
         mb: 3,
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        justifyContent: "space-between",
+        alignItems: "center",
       }}
     >
       <Box>
@@ -210,10 +223,14 @@ const Header = () => {
           {pageTitle}
         </Typography>
       </Box>
-      <Box sx={{ width: 'max-content', display: 'flex', gap: 3 }}>
-        <Box sx={{ position: 'relative' }}>
+      <Box sx={{ width: "max-content", display: "flex", gap: 3 }}>
+        <Box sx={{ position: "relative" }}>
           <IconButton onClick={handleNotificationBox} ref={notificationIconRef}>
-            <Badge color="error" variant="dot" invisible={notificationBadgeCount <= 0}>
+            <Badge
+              color="error"
+              variant="dot"
+              invisible={notificationBadgeCount <= 0}
+            >
               <NotificationsIcon />
             </Badge>
           </IconButton>
@@ -221,35 +238,44 @@ const Header = () => {
           {showMessageBox && (
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: 50,
                 left: -320,
                 width: 360,
                 bgcolor: palette.common.white,
-                borderRadius: '.75rem',
+                borderRadius: ".75rem",
                 p: 1,
                 pt: 0,
-                boxShadow: 'rgba(0, 0, 0, 0.09) 0px 3px 12px',
+                boxShadow: "rgba(0, 0, 0, 0.09) 0px 3px 12px",
               }}
               className="notification-box"
             >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
+              <Box
+                sx={{ display: "flex", justifyContent: "space-between", p: 2 }}
+              >
                 <Typography variant="h4" color={palette.text.primary}>
                   Notification
                 </Typography>
                 <Chip
-                  label={notificationBadgeCount ? `unread ${notificationBadgeCount}` : 'unread 0'}
+                  label={
+                    notificationBadgeCount
+                      ? `unread ${notificationBadgeCount}`
+                      : "unread 0"
+                  }
                   size="small"
-                  sx={{ backgroundColor: palette.primary.dark, color: palette.common.white }}
+                  sx={{
+                    backgroundColor: palette.primary.dark,
+                    color: palette.common.white,
+                  }}
                   variant="filled"
                 />
               </Box>
               <Divider />
-              <List component="nav" sx={{ overflow: 'auto', height: 300 }}>
+              <List component="nav" sx={{ overflow: "auto", height: 300 }}>
                 {filterNotificationData?.length <= 0 ? (
                   <StyledGridOverlay>
                     <svg
-                      style={{ flexShrink: 0, marginTop: '1rem' }}
+                      style={{ flexShrink: 0, marginTop: "1rem" }}
                       width="200"
                       height="90"
                       viewBox="0 0 184 152"
@@ -282,13 +308,27 @@ const Header = () => {
                           className="ant-empty-img-3"
                           d="M149.121 33.292l-6.83 2.65a1 1 0 0 1-1.317-1.23l1.937-6.207c-2.589-2.944-4.109-6.534-4.109-10.408C138.802 8.102 148.92 0 161.402 0 173.881 0 184 8.102 184 18.097c0 9.995-10.118 18.097-22.599 18.097-4.528 0-8.744-1.066-12.28-2.902z"
                         />
-                        <g className="ant-empty-img-4" transform="translate(149.65 15.383)">
-                          <ellipse cx="20.654" cy="3.167" rx="2.849" ry="2.815" />
+                        <g
+                          className="ant-empty-img-4"
+                          transform="translate(149.65 15.383)"
+                        >
+                          <ellipse
+                            cx="20.654"
+                            cy="3.167"
+                            rx="2.849"
+                            ry="2.815"
+                          />
                           <path d="M5.698 5.63H0L2.898.704zM9.259.704h4.985V5.63H9.259z" />
                         </g>
                       </g>
                     </svg>
-                    <Box sx={{ mt: 2, color: palette.text.primary, fontSize: '.85rem' }}>
+                    <Box
+                      sx={{
+                        mt: 2,
+                        color: palette.text.primary,
+                        fontSize: ".85rem",
+                      }}
+                    >
                       No Notifications
                     </Box>
                   </StyledGridOverlay>
@@ -299,24 +339,56 @@ const Header = () => {
                       alignItems="flex-start"
                       onClick={() => handleEditNotification(notification?._id)}
                     >
-                      <ListItemButton sx={{ flexDirection: 'column', borderRadius: '.65rem' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <ListItemButton
+                        sx={{ flexDirection: "column", borderRadius: ".65rem" }}
+                      >
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
                           <ListItemAvatar>
-                            <Avatar alt="profile pics" src={notification?.profile} />
+                            <Avatar
+                              alt="profile pics"
+                              src={notification?.profile}
+                            />
                           </ListItemAvatar>
                           <ListItemText
-                            sx={{ alignItems: 'center' }}
+                            sx={{ alignItems: "center" }}
                             primary={
-                              <Typography sx={{ color: palette.text.primary, fontWeight: '600' }}>
+                              <Typography
+                                sx={{
+                                  color: palette.text.primary,
+                                  fontWeight: "600",
+                                }}
+                              >
                                 {notification?.tag}
                               </Typography>
                             }
-                            secondary={<span dangerouslySetInnerHTML={{ __html: notification.message }} />}
+                            secondary={
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: notification.message,
+                                }}
+                              />
+                            }
                           />
                         </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', mt: 1 }}>
-                          <AccessTimeFilledIcon fontSize="small" color="primary" />
-                          <Typography sx={{ color: palette.text.primary, fontSize: '0.75rem', ml: 0.5 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginLeft: "auto",
+                            mt: 1,
+                          }}
+                        >
+                          <AccessTimeFilledIcon
+                            fontSize="small"
+                            color="primary"
+                          />
+                          <Typography
+                            sx={{
+                              color: palette.text.primary,
+                              fontSize: "0.75rem",
+                              ml: 0.5,
+                            }}
+                          >
                             {dayjs(notification?.createdAt).fromNow()}
                           </Typography>
                         </Box>
@@ -337,22 +409,22 @@ const Header = () => {
           </Tooltip>
           <Menu
             sx={{
-              mt: '45px',
-              '.MuiPaper-elevation': {
-                boxShadow: 'rgba(0, 0, 0, 0.09) 0px 3px 12px',
+              mt: "45px",
+              ".MuiPaper-elevation": {
+                boxShadow: "rgba(0, 0, 0, 0.09) 0px 3px 12px",
                 backgroundColor: palette.common.white,
               },
             }}
             id="menu-appbar"
             anchorEl={anchorElUser}
             anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             keepMounted
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}

@@ -373,6 +373,7 @@ const TaskList: NextPageWithLayout = () => {
   const [taskList, setTaskList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [downloadData, setDownloadData] = useState<any>([]);
   const [keyword, setKeyword] = useState(4);
   const router = useRouter();
 
@@ -428,6 +429,7 @@ const TaskList: NextPageWithLayout = () => {
         };
       });
       setTaskList(taskData);
+      setDownloadData(taskData);
       setIsLoading(false);
     };
     taskApi();
@@ -435,13 +437,13 @@ const TaskList: NextPageWithLayout = () => {
 
   const handleSearchChange = (newSearchText: string) => {
     setSearchText(newSearchText);
+    setPage(0);
   };
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Data
   ) => {
-    console.log(property);
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
@@ -470,6 +472,7 @@ const TaskList: NextPageWithLayout = () => {
           .includes(searchText.toLowerCase().trim())
       );
     });
+    setDownloadData(filteredRows);
     return filteredRows;
   }
 
@@ -510,7 +513,7 @@ const TaskList: NextPageWithLayout = () => {
           mt: 2,
         }}
       >
-        <TaskDownload datas={visibleRows} />
+        <TaskDownload datas={downloadData} />
         <AddButton onClick={() => router.push("/task/add")}>
           <AddIcon fontSize="small" sx={{ mr: 1 }} /> New Task
         </AddButton>
@@ -536,7 +539,10 @@ const TaskList: NextPageWithLayout = () => {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={keyword}
-            onChange={(e: any) => setKeyword(e.target.value)}
+            onChange={(e: any) => {
+              setKeyword(e.target.value);
+              setPage(0);
+            }}
           >
             <MenuItem value={0}>Opened</MenuItem>
             <MenuItem value={1}>In progress</MenuItem>
