@@ -1,22 +1,12 @@
-import {
-  Controller,
-  Param,
-  Delete,
-  Res,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Param, Delete, Res, HttpStatus } from '@nestjs/common';
 import { ProjectService } from '../../service/project.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('project')
 @ApiTags('Project')
 export class DeleteProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
   @Delete('delete/:id')
   async remove(@Res() response, @Param('id') id: string): Promise<any> {
     try {

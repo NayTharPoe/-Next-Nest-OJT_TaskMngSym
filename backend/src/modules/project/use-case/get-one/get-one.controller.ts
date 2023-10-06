@@ -1,23 +1,13 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Res,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Res, HttpStatus } from '@nestjs/common';
 import { ProjectService } from '../../service/project.service';
 import { GetOneProjectResponseDto } from './get-one.response.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('project')
 @ApiTags('Project')
 export class GetDetailProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
   @Get('detail/:id')
   async findOne(
     @Res() response,

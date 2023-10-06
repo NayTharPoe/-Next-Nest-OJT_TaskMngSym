@@ -32,6 +32,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { ReportSchema } from '@/lib/validation/reportSchema';
 import { socket } from '../../socket';
+import config from '@/config';
 
 const PreviewDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -216,7 +217,7 @@ const ReportAddPage = () => {
         const currentUserData = JSON.parse(user);
         setCurrentUserData(currentUserData);
 
-        await axios.get('http://localhost:8080/employees/list').then((res) => {
+        await axios.get(`${config.SERVER_DOMAIN}/employees/list`).then((res) => {
           const adminRoles = res?.data?.data
             ?.filter((e: any) => e?.position !== '0' && e?._id !== currentUserData?._id)
             .map((employee: any) => ({
@@ -233,7 +234,7 @@ const ReportAddPage = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get('http://localhost:8080/tasks/list').then((res) => res.data);
+      const res = await axios.get(`${config.SERVER_DOMAIN}/tasks/list`).then((res) => res.data);
       const taskOptions = res.data?.map((task: { _id: any }, index: number) => ({
         value: task._id,
         label: index + 1,
@@ -286,10 +287,10 @@ const ReportAddPage = () => {
           status: Number(row.status),
           reportTo: roleOptions.find((option) => option.value === data.reportTo)?.label,
           reportBy: currentUserData,
-          problemFeeling: data.problem_feeling,
+          problemFeeling: data.problem_feeling ? data.problem_feeling : 'Nothing',
         }));
 
-        const reportResponse = await axios.post('http://localhost:8080/report/add', payload);
+        const reportResponse = await axios.post(`${config.SERVER_DOMAIN}/report/add`, payload);
 
         const notificationPayload = reportResponse.data?.data.map((row: any) => ({
           tag: 'REPORT',
@@ -305,7 +306,7 @@ const ReportAddPage = () => {
         }));
 
         const notificationResponse = await axios.post(
-          'http://localhost:8080/notification/add',
+          `${config.SERVER_DOMAIN}/notification/add`,
           notificationPayload
         );
         socket.emit('reportCreated', notificationResponse.data);

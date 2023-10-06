@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import MainLayout from '@/layouts/MainLayout';
 import {
   Avatar,
@@ -13,6 +13,10 @@ import {
   Stack,
   TextField,
   Typography,
+  Pagination,
+  Select,
+  MenuItem,
+  styled,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -22,13 +26,16 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { StyledGridOverlay } from '@/components/styledGridOverlay';
 import ExcelDownloadButton from '@/components/reportExcelDownload';
+import config from '@/config';
 
-const ReportListPage = ({ reports }: any) => {
+const ReportListPage = ({ reports, page, rowPerPage }: any) => {
   const [formData, setFormData] = useState({
     reportTo: '',
     reportBy: '',
     selectedDate: null,
   });
+  const [limit, setLimit] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
   const statusOptions = [
@@ -53,6 +60,35 @@ const ReportListPage = ({ reports }: any) => {
     });
   };
 
+  const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    const currentQuery = { ...router.query };
+    currentQuery.page = page.toString();
+    currentQuery.limit = limit.toString();
+    const newUrl = {
+      pathname: router.pathname,
+      query: currentQuery,
+    };
+    router.push(newUrl);
+    setCurrentPage(page);
+  };
+
+  const handleLimitChange: any = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const newLimit = event.target.value as number;
+    setLimit(newLimit);
+
+    const currentPathname = router.pathname;
+    const currentQuery = { ...router.query };
+    currentQuery.limit = newLimit.toString();
+
+    router.push({
+      pathname: currentPathname,
+      query: currentQuery,
+    });
+  };
+
+  const startIndex = (page - 1) * rowPerPage + 1;
+  const endIndex = Math.min(page * rowPerPage, reports?.count);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -63,15 +99,26 @@ const ReportListPage = ({ reports }: any) => {
     const reportToParam = formData.reportTo ? `&reportTo=${formattedReportTo}` : '';
     const reportByParam = formData.reportBy ? `&reportBy=${formattedBy}` : '';
     const dateParam = formData.selectedDate ? `&date=${formattedDate}` : '';
-    router.push(`${router.pathname}?page=1&limit=2000${reportToParam}${reportByParam}${dateParam}`);
+    router.push(`${router.pathname}?page=${page}&limit=${limit}${reportToParam}${reportByParam}${dateParam}`);
   };
+
+  useEffect(() => {
+    const { query } = router;
+    const page = parseInt(query.page as string, 10) || 1;
+    setCurrentPage(page);
+  }, [router.query]);
 
   return (
     <Box sx={{ width: '100%', my: 4 }}>
       <Grid
         container
         spacing={2}
-        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 4,
+        }}
       >
         <Grid item>
           <Box component="form" onSubmit={handleSubmit}>
@@ -84,6 +131,22 @@ const ReportListPage = ({ reports }: any) => {
                   onChange={handleInputChange}
                   placeholder="Report To"
                   variant="outlined"
+                  InputProps={{
+                    endAdornment: formData.reportTo && (
+                      <InputAdornment
+                        position="end"
+                        onClick={() =>
+                          setFormData({
+                            ...formData,
+                            reportTo: '',
+                          })
+                        }
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <ClearIcon fontSize="small" />
+                      </InputAdornment>
+                    ),
+                  }}
                   sx={{
                     '.MuiInputBase-root': {
                       borderRadius: '.4rem',
@@ -272,6 +335,78 @@ const ReportListPage = ({ reports }: any) => {
           })
         )}
       </Grid>
+      <Box
+        sx={{
+          mt: 5,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 5,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Select
+            value={limit}
+            size="small"
+            onChange={handleLimitChange}
+            sx={{
+              borderRadius: '4rem',
+              backgroundColor: palette.common.white,
+            }}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  backgroundColor: palette.common.white,
+                  borderRadius: '0.6rem',
+                },
+              },
+            }}
+          >
+            <MenuItem value={5}>5 results per page</MenuItem>
+            <MenuItem value={10}>10 results per page</MenuItem>
+            <MenuItem value={25}>25 results per page</MenuItem>
+          </Select>
+        </Box>
+        <Pagination
+          shape="rounded"
+          count={Math.ceil(reports?.count / limit)}
+          page={currentPage}
+          onChange={handlePageChange}
+          sx={{
+            '.MuiPaginationItem-root': {
+              border: `1px solid ${palette.accent.light}`,
+              borderRadius: '0.95rem',
+              padding: '0 1.2rem',
+            },
+            '.MuiPaginationItem-root.Mui-selected': {
+              backgroundColor: palette.primary.main,
+              borderColor: palette.primary.main,
+              color: palette.common.white,
+              '&:hover': {
+                backgroundColor: palette.primary.dark,
+                color: palette.common.white,
+              },
+            },
+            '.Mui-focusVisible': {
+              color: palette.text.primary,
+              backgroundColor: palette.primary.main,
+            },
+            '.MuiPaginationItem-ellipsis': {
+              border: 'none',
+              backgroundColor: 'transparent',
+            },
+            '.MuiPaginationItem-previousNext': {
+              border: 'none',
+            },
+          }}
+        />
+        <Typography>
+          <strong>
+            {startIndex} - {endIndex}
+          </strong>{' '}
+          / {reports?.count} results
+        </Typography>
+      </Box>
     </Box>
   );
 };
@@ -282,10 +417,12 @@ ReportListPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getServerSideProps(context: any) {
+  const page = context.query.page || 1;
+  const rowPerPage = context.query.limit || 5;
   const res = await fetch(
-    `http://localhost:8080/reports/list?${new URLSearchParams(context.query).toString()}`
+    `${config.SERVER_DOMAIN}/reports/list?${new URLSearchParams(context.query).toString()}`
   );
   const reports = await res.json();
 
-  return { props: { reports } };
+  return { props: { reports, page, rowPerPage } };
 }

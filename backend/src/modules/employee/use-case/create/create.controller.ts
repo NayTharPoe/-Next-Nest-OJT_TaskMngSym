@@ -4,15 +4,13 @@ import {
   Post,
   Body,
   NotFoundException,
-  UseGuards,
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { CreateEmployeeRequestDto } from './create.request.dto';
 import { CreateEmployeeResponseDto } from './create.response.dto';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('employee')
@@ -20,8 +18,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class CreateController {
   constructor(private employeeService: EmployeeService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
   @Post('add')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
