@@ -274,7 +274,7 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
   const handleInputSearch = () => {
     const formattedSearchParam = searchText ? searchText.toLowerCase().trim() : '';
     const searchParam = searchText ? `&search=${formattedSearchParam}` : '';
-    router.push(`${router.pathname}?page=${page}&limit=${limit}${searchParam}`);
+    router.push(`${router.pathname}?page=1&limit=${limit}${searchParam}`);
   };
 
   const handleClearSearchText = () => {
