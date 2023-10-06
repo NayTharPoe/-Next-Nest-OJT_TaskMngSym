@@ -21,10 +21,10 @@ import palette from "@/theme/palette";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
-import axios from "axios";
 import AuthDialog from "@/components/authDialog";
 import Loading from "@/components/loading";
 import { apiClient } from "@/services/apiClient";
+import config from "@/config";
 
 const EmployeeCreate = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -69,7 +69,7 @@ const EmployeeCreate = () => {
     formData.append("position", data.position);
     formData.append("profile", uploadedPhoto);
     apiClient
-      .post("http://localhost:8080/employee/add", formData)
+      .post(`${config.SERVER_DOMAIN}/employee/add`, formData)
       .then((res) => {
         setOpen(true);
         setIsLoading(false);

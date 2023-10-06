@@ -17,6 +17,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import AuthDialog from "@/components/authDialog";
 import Loading from "@/components/loading";
+import config from "@/config";
 
 const ResetPassword = () => {
   const [showPassword1, setShowPassword1] = useState(false);
@@ -45,7 +46,7 @@ const ResetPassword = () => {
     setIsLoading(true);
     axios
       .post(
-        `http://localhost:8080/auth/reset-password/${router.query.id}`,
+        `${config.SERVER_DOMAIN}/auth/reset-password/${router.query.id}`,
         data
       )
       .then((res) => {

@@ -24,6 +24,7 @@ import { TaskAddSchema } from "@/utils/taskValidate";
 import AuthDialog from "@/components/authDialog";
 import Loading from "@/components/loading";
 import { apiClient } from "@/services/apiClient";
+import config from "@/config";
 
 const TaskCreate = () => {
   const [selectProject, setSelectProject] = useState([]);
@@ -38,10 +39,10 @@ const TaskCreate = () => {
   useEffect(() => {
     const fetchData = async () => {
       const projectApi = await apiClient.get(
-        "http://localhost:8080/projects/list?page=1&limit=100"
+        `${config.SERVER_DOMAIN}/projects/list?page=1&limit=100`
       );
       const employeeApi = await apiClient.get(
-        "http://localhost:8080/employees/list?page=1&limit=100"
+        `${config.SERVER_DOMAIN}/employees/list?page=1&limit=100`
       );
       setSelectProject(
         projectApi.data.data.map((project: any) => ({
@@ -81,7 +82,7 @@ const TaskCreate = () => {
         : "",
     };
     apiClient
-      .post("http://localhost:8080/task/add", result)
+      .post(`${config.SERVER_DOMAIN}/task/add`, result)
       .then((res) => {
         setOpen(true);
         setIsLoading(false);

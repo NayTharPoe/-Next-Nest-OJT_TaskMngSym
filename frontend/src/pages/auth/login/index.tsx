@@ -18,6 +18,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import AuthDialog from "@/components/authDialog";
 import Loading from "@/components/loading";
+import config from "@/config";
 
 const style = {
   position: "absolute",
@@ -49,7 +50,7 @@ const Login = () => {
   const onSubmit = (data: any): void => {
     setIsLoading(true);
     axios
-      .post("http://localhost:8080/auth/login", data)
+      .post(`${config.SERVER_DOMAIN}/auth/login`, data)
       .then((res: any) => {
         const userData = res.data.result;
         localStorage.setItem("user", JSON.stringify(userData));
