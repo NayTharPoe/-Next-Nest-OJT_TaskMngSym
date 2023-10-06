@@ -4,6 +4,7 @@ import { Box, Typography, Button, Grid } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/router";
 import AuthDialog from "@/components/authDialog";
+import config from "@/config";
 
 const VerifyAccount = () => {
   const [open, setOpen] = useState(false);
@@ -14,7 +15,7 @@ const VerifyAccount = () => {
 
   const accountVerify = () => {
     axios
-      .post(`http://localhost:8080/auth/verify/${router.query.token}`)
+      .post(`${config.SERVER_DOMAIN}/auth/verify/${router.query.token}`)
       .then((res) => {
         console.log(res);
         setOpen(true);

@@ -2,6 +2,7 @@
 import AuthButton from "@/components/authBtn";
 import AuthDialog from "@/components/authDialog";
 import Loading from "@/components/loading";
+import config from "@/config";
 import { Box, Card, Grid, Stack, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -32,13 +33,12 @@ const ForgetPasswrod = () => {
   const onSubmit = (data: any): void => {
     setIsLoading(true);
     axios
-      .post("http://localhost:8080/auth/forget-password", data)
+      .post(`${config.SERVER_DOMAIN}/auth/forget-password`, data)
       .then((res: any) => {
         setStatusText(res.statusText);
         setOpen(true);
         setMessage(res.data?.message);
         setIsLoading(false);
-        // router.push("/auth/login");
       })
       .catch((err) => {
         setOpen(true);

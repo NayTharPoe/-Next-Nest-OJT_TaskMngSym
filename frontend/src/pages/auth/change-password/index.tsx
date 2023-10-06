@@ -16,6 +16,7 @@ import AuthButton from "@/components/authBtn";
 import axios from "axios";
 import AuthDialog from "@/components/authDialog";
 import Loading from "@/components/loading";
+import config from "@/config";
 
 const ChangePassword = () => {
   const [showPassword1, setShowPassword1] = useState(false);
@@ -39,7 +40,7 @@ const ChangePassword = () => {
   const onSubmit = (data: any): void => {
     setIsLoading(true);
     axios
-      .post("http://localhost:8080/auth/change-password", data)
+      .post(`${config.SERVER_DOMAIN}/auth/change-password`, data)
       .then((res) => {
         setStatusText(res.statusText);
         setOpen(true);
