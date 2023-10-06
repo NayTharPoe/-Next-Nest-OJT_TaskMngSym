@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ProjectDocument, ProjectEntity } from '../entities/project.entity';
 import { CreateProjectRequestDto } from '../use-case/create/create.request.dto';
 import { UpdateProjectRequestDto } from '../use-case/update/update.request.dto';
-import { PaginationRequestDto } from 'src/common/dtos/request/pagination.req.dto';
+import { ProjectPaginationRequestDto } from 'src/common/dtos/request/projectPagination.req.dto';
 @Injectable()
 export class ProjectService {
   constructor(
@@ -21,14 +21,26 @@ export class ProjectService {
   }
 
   // find service
-  async findAll({ page, limit }: PaginationRequestDto): Promise<{
+  async findAll({ page, limit, search }: ProjectPaginationRequestDto): Promise<{
     projects: ProjectDocument[];
     totalProjects: number;
   }> {
-    const totalProjects = await this.projectModel.countDocuments();
+    const regexSearch = search ? new RegExp(search, 'i') : undefined;
+
+    const query: any = {};
+
+    if (regexSearch) {
+      query.$or = [
+        { projectName: { $regex: regexSearch } },
+        { language: { $regex: regexSearch } },
+        { description: { $regex: regexSearch } },
+      ];
+    }
+
+    const totalProjects = await this.projectModel.countDocuments(query);
 
     const projects: any = await this.projectModel
-      .find()
+      .find(query)
       .limit(limit)
       .skip(limit * (page - 1))
       .sort({ createdAt: -1 })

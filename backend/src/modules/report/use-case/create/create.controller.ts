@@ -1,24 +1,14 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpStatus,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpStatus, Res } from '@nestjs/common';
 import { ReportService } from '../../services/report.service';
 import { CreateReportRequestDto } from './create.request.dto';
 import { CreateReportResponseDto } from './create.response.dto';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 @Controller('report')
 @ApiTags('Report')
 export class CreateReportController {
   constructor(private readonly reportService: ReportService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
   @ApiBody({ type: [CreateReportRequestDto] })
   @Post('add')
   async create(

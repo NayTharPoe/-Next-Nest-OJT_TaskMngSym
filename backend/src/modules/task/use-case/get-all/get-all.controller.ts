@@ -3,13 +3,11 @@ import {
   Get,
   Response,
   NotFoundException,
-  UseGuards,
   Query,
 } from '@nestjs/common';
 import { TaskService } from '../../service/task.service';
 import { GetAllTaskResponseDto } from './getAll.response.dto';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { EmployeePaginationRequestDto } from 'src/common/dtos/request/employeePagination.req.dto';
 
 @Controller('tasks')
@@ -17,8 +15,6 @@ import { EmployeePaginationRequestDto } from 'src/common/dtos/request/employeePa
 export class GetAllController {
   constructor(private taskService: TaskService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
   @Get('list')
   async getAllTask(
     @Response() res,

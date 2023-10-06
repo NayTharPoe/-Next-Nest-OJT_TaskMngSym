@@ -5,21 +5,17 @@ import {
   HttpStatus,
   Res,
   Body,
-  UseGuards,
 } from '@nestjs/common';
 import { NotificationService } from '../../service/notification.service';
 import { UpdateNotificationRequestDto } from './update.request.dto';
 import { UpdateNotificationResponseDto } from './update.response.dto';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('notification')
 @ApiTags('Notification')
 export class UpdateNotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  // @ApiBearerAuth('JWT-auth')
-  // @UseGuards(AuthGuard)
   @Patch('edit/:id')
   async update(
     @Res() response,
