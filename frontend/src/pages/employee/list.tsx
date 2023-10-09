@@ -67,6 +67,7 @@ const EmployeeList = () => {
   const handleInputChange = (event: any) => {
     setSearchText(event.target.value);
     setKeyword(event.target.value);
+    setPage(1);
   };
 
   const filterEmployeeData = employeeList?.filter((row: any) => {
