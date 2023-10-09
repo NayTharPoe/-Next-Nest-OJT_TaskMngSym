@@ -302,11 +302,11 @@ const ReportListPage = ({ reports, allReports, page, rowPerPage }: any) => {
                   sx={{
                     bgcolor: palette.common.white,
                     boxShadow: 'none',
-                    width: '340px',
+                    width: '335px',
                     p: 1,
                     borderRadius: '1.4rem',
-                    '@media (min-width: 320px)': {
-                      width: '335px',
+                    '@media (max-width: 450px)': {
+                      width: '280px',
                     },
                   }}
                 >
