@@ -36,8 +36,8 @@
             "after": true
         }],
         "indent": ["error", 2],
-        "no-console": ["error", { 
-            "allow": ["warn", "error"] 
+        "no-console": ["error", {
+            "allow": ["warn", "error"]
         }],
         "no-multiple-empty-lines": ["warn", {
             "max": 1,
@@ -54,4 +54,4 @@
         "react/no-children-prop": "error",
         "react/jsx-no-bind": "error"
     }
-  }
+}
