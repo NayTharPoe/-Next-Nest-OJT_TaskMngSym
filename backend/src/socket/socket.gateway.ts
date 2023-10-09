@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: 'https://next-nest-task-mng-sym.vercel.app',
+    origin: '*',
     methods: ['GET', 'POST'],
   },
 })
