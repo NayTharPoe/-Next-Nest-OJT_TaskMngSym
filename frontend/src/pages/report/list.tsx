@@ -27,6 +27,7 @@ import { useRouter } from 'next/router';
 import { StyledGridOverlay } from '@/components/styledGridOverlay';
 import ExcelDownloadButton from '@/components/reportExcelDownload';
 import config from '@/config';
+import axios from 'axios';
 
 const ReportListPage = ({ reports, allReports, page, rowPerPage }: any) => {
   const [formData, setFormData] = useState({
@@ -434,13 +435,13 @@ export async function getServerSideProps(context: any) {
   const rowPerPage = context.query.limit || 5;
   let url;
 
-  const filterRes = await fetch(
+  const filterRes = await axios.get(
     `${config.SERVER_DOMAIN}/reports/list?${new URLSearchParams(context.query).toString()}`
   );
-  const reports = await filterRes.json();
+  const reports = filterRes.data;
 
-  const allRes = await fetch(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`);
-  const allReports = await allRes.json();
+  const allRes = await axios.get(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`);
+  const allReports = allRes?.data;
 
   return { props: { reports, allReports, page, rowPerPage } };
 }

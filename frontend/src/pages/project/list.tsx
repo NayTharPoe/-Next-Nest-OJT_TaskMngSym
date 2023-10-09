@@ -206,15 +206,17 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
 
   const offset = (currentPage - 1) * limit;
 
-  let rows: any = projects?.data?.map((row: any, index: number) => ({
-    _id: row._id,
-    displayId: index + 1 + offset,
-    projectName: row.projectName,
-    language: row.language,
-    description: row.description,
-    startDate: dayjs(row.startDate).format('YYYY-MM-DD'),
-    endDate: dayjs(row.endDate).format('YYYY-MM-DD'),
-  }));
+  let rows: any = projects?.data.length
+    ? projects?.data?.map((row: any, index: number) => ({
+        _id: row._id,
+        displayId: index + 1 + offset,
+        projectName: row.projectName,
+        language: row.language,
+        description: row.description,
+        startDate: dayjs(row.startDate).format('YYYY-MM-DD'),
+        endDate: dayjs(row.endDate).format('YYYY-MM-DD'),
+      }))
+    : [];
 
   const handleEditProject = (id: any) => {
     setEditDialogOpen(false);
@@ -456,10 +458,11 @@ ProjectListPage.getLayout = function getLayout(page: ReactElement) {
 export async function getServerSideProps(context: any) {
   const page = context.query.page || 1;
   const rowPerPage = context.query.limit || 5;
+
   const res = await axios.get(
     `${config.SERVER_DOMAIN}/projects/list?${new URLSearchParams(context.query).toString()}`
   );
-  const projects = await res?.data;
+  const projects = res?.data;
 
   return { props: { projects, page, rowPerPage } };
 }
