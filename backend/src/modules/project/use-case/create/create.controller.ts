@@ -9,6 +9,8 @@ import { ApiTags } from '@nestjs/swagger';
 export class CreateProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
+  // @ApiBearerAuth('JWT-auth')
+  // @UseGuards(AuthGuard)
   @Post('add')
   async create(
     @Res() response,

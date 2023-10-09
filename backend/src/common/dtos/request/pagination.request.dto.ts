@@ -23,6 +23,7 @@ export class PaginationRequestDto {
   @IsOptional()
   limit?: number = defaultLimit;
 
-  @ApiProperty()
-  keyword: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  keyword?: string;
 }

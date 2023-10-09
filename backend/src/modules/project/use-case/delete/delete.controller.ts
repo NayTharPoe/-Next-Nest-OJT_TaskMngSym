@@ -1,6 +1,5 @@
 import { Controller, Param, Delete, Res, HttpStatus } from '@nestjs/common';
 import { ProjectService } from '../../service/project.service';
-// import { ProjectEntity } from '../../entities/project.entity';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('project')

@@ -1,11 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { token } from '../entities/token.entities';
+import { TokenDocument, TokenEntity } from '../entities/token.entities';
 import { Model } from 'mongoose';
 
 @Injectable()
 export class TokenService {
-  constructor(@InjectModel(token.name) private tokenModel: Model<token>) {}
+  constructor(@InjectModel(TokenEntity.name) private tokenModel: Model<TokenDocument>) {}
 
   async createToken(email: string, token: string) {
     await this.tokenModel.create({ email, token });

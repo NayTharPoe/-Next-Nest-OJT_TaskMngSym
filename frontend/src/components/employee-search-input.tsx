@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack } from "@mui/material";
+import { InputLabel, Stack } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import { InputBase, ButtonBase } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -72,7 +72,7 @@ export default function EmployeeSearchBox({
   inputSearch: any;
 }) {
   return (
-    <Stack direction="row">
+    <Stack direction="column">
       <Search>
         <SearchIconWrapper>
           <SearchIcon />

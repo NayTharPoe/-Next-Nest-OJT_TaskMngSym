@@ -1,53 +1,60 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Query } from 'express-serve-static-core';
-// import { ProjectEntity, ProjectDocument } from '../entities/project.entity';
+import { ProjectDocument, ProjectEntity } from '../entities/project.entity';
 import { CreateProjectRequestDto } from '../use-case/create/create.request.dto';
 import { UpdateProjectRequestDto } from '../use-case/update/update.request.dto';
-import { project } from '../entities/project.entity';
-
+import { ProjectPaginationRequestDto } from 'src/common/dtos/request/projectPagination.req.dto';
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectModel(project.name)
-    private readonly projectModel: Model<project>,
+    @InjectModel(ProjectEntity.name)
+    private readonly projectModel: Model<ProjectDocument>,
   ) {}
 
   // create service
-  async create(createProjectDto: CreateProjectRequestDto): Promise<project> {
+  async create(
+    createProjectDto: CreateProjectRequestDto,
+  ): Promise<ProjectDocument> {
     const newProject = new this.projectModel(createProjectDto);
     return await newProject.save();
   }
 
   // find service
-  async findAll(
-    query: Query,
-  ): Promise<{ projects: project[]; totalProjects: number }> {
-    const resPerPage = Number(query.limit);
-    const currentPage = Number(query.page) || 1;
-    const skip = resPerPage * (currentPage - 1);
+  async findAll({ page, limit, search }: ProjectPaginationRequestDto): Promise<{
+    projects: ProjectDocument[];
+    totalProjects: number;
+  }> {
+    const regexSearch = search ? new RegExp(search, 'i') : undefined;
 
-    const totalProjects = await this.projectModel.countDocuments();
+    const query: any = {};
 
-    const projects = await this.projectModel
-      .find()
-      .limit(resPerPage)
-      .skip(skip)
+    if (regexSearch) {
+      query.$or = [
+        { projectName: { $regex: regexSearch } },
+        { language: { $regex: regexSearch } },
+        { description: { $regex: regexSearch } },
+      ];
+    }
+
+    const totalProjects = await this.projectModel.countDocuments(query);
+
+    const projects: any = await this.projectModel
+      .find(query)
+      .limit(limit)
+      .skip(limit * (page - 1))
       .sort({ createdAt: -1 })
       .select('-__v');
 
-    const result = { projects, totalProjects };
-    return result;
+    return { projects, totalProjects };
   }
 
   // find one service
-  async findOne(id: string): Promise<project> {
+  async findOne(id: string): Promise<ProjectDocument> {
     const project = await this.projectModel.findById(id);
     if (!project) {
-      throw new HttpException(
+      throw new NotFoundException(
         'There is no project with this id to retrieve',
-        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -58,13 +65,10 @@ export class ProjectService {
   async update(
     id: string,
     updateProjectDto: UpdateProjectRequestDto,
-  ): Promise<project> {
+  ): Promise<ProjectDocument> {
     const project = await this.projectModel.findById(id);
     if (!project) {
-      throw new HttpException(
-        'There is no project with this id to update',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException('There is no project with this id to update');
     }
 
     return await this.projectModel.findByIdAndUpdate(id, updateProjectDto, {
@@ -73,13 +77,10 @@ export class ProjectService {
   }
 
   // delete service
-  async remove(id: string): Promise<project> {
+  async remove(id: string): Promise<ProjectDocument> {
     const project = await this.projectModel.findById(id);
     if (!project) {
-      throw new HttpException(
-        'There is no project with this id to delete',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException('There is no project with this id to delete');
     }
 
     return await this.projectModel.findByIdAndDelete(id);

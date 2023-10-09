@@ -1,134 +1,4 @@
-// import MainLayout from "@/layouts/MainLayout";
-// import {
-//   Box,
-//   Grid,
-//   InputLabel,
-//   Stack,
-//   TextField,
-//   CardMedia,
-//   Select,
-//   Button,
-//   MenuItem,
-// } from "@mui/material";
-// import React, { ReactElement, useState } from "react";
-// import palette from "@/theme/palette";
-// import { useRouter } from "next/router";
-
-// const EmployeeDetail = () => {
-//   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-//   const [selectedValue, setSelectedValue] = useState<number | null>(0);
-
-//   const router = useRouter();
-
-//   const CancelButton = (props: any) => {
-//     return (
-//       <Button
-//         fullWidth
-//         variant="contained"
-//         sx={{
-//           padding: "10px",
-//           borderRadius: ".5rem",
-//           boxShadow: "none",
-//           background: palette.secondary.main,
-//           color: palette.text.primary,
-//           "&:hover": {
-//             background: palette.secondary.main,
-//             borderColor: palette.primary.border,
-//             boxShadow: "none",
-//           },
-//         }}
-//         {...props}
-//       >
-//         {props.children}
-//       </Button>
-//     );
-//   };
-
-//   return (
-//     <>
-//       <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
-//         <Grid container spacing={4}>
-//           <Grid item md={6} sm={6} xs={12}>
-//             <InputLabel>Name</InputLabel>
-//             <TextField disabled fullWidth placeholder="Employee Name..." />
-//           </Grid>
-//           <Grid item md={6} sm={6} xs={12}>
-//             <InputLabel>Email</InputLabel>
-//             <TextField disabled fullWidth placeholder="Email..." />
-//           </Grid>
-//           <Grid item xs={12}>
-//             <Box
-//               sx={{
-//                 border: "1px solid #b0afaf",
-//                 borderRadius: "6px",
-//                 width: "48%",
-//                 "@media (max-width: 600px)": { width: "65%" },
-//               }}
-//             >
-//               <CardMedia
-//                 component="img"
-//                 alt="img-upload"
-//                 src="https://img.freepik.com/free-photo/cute-dog-studio_23-2150687309.jpg?size=626&ext=jpg&ga=GA1.1.988097705.1691639176&semt=sph"
-//                 sx={{
-//                   width: "100%",
-//                   height: "170px",
-//                   borderRadius: "5px",
-//                   objectFit: "cover",
-//                 }}
-//               />
-//             </Box>
-//           </Grid>
-//           <Grid item sm={6} xs={12}>
-//             <InputLabel>Address</InputLabel>
-//             <TextField disabled fullWidth placeholder="Address..." />
-//           </Grid>
-//           <Grid item sm={6} xs={12}>
-//             <InputLabel>Phone</InputLabel>
-//             <TextField disabled fullWidth placeholder="Phone..." />
-//           </Grid>
-//           <Grid item sm={6} xs={12}>
-//             <InputLabel>DOB</InputLabel>
-//             <TextField disabled fullWidth placeholder="DOB..." />
-//           </Grid>
-//           <Grid item sm={6} xs={12}>
-//             <InputLabel>Position</InputLabel>
-//             {/* <TextField fullWidth placeholder="Position..." /> */}
-//             <Select
-//               disabled
-//               value={selectedValue}
-//               onChange={(e) => setSelectedValue(e.target.value as number)}
-//               fullWidth
-//             >
-//               <MenuItem value="0">Member</MenuItem>
-//               <MenuItem value="1">Admin</MenuItem>
-//             </Select>
-//           </Grid>
-//         </Grid>
-//         <Stack
-//           mt={3}
-//           sx={{
-//             display: "flex",
-//             justifyContent: "center",
-//             alignItems: "center",
-//           }}
-//           direction={"column"}
-//         >
-//           <CancelButton onClick={() => router.push("/employee/list")}>
-//             Cancel
-//           </CancelButton>
-//         </Stack>
-//       </Box>
-//     </>
-//   );
-// };
-
-// EmployeeDetail.getLayout = function getLayout(page: ReactElement) {
-//   return <MainLayout>{page}</MainLayout>;
-// };
-
-// export default EmployeeDetail;
-
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import MainLayout from "@/layouts/MainLayout";
 import {
   Avatar,
@@ -137,34 +7,41 @@ import {
   Card,
   CardContent,
   Grid,
-  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
-import DeleteIcon from "@mui/icons-material/Delete";
 import CardBtn from "@/components/cardBtn";
 import palette from "@/theme/palette";
 import HomeIcon from "@mui/icons-material/Home";
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 import { useRouter } from "next/router";
-import { theme } from "@/theme";
+import { apiClient } from "@/services/apiClient";
+import Loading from "@/components/loading";
+import config from "@/config";
 
 const EmployeeList = () => {
   const router = useRouter();
 
-  const employee = {
-    id: 1,
-    email: "mtm.linnaunghtet@gmail.com",
-    phone: "09800900700",
-    address: "Pathein",
-    birthDate: "2023-56-90",
-    verified: true,
-  };
+  const [employeeData, setEmployeeData] = useState<any>("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (router.query?.id) {
+      apiClient
+        .get(`${config.SERVER_DOMAIN}/employee/detail/${router.query.id}`)
+        .then((res) => {
+          setEmployeeData(res.data.data);
+          setIsLoading(false);
+        });
+    }
+  }, [router.query.id]);
 
   return (
     <>
+      {isLoading && <Loading />}
       <Grid
         mt={2}
         container
@@ -195,7 +72,7 @@ const EmployeeList = () => {
                 margin: "30px auto 0",
               }}
               alt="img"
-              src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
+              src={employeeData?.profile}
             />
             <Box
               mt={1}
@@ -204,7 +81,7 @@ const EmployeeList = () => {
                 color: (theme) => `${theme.palette.text.secondary}`,
               }}
             >
-              <Typography>Linn Aung Htet</Typography>
+              <Typography>{employeeData?.employeeName}</Typography>
               <Typography
                 sx={{
                   fontSize: "14px",
@@ -216,12 +93,14 @@ const EmployeeList = () => {
                 sx={{
                   background: "transparent",
                   border: `1px solid ${
-                    employee.verified
+                    employeeData?.verified
                       ? palette.info.light
                       : palette.error.lighter
                   }`,
                   color: `${
-                    employee.verified ? palette.info.main : palette.error.main
+                    employeeData?.verified
+                      ? palette.info.main
+                      : palette.error.main
                   }`,
                   textTransform: "uppercase",
                   marginTop: "4px",
@@ -233,7 +112,7 @@ const EmployeeList = () => {
                 }}
                 variant="contained"
               >
-                {employee.verified ? "Verified" : "Not Verified"}
+                {employeeData.verified ? "Verified" : "Not Verified"}
               </Button>
             </Box>
             <CardContent>
@@ -256,7 +135,7 @@ const EmployeeList = () => {
                   }}
                 >
                   <EmailIcon sx={{ marginRight: "5px", fontSize: "20px" }} />{" "}
-                  {employee.email}
+                  {employeeData?.email}
                 </Typography>
                 <Typography
                   style={{
@@ -266,7 +145,7 @@ const EmployeeList = () => {
                   }}
                 >
                   <PhoneIcon style={{ fontSize: "20px", marginRight: "5px" }} />{" "}
-                  {employee.phone}
+                  {employeeData?.phone ? employeeData.phone : "..."}
                 </Typography>
               </Stack>
               <Stack
@@ -288,7 +167,7 @@ const EmployeeList = () => {
                   }}
                 >
                   <HomeIcon sx={{ marginRight: "5px", fontSize: "20px" }} />{" "}
-                  {employee.address}
+                  {employeeData?.address ? employeeData.address : "..."}
                 </Typography>
                 <Typography
                   style={{
@@ -300,7 +179,7 @@ const EmployeeList = () => {
                   <PermContactCalendarIcon
                     style={{ fontSize: "20px", marginRight: "5px" }}
                   />{" "}
-                  {employee.birthDate}
+                  {employeeData?.dob ? employeeData.dob : "..."}
                 </Typography>
               </Stack>
               <Stack
@@ -313,7 +192,9 @@ const EmployeeList = () => {
                 mt={2}
               >
                 <CardBtn
-                  onClick={() => router.push(`/employee/edit/${employee.id}`)}
+                  onClick={() =>
+                    router.push(`/employee/edit/${employeeData._id}`)
+                  }
                   text="Edit"
                 >
                   Edit

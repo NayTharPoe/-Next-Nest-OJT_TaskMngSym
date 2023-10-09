@@ -1,34 +1,36 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { EmployeeEntity } from 'src/modules/employee/entities/employee.entities';
+import { ProjectEntity } from 'src/modules/project/entities/project.entity';
 
-@Schema({
-  timestamps: true,
-})
-export class task {
-  @Prop({ ref: 'project', required: true })
+export type TaskDocument = TaskEntity & Document;
+
+@Schema({ collection: 'tasks', timestamps: true })
+export class TaskEntity {
+  @Prop({ ref: ProjectEntity.name, required: true })
   project: string;
 
-  @Prop({ ref: 'employee', required: true })
+  @Prop({ ref: EmployeeEntity.name, required: true })
   assignedEmployee: string;
 
   @Prop({ required: true })
   title: string;
 
-  @Prop({ required: true })
+  @Prop()
   description: string;
 
   @Prop({ required: true })
   estimateHour: number;
 
-  @Prop({ default: true })
+  @Prop()
   actualHour: number;
 
-  @Prop({ required: true })
+  @Prop()
   status: string;
 
-  @Prop()
+  @Prop({ required: true })
   estimate_start_date: string;
 
-  @Prop()
+  @Prop({ required: true })
   estimate_finish_date: string;
 
   @Prop()
@@ -38,4 +40,4 @@ export class task {
   actual_finish_date: string;
 }
 
-export const taskSchema = SchemaFactory.createForClass(task);
+export const taskSchema = SchemaFactory.createForClass(TaskEntity);

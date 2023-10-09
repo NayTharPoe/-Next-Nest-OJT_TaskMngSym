@@ -4,18 +4,14 @@ import {
   Response,
   Param,
   Body,
-  UseGuards,
   NotFoundException,
   UseInterceptors,
   UploadedFile,
-  ParseFilePipe,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { UpdateEmployeeResponseDto } from './update.response.dto';
 import { UpdateEmployeeRequestDto } from './update.request.dto';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('employee')
@@ -23,8 +19,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class UpdateController {
   constructor(private employeeService: EmployeeService) {}
 
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
   @Put('edit/:id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -61,11 +55,7 @@ export class UpdateController {
     @Response() res,
     @Param('id') id: string,
     @Body() employee: UpdateEmployeeRequestDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' })],
-      }),
-    )
+    @UploadedFile()
     profile?: Express.Multer.File,
   ): Promise<UpdateEmployeeResponseDto> {
     try {

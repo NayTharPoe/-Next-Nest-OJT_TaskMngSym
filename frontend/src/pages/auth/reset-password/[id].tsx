@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import AuthButton from "@/components/authBtn";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Controller, useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 import {
   Box,
   Card,
@@ -12,14 +14,58 @@ import {
 } from "@mui/material";
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
+import axios from "axios";
+import AuthDialog from "@/components/authDialog";
+import Loading from "@/components/loading";
+import config from "@/config";
 
 const ResetPassword = () => {
   const [showPassword1, setShowPassword1] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [statusText, setStatusText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const handleClose = () => {
+    setOpen(false);
+    if (statusText === "OK") {
+      router.push("/auth/login");
+    }
+  };
+
+  const onSubmit = (data: any): void => {
+    setIsLoading(true);
+    axios
+      .post(
+        `${config.SERVER_DOMAIN}/auth/reset-password/${router.query.id}`,
+        data
+      )
+      .then((res) => {
+        setStatusText(res.statusText);
+        setOpen(true);
+        setMessage(res.data?.message);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setOpen(true);
+        setIsLoading(false);
+        setMessage(err.response?.data.message);
+      });
+  };
 
   return (
     <>
-      <Box>
+      {isLoading && <Loading />}
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container>
           <Grid
             sx={{
@@ -46,7 +92,10 @@ const ResetPassword = () => {
             alignItems="center"
             item
             sx={{
-              backgroundImage: { xs: `url('/auth-img/reset.png')`, md: "none" },
+              backgroundImage: {
+                xs: `url('/auth-img/reset.png')`,
+                md: "none",
+              },
               backgroundSize: "670px",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
@@ -70,46 +119,83 @@ const ResetPassword = () => {
                 mt={4}
                 spacing={3}
               >
-                <TextField
+                <Controller
                   name="newPassword"
-                  type={showPassword1 ? "text" : "password"}
-                  label="Enter your new password"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword1(!showPassword1)}
-                          edge="end"
-                        >
-                          {showPassword1 ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                ></TextField>
-                <TextField
+                  control={control}
+                  rules={{ required: "NewPassword is required" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      name="newPassword"
+                      type={showPassword1 ? "text" : "password"}
+                      label="Enter your new password"
+                      value={field.value || ""}
+                      error={!!errors.newPassword}
+                      helperText={errors.newPassword?.message as string}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword1(!showPassword1)}
+                              edge="end"
+                            >
+                              {showPassword1 ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    ></TextField>
+                  )}
+                />
+                <Controller
                   name="confirmPassword"
-                  type={showPassword2 ? "text" : "password"}
-                  label="Enter your confirm password"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword2(!showPassword2)}
-                          edge="end"
-                        >
-                          {showPassword2 ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                ></TextField>
+                  control={control}
+                  rules={{ required: "ConfirmPassword is required" }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      name="confirmPassword"
+                      type={showPassword2 ? "text" : "password"}
+                      label="Enter your confirm password"
+                      value={field.value || ""}
+                      error={!!errors.confirmPassword}
+                      helperText={errors.confirmPassword?.message as string}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword2(!showPassword2)}
+                              edge="end"
+                            >
+                              {showPassword2 ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    ></TextField>
+                  )}
+                />
               </Stack>
-              <AuthButton btnText={"Change Password"} />
+              <AuthButton>Change Password</AuthButton>
+              <AuthDialog
+                statusText={statusText}
+                open={open}
+                close={handleClose}
+              >
+                {message}
+              </AuthDialog>
             </Card>
           </Grid>
         </Grid>
-      </Box>
+      </form>
     </>
   );
 };

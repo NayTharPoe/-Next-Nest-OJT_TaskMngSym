@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import MainLayout from "@/layouts/MainLayout";
 import {
   Avatar,
@@ -15,64 +15,70 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import AddNewBtn from "@/components/addNewBtn";
-import CardBtn from "@/components/cardBtn";
 import palette from "@/theme/palette";
 import EmployeeSearchBox from "@/components/employee-search-input";
 import { useRouter } from "next/router";
 import { theme } from "@/theme";
+import ConfirmDialog from "@/components/commonDialog";
+import { apiClient } from "@/services/apiClient";
+import PaginationComponent from "@/components/pagination";
+import CardBtn from "@/components/cardBtn";
+import config from "@/config";
 
 const EmployeeList = () => {
   const [searchText, setSearchText] = useState("");
+  const [open, setOpen] = useState(false);
+  const [onClose, setOnClose] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
+  const [employeeList, setEmployeeList] = useState<any>([]);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(4);
+  const [totalEmployee, setTotalEmployee] = useState(0);
+  const [keyword, setKeyword] = useState("");
+  const [searchErr, setSearchErr] = useState("");
+
+  useEffect(() => {
+    apiClient
+      .get(
+        `${config.SERVER_DOMAIN}/employees/list?page=${page}&limit=${limit}&keyword=${keyword}`
+      )
+      .then((res) => {
+        setEmployeeList(res.data.data);
+        setTotalEmployee(res.data.totalEmployee);
+        setSearchErr("");
+      })
+      .catch((err) => {
+        if (err.response?.status === 404) {
+          setSearchErr(err.response?.data.message);
+        }
+      });
+  }, [page, limit, keyword]);
 
   const router = useRouter();
 
-  const handleInputChange = (event: any) => {
-    setSearchText(event.target.value);
+  const handleDelete = () => {
+    apiClient.delete(`${config.SERVER_DOMAIN}/employee/${deleteId}`);
+    setEmployeeList((prevList: any) =>
+      prevList?.filter((row: any) => row._id !== deleteId)
+    );
+    setOpen(false);
   };
 
-  const employee = [
-    {
-      id: 1,
-      email: "mtm.linnaunghtet@gmail.com",
-      phone: "09800900700",
-      birthDate: "2023-56-90",
-      verified: true,
-      appliedOn: "2023-09-89",
-    },
-    {
-      id: 2,
-      email: "james@gmail.com",
-      phone: "09800900700",
-      birthDate: "2023-56-90",
-      verified: false,
-      appliedOn: "2023-09-89",
-    },
-    {
-      id: 3,
-      email: "james@gmail.com",
-      phone: "09800900700",
-      birthDate: "2023-56-90",
-      verified: true,
-      appliedOn: "2023-09-89",
-    },
-    {
-      id: 4,
-      email: "james@gmail.com",
-      phone: "09800900700",
-      birthDate: "2023-56-90",
-      verified: false,
-      appliedOn: "2023-09-89",
-    },
-  ];
+  const handleInputChange = (event: any) => {
+    setSearchText(event.target.value);
+    setKeyword(event.target.value);
+    setPage(1);
+  };
 
-  const filterEmployeeData = employee.filter((row) => {
-    const { email, phone } = row;
+  const filterEmployeeData = employeeList?.filter((row: any) => {
+    const { email, employeeName } = row;
     return (
       email
         .toLocaleLowerCase()
         .includes(searchText.toLocaleLowerCase().trim()) ||
-      phone.toLocaleLowerCase().includes(searchText.toLocaleLowerCase().trim())
+      employeeName
+        .toLocaleLowerCase()
+        .includes(searchText.toLocaleLowerCase().trim())
     );
   });
 
@@ -99,6 +105,10 @@ const EmployeeList = () => {
         {props.children}
       </Button>
     );
+  };
+
+  const handlePageChange = (newPage: any) => {
+    setPage(newPage);
   };
 
   return (
@@ -145,9 +155,9 @@ const EmployeeList = () => {
           justifyContent: "center",
         }}
       >
-        {filterEmployeeData.map((row) => {
+        {filterEmployeeData?.map((row: any) => {
           return (
-            <Grid key={row.id} item>
+            <Grid key={row._id} item>
               <Card
                 sx={{
                   background: "#fbfbfb",
@@ -165,13 +175,24 @@ const EmployeeList = () => {
                     padding: "5px 8px 0",
                   }}
                 >
-                  <IconButton>
+                  <IconButton
+                    onClick={() => {
+                      setOpen(true), setDeleteId(row._id);
+                    }}
+                  >
                     <DeleteIcon
                       sx={{
                         color: (theme) => `${theme.palette.text.secondary}`,
                       }}
                     />
                   </IconButton>
+                  <ConfirmDialog
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    onClick={handleDelete}
+                    // onCancel={() => setOpen(false)}
+                    id={row._id}
+                  />
                 </div>
                 <Avatar
                   sx={{
@@ -180,7 +201,7 @@ const EmployeeList = () => {
                     margin: "0 auto",
                   }}
                   alt="img"
-                  src="https://minimal-kit-react.vercel.app/assets/images/avatars/avatar_default.jpg"
+                  src={row.profile}
                 />
                 <Box
                   mt={1}
@@ -189,13 +210,13 @@ const EmployeeList = () => {
                     color: (theme) => `${theme.palette.text.secondary}`,
                   }}
                 >
-                  <Typography>Linn Aung Htet</Typography>
+                  <Typography>{row.employeeName}</Typography>
                   <Typography
                     sx={{
                       fontSize: "14px",
                     }}
                   >
-                    Admin
+                    {row.position === "0" ? "Member" : "Admin"}
                   </Typography>
                   <Button
                     sx={{
@@ -255,7 +276,7 @@ const EmployeeList = () => {
                       <PhoneIcon
                         style={{ fontSize: "20px", marginRight: "5px" }}
                       />{" "}
-                      {row.phone}
+                      {row.phone ? row.phone : "..."}
                     </Typography>
                   </Stack>
                   <Stack
@@ -268,13 +289,13 @@ const EmployeeList = () => {
                     mt={2}
                   >
                     <CardBtn
-                      onClick={() => router.push(`/employee/edit/${row.id}`)}
+                      onClick={() => router.push(`/employee/edit/${row._id}`)}
                       text="Edit"
                     >
                       Edit
                     </CardBtn>
                     <CardBtn
-                      onClick={() => router.push(`/employee/detail/${row.id}`)}
+                      onClick={() => router.push(`/employee/detail/${row._id}`)}
                       text="View"
                     >
                       View
@@ -286,6 +307,23 @@ const EmployeeList = () => {
           );
         })}
       </Grid>
+      <Typography
+        color="primary"
+        variant="h4"
+        sx={{ textAlign: "center", margin: "50px 0" }}
+      >
+        {searchErr}
+      </Typography>
+      {searchErr === "" ? (
+        <PaginationComponent
+          totalItems={totalEmployee}
+          itemsPerPage={limit}
+          currentPage={page}
+          onPageChange={handlePageChange}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 };

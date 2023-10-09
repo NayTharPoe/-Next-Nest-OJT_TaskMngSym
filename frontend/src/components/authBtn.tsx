@@ -2,7 +2,7 @@ import React from "react";
 import { styled } from "@mui/material/styles";
 import { Button } from "@mui/material";
 
-const AuthButton = ({ btnText }: { btnText: string }) => {
+const AuthButton = (props: any) => {
   const BootstrapButton = styled(Button)({
     boxShadow: "none",
     textTransform: "none",
@@ -27,8 +27,8 @@ const AuthButton = ({ btnText }: { btnText: string }) => {
   });
 
   return (
-    <BootstrapButton variant="contained" disableFocusRipple>
-      {btnText}
+    <BootstrapButton type="submit" variant="contained" disableFocusRipple>
+      {props.children}
     </BootstrapButton>
   );
 };
