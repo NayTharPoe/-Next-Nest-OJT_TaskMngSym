@@ -28,7 +28,7 @@ import { StyledGridOverlay } from '@/components/styledGridOverlay';
 import ExcelDownloadButton from '@/components/reportExcelDownload';
 import config from '@/config';
 
-const ReportListPage = ({ reports, page, rowPerPage }: any) => {
+const ReportListPage = ({ reports, allReports, page, rowPerPage }: any) => {
   const [formData, setFormData] = useState({
     reportTo: '',
     reportBy: '',
@@ -99,7 +99,23 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
     const reportToParam = formData.reportTo ? `&reportTo=${formattedReportTo}` : '';
     const reportByParam = formData.reportBy ? `&reportBy=${formattedBy}` : '';
     const dateParam = formData.selectedDate ? `&date=${formattedDate}` : '';
-    router.push(`${router.pathname}?page=${page}&limit=${limit}${reportToParam}${reportByParam}${dateParam}`);
+    router.push(`${router.pathname}?page=1&limit=${limit}${reportToParam}${reportByParam}${dateParam}`);
+  };
+
+  const handleClearReportTo = () => {
+    setFormData({
+      ...formData,
+      reportTo: '',
+    });
+    router.push(`${router.pathname}?page=1&limit=${limit}`);
+  };
+
+  const handleClearReportBy = () => {
+    setFormData({
+      ...formData,
+      reportBy: '',
+    });
+    router.push(`${router.pathname}?page=1&limit=${limit}`);
   };
 
   useEffect(() => {
@@ -135,12 +151,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                     endAdornment: formData.reportTo && (
                       <InputAdornment
                         position="end"
-                        onClick={() =>
-                          setFormData({
-                            ...formData,
-                            reportTo: '',
-                          })
-                        }
+                        onClick={handleClearReportTo}
                         style={{ cursor: 'pointer' }}
                       >
                         <ClearIcon fontSize="small" />
@@ -169,12 +180,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                     endAdornment: formData.reportBy && (
                       <InputAdornment
                         position="end"
-                        onClick={() =>
-                          setFormData({
-                            ...formData,
-                            reportBy: '',
-                          })
-                        }
+                        onClick={handleClearReportBy}
                         style={{ cursor: 'pointer' }}
                       >
                         <ClearIcon fontSize="small" />
@@ -231,7 +237,14 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
         </Grid>
         <Grid item>
           <AddNewBtn AddNewBtnText="Add Report" path="/report/add" />
-          <ExcelDownloadButton data={reports?.data} fileName="report-list" />
+          <ExcelDownloadButton
+            data={
+              formData.reportTo || formData.reportBy || formData.selectedDate
+                ? reports?.data
+                : allReports?.data
+            }
+            fileName="report-list"
+          />
         </Grid>
       </Grid>
       <Grid
@@ -289,11 +302,11 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                   sx={{
                     bgcolor: palette.common.white,
                     boxShadow: 'none',
-                    width: '340px',
+                    width: '335px',
                     p: 1,
                     borderRadius: '1.4rem',
-                    '@media (min-width: 320px)': {
-                      width: '335px',
+                    '@media (max-width: 450px)': {
+                      width: '280px',
                     },
                   }}
                 >
@@ -419,10 +432,15 @@ ReportListPage.getLayout = function getLayout(page: ReactElement) {
 export async function getServerSideProps(context: any) {
   const page = context.query.page || 1;
   const rowPerPage = context.query.limit || 5;
-  const res = await fetch(
+  let url;
+
+  const filterRes = await fetch(
     `${config.SERVER_DOMAIN}/reports/list?${new URLSearchParams(context.query).toString()}`
   );
-  const reports = await res.json();
+  const reports = await filterRes.json();
 
-  return { props: { reports, page, rowPerPage } };
+  const allRes = await fetch(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`);
+  const allReports = await allRes.json();
+
+  return { props: { reports, allReports, page, rowPerPage } };
 }
