@@ -464,5 +464,8 @@ export async function getServerSideProps(context: any) {
   );
   const projects = res?.data;
 
+  console.log('res::', res);
+  console.log('projects::', projects);
+
   return { props: { projects, page, rowPerPage } };
 }
