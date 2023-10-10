@@ -28,8 +28,9 @@ import { StyledGridOverlay } from '@/components/styledGridOverlay';
 import ExcelDownloadButton from '@/components/reportExcelDownload';
 import config from '@/config';
 import axios from 'axios';
+import { log } from 'console';
 
-const ReportListPage = ({ reports, allReports, page, rowPerPage }: any) => {
+const ReportListPage = ({ reports, page, rowPerPage }: any) => {
   const [formData, setFormData] = useState({
     reportTo: '',
     reportBy: '',
@@ -37,6 +38,7 @@ const ReportListPage = ({ reports, allReports, page, rowPerPage }: any) => {
   });
   const [limit, setLimit] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allReports, setAllReports] = useState([]);
   const router = useRouter();
 
   const statusOptions = [
@@ -124,6 +126,15 @@ const ReportListPage = ({ reports, allReports, page, rowPerPage }: any) => {
     const page = parseInt(query.page as string, 10) || 1;
     setCurrentPage(page);
   }, [router.query]);
+
+  const fetchAllReports = async () => {
+    const allRes = await axios.get(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`);
+    setAllReports(allRes?.data?.data);
+  };
+
+  useEffect(() => {
+    fetchAllReports();
+  }, []);
 
   return (
     <Box sx={{ width: '100%', my: 4 }}>
@@ -240,9 +251,7 @@ const ReportListPage = ({ reports, allReports, page, rowPerPage }: any) => {
           <AddNewBtn AddNewBtnText="Add Report" path="/report/add" />
           <ExcelDownloadButton
             data={
-              formData.reportTo || formData.reportBy || formData.selectedDate
-                ? reports?.data
-                : allReports?.data
+              formData.reportTo || formData.reportBy || formData.selectedDate ? reports?.data : allReports
             }
             fileName="report-list"
           />
@@ -440,8 +449,5 @@ export async function getServerSideProps(context: any) {
   );
   const reports = filterRes.data;
 
-  const allRes = await axios.get(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`);
-  const allReports = allRes?.data;
-
-  return { props: { reports, allReports, page, rowPerPage } };
+  return { props: { reports, page, rowPerPage } };
 }
