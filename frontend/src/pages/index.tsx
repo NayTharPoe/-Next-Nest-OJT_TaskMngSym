@@ -240,9 +240,9 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
       setLoggedInUser(currentUserData);
 
       if (currentUserData?.position !== '1') {
-        const result = formattedRow?.filter(
-          (task: any) => task?.assignedEmployee === currentUserData?.employeeName
-        );
+        const result = formattedRow?.length
+          ? formattedRow?.filter((task: any) => task?.assignedEmployee === currentUserData?.employeeName)
+          : [];
         setFilterRow(result);
       } else {
         setFilterRow(formattedRow);

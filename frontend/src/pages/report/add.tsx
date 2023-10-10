@@ -23,6 +23,7 @@ import {
   Dialog,
   DialogContentText,
   Typography,
+  Select,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
@@ -215,9 +216,7 @@ const ReportAddPage = () => {
       const user = localStorage.getItem('user');
       if (user) {
         const currentUserData = JSON.parse(user);
-        setCurrentUserData(currentUserData);
-
-        await axios.get(`${config.SERVER_DOMAIN}/employees/list`).then((res) => {
+        await axios.get(`${config.SERVER_DOMAIN}/employees/list?page=1&limit=2000`).then((res) => {
           const adminRoles = res?.data?.data
             ?.filter((e: any) => e?.position !== '0' && e?._id !== currentUserData?._id)
             .map((employee: any) => ({
@@ -234,13 +233,30 @@ const ReportAddPage = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get(`${config.SERVER_DOMAIN}/tasks/list`).then((res) => res.data);
-      const taskOptions = res.data?.map((task: { _id: any }, index: number) => ({
-        value: task._id,
-        label: index + 1,
-      }));
+      const res = await axios.get(`${config.SERVER_DOMAIN}/tasks/list?page=1&limit=2000`);
+      const responseData = res.data?.data || [];
 
-      const selectedTaskData = res.data?.map((task: any) => ({
+      let taskOptions = [];
+      let selectedTaskData = [];
+
+      const user = localStorage.getItem('user');
+      if (user) {
+        const currentUserData = JSON.parse(user);
+        const filterTaskOptions = responseData.filter(
+          (task: any) => task?.assignedEmployee?._id === currentUserData?._id
+        );
+
+        console.log(filterTaskOptions);
+        taskOptions =
+          currentUserData?.position !== '1'
+            ? filterTaskOptions
+            : responseData.map((task: { _id: any }, index: number) => ({
+                value: task._id,
+                label: index + 1,
+              }));
+      }
+
+      selectedTaskData = responseData.map((task: any) => ({
         key: task._id,
         taskTitle: task?.title,
         project: task.project?.projectName,
@@ -406,6 +422,11 @@ const ReportAddPage = () => {
                               error={!!errors.reports?.[index]?.taskId}
                               helperText={errors.reports?.[index]?.taskId?.message}
                               onChange={(e) => handleChangeTask(e, index)}
+                              SelectProps={{
+                                MenuProps: {
+                                  style: { height: '280px' },
+                                },
+                              }}
                             >
                               {taskOptions?.map((option: any) => (
                                 <MenuItem key={option.value} value={option.value}>

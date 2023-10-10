@@ -139,17 +139,17 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
     <Box sx={{ width: '100%', my: 4 }}>
       <Grid
         container
-        spacing={2}
+        spacing={1}
         sx={{
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
+          justifyContent: 'space-between',
           mb: 4,
         }}
       >
         <Grid item>
           <Box component="form" onSubmit={handleSubmit}>
-            <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+            <Grid container spacing={1} sx={{ alignItems: 'center' }}>
               <Grid item xs={6} sm={3}>
                 <TextField
                   name="reportTo"
@@ -225,7 +225,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={6} sm={3}>
+              <Grid item xs={6} sm={1}>
                 <Button
                   variant="contained"
                   size="large"
@@ -256,6 +256,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
           />
         </Grid>
       </Grid>
+
       <Grid
         py={4}
         container
