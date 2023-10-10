@@ -28,7 +28,6 @@ import { StyledGridOverlay } from '@/components/styledGridOverlay';
 import ExcelDownloadButton from '@/components/reportExcelDownload';
 import config from '@/config';
 import axios from 'axios';
-import { log } from 'console';
 
 const ReportListPage = ({ reports, page, rowPerPage }: any) => {
   const [formData, setFormData] = useState({

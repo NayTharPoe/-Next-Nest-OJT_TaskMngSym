@@ -298,7 +298,9 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
             name="search"
             id="search"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+              setSearchText(e.target.value)
+            }
             placeholder="Name, Language, Desc ..."
             variant="outlined"
             InputProps={{
