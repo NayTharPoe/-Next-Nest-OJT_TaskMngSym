@@ -456,16 +456,30 @@ ProjectListPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getServerSideProps(context: any) {
-  const page = context.query.page || 1;
-  const rowPerPage = context.query.limit || 5;
+  try {
+    const page = context.query.page || 1;
+    const rowPerPage = context.query.limit || 5;
 
-  const res = await axios.get(
-    `${config.SERVER_DOMAIN}/projects/list?${new URLSearchParams(context.query).toString()}`
-  );
-  const projects = res?.data;
+    const res = await axios.get(
+      `${config.SERVER_DOMAIN}/projects/list?${new URLSearchParams(context.query).toString()}`
+    );
+    const projects = res?.data;
 
-  console.log('res::', res);
-  console.log('projects::', projects);
-
-  return { props: { projects, page, rowPerPage } };
+    return {
+      props: {
+        projects,
+        page,
+        rowPerPage,
+      },
+    };
+  } catch (error) {
+    console.log('An error occur while fetching data', error);
+    return {
+      props: {
+        projects: [],
+        page: 1,
+        rowPerPage: 5,
+      },
+    };
+  }
 }

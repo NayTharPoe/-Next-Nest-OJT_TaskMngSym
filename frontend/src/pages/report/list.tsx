@@ -440,14 +440,30 @@ ReportListPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getServerSideProps(context: any) {
-  const page = context.query.page || 1;
-  const rowPerPage = context.query.limit || 5;
-  let url;
+  try {
+    const page = context.query.page || 1;
+    const rowPerPage = context.query.limit || 5;
 
-  const filterRes = await axios.get(
-    `${config.SERVER_DOMAIN}/reports/list?${new URLSearchParams(context.query).toString()}`
-  );
-  const reports = filterRes.data;
+    const res = await axios.get(
+      `${config.SERVER_DOMAIN}/reports/list?${new URLSearchParams(context.query).toString()}`
+    );
+    const reports = res?.data;
 
-  return { props: { reports, page, rowPerPage } };
+    return {
+      props: {
+        reports,
+        page,
+        rowPerPage,
+      },
+    };
+  } catch (error) {
+    console.log('An error occur while fetching data', error);
+    return {
+      props: {
+        reports: [],
+        page: 1,
+        rowPerPage: 5,
+      },
+    };
+  }
 }
