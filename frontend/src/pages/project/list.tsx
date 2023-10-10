@@ -457,7 +457,7 @@ ProjectListPage.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export async function getServerSideProps(context: any) {
+ProjectListPage.getInitialProps = async (context: any) => {
   try {
     const page = context.query.page || 1;
     const rowPerPage = context.query.limit || 5;
@@ -468,20 +468,16 @@ export async function getServerSideProps(context: any) {
     const projects = res?.data;
 
     return {
-      props: {
-        projects,
-        page,
-        rowPerPage,
-      },
+      projects,
+      page,
+      rowPerPage,
     };
   } catch (error) {
     console.log('An error occur while fetching data', error);
     return {
-      props: {
-        projects: [],
-        page: 1,
-        rowPerPage: 5,
-      },
+      projects: [],
+      page: 1,
+      rowPerPage: 5,
     };
   }
-}
+};

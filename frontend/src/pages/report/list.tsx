@@ -438,7 +438,7 @@ ReportListPage.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export async function getServerSideProps(context: any) {
+ReportListPage.getInitialProps = async (context: any) => {
   try {
     const page = context.query.page || 1;
     const rowPerPage = context.query.limit || 5;
@@ -449,20 +449,16 @@ export async function getServerSideProps(context: any) {
     const reports = res?.data;
 
     return {
-      props: {
-        reports,
-        page,
-        rowPerPage,
-      },
+      reports,
+      page,
+      rowPerPage,
     };
   } catch (error) {
     console.log('An error occur while fetching data', error);
     return {
-      props: {
-        reports: [],
-        page: 1,
-        rowPerPage: 5,
-      },
+      reports: [],
+      page: 1,
+      rowPerPage: 5,
     };
   }
-}
+};

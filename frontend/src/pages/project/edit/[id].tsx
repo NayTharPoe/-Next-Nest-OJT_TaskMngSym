@@ -283,14 +283,12 @@ EditProjectPage.getLayout = function getLayout(page: ReactElement) {
 
 export default EditProjectPage;
 
-export async function getServerSideProps(context: { query: { id: any } }) {
+EditProjectPage.getInitialProps = async (context: any) => {
   const { id } = context.query;
   const res = await fetch(`${config.SERVER_DOMAIN}/project/detail/${id}`);
   const project = await res.json();
 
   return {
-    props: {
-      project,
-    },
+    project,
   };
-}
+};
