@@ -1,5 +1,5 @@
 const config = {
-  SERVER_DOMAIN: 'https://next-task-server.onrender.com',
+  SERVER_DOMAIN: "http://localhost:8080",
 };
 
 export default config;

@@ -17,7 +17,6 @@ export class TaskService {
     limit,
     keyword,
   }: EmployeePaginationRequestDto): Promise<any> {
-    // console.log(keyword);
     let options = {};
     if (keyword) {
       options = {
@@ -27,6 +26,7 @@ export class TaskService {
     const totalTasks = await this.taskModel.countDocuments(options);
     const data = await this.taskModel
       .find(options)
+      .sort({ createdAt: -1 })
       .populate([
         {
           path: 'project',

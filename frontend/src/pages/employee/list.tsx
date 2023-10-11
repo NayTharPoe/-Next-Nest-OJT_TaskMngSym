@@ -8,6 +8,9 @@ import {
   CardContent,
   Grid,
   IconButton,
+  MenuItem,
+  Pagination,
+  Select,
   Stack,
   Typography,
 } from "@mui/material";
@@ -32,10 +35,29 @@ const EmployeeList = () => {
   const [deleteId, setDeleteId] = useState("");
   const [employeeList, setEmployeeList] = useState<any>([]);
   const [page, setPage] = useState(1);
-  const [limit] = useState(4);
+  const [limit, setLimit] = useState(5);
   const [totalEmployee, setTotalEmployee] = useState(0);
+  const [employeeLength, setEmployeeLength] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [searchErr, setSearchErr] = useState("");
+
+  useEffect(() => {
+    apiClient
+      .get(
+        `${config.SERVER_DOMAIN}/employees/list?page=1&limit=100&keyword=${keyword}`
+      )
+      .then((res) => {
+        setEmployeeLength(res.data.data.length);
+        setSearchErr("");
+      })
+      .catch((err) => {
+        if (err.response?.status === 404) {
+          setSearchErr(err.response?.data.message);
+          setEmployeeLength(0);
+          setEmployeeList([]);
+        }
+      });
+  }, [keyword]);
 
   useEffect(() => {
     apiClient
@@ -50,6 +72,7 @@ const EmployeeList = () => {
       .catch((err) => {
         if (err.response?.status === 404) {
           setSearchErr(err.response?.data.message);
+          setEmployeeList([]);
         }
       });
   }, [page, limit, keyword]);
@@ -70,17 +93,8 @@ const EmployeeList = () => {
     setPage(1);
   };
 
-  const filterEmployeeData = employeeList?.filter((row: any) => {
-    const { email, employeeName } = row;
-    return (
-      email
-        .toLocaleLowerCase()
-        .includes(searchText.toLocaleLowerCase().trim()) ||
-      employeeName
-        .toLocaleLowerCase()
-        .includes(searchText.toLocaleLowerCase().trim())
-    );
-  });
+  const startIndex = (page - 1) * limit + 1;
+  const endIndex = Math.min(page * limit, employeeLength);
 
   const AddButton = (props: any) => {
     return (
@@ -107,8 +121,35 @@ const EmployeeList = () => {
     );
   };
 
-  const handlePageChange = (newPage: any) => {
-    setPage(newPage);
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    const currentQuery = { ...router.query };
+    currentQuery.page = page.toString();
+    currentQuery.limit = limit.toString();
+    const newUrl = {
+      pathname: router.pathname,
+      query: currentQuery,
+    };
+    router.push(newUrl);
+    setPage(page);
+  };
+
+  const handleLimitChange: any = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    const newLimit = event.target.value as number;
+    setLimit(newLimit);
+
+    const currentPathname = router.pathname;
+    const currentQuery = { ...router.query };
+    currentQuery.limit = newLimit.toString();
+
+    router.push({
+      pathname: currentPathname,
+      query: currentQuery,
+    });
   };
 
   return (
@@ -155,7 +196,7 @@ const EmployeeList = () => {
           justifyContent: "center",
         }}
       >
-        {filterEmployeeData?.map((row: any) => {
+        {employeeList?.map((row: any) => {
           return (
             <Grid key={row._id} item>
               <Card
@@ -190,7 +231,6 @@ const EmployeeList = () => {
                     open={open}
                     onClose={() => setOpen(false)}
                     onClick={handleDelete}
-                    // onCancel={() => setOpen(false)}
                     id={row._id}
                   />
                 </div>
@@ -307,23 +347,108 @@ const EmployeeList = () => {
           );
         })}
       </Grid>
-      <Typography
+      {/* <Typography
         color="primary"
         variant="h4"
         sx={{ textAlign: "center", margin: "50px 0" }}
       >
         {searchErr}
-      </Typography>
-      {searchErr === "" ? (
-        <PaginationComponent
-          totalItems={totalEmployee}
-          itemsPerPage={limit}
-          currentPage={page}
-          onPageChange={handlePageChange}
-        />
+      </Typography> */}
+      {searchErr !== "" ? (
+        <Typography
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "50px",
+          }}
+        >
+          <img
+            width={350}
+            height={350}
+            src="https://img.freepik.com/free-vector/no-data-concept-illustration_114360-536.jpg?w=740&t=st=1696498646~exp=1696499246~hmac=c254d88ac3bfbc180427bd2cfce42cf18e0c8d77e8a7cdef35e370adbffa9f55"
+            alt=""
+          />
+        </Typography>
       ) : (
         ""
       )}
+      {/* {searchErr === "" ? ( */}
+      <>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+            marginTop: "30px",
+          }}
+        >
+          <Select
+            value={limit}
+            size="small"
+            onChange={handleLimitChange}
+            sx={{
+              borderRadius: "4rem",
+              backgroundColor: palette.common.white,
+            }}
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  backgroundColor: palette.common.white,
+                  borderRadius: "0.6rem",
+                },
+              },
+            }}
+          >
+            <MenuItem value={5}>5 results per page</MenuItem>
+            <MenuItem value={10}>10 results per page</MenuItem>
+            <MenuItem value={25}>25 results per page</MenuItem>
+          </Select>
+          <Pagination
+            shape="rounded"
+            count={Math.ceil(totalEmployee / limit)}
+            page={page}
+            onChange={handlePageChange}
+            sx={{
+              ".MuiPaginationItem-root": {
+                border: `1px solid ${palette.accent.light}`,
+                borderRadius: "0.95rem",
+                padding: "0 1.2rem",
+              },
+              ".MuiPaginationItem-root.Mui-selected": {
+                backgroundColor: palette.primary.main,
+                borderColor: palette.primary.main,
+                color: palette.common.white,
+                "&:hover": {
+                  backgroundColor: palette.primary.dark,
+                  color: palette.common.white,
+                },
+              },
+              ".Mui-focusVisible": {
+                color: palette.text.primary,
+                backgroundColor: palette.primary.main,
+              },
+              ".MuiPaginationItem-ellipsis": {
+                border: "none",
+                backgroundColor: "transparent",
+              },
+              ".MuiPaginationItem-previousNext": {
+                border: "none",
+              },
+            }}
+          />
+          <Typography>
+            <strong>
+              {startIndex} - {endIndex}
+            </strong>{" "}
+            / {employeeLength} results
+          </Typography>
+        </Box>
+      </>
+      {/* ) : (
+         ""
+      )} */}
     </>
   );
 };
