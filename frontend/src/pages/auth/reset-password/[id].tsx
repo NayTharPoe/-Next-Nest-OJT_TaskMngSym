@@ -24,7 +24,7 @@ const ResetPassword = () => {
   const [showPassword2, setShowPassword2] = useState(false);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [statusText, setStatusText] = useState("");
+  const [statusText, setStatusText] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -37,7 +37,7 @@ const ResetPassword = () => {
 
   const handleClose = () => {
     setOpen(false);
-    if (statusText === "OK") {
+    if (statusText === 200) {
       router.push("/auth/login");
     }
   };
@@ -50,7 +50,7 @@ const ResetPassword = () => {
         data
       )
       .then((res) => {
-        setStatusText(res.statusText);
+        setStatusText(res.status);
         setOpen(true);
         setMessage(res.data?.message);
         setIsLoading(false);

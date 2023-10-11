@@ -47,6 +47,7 @@ export class EmployeeService {
 
     const data = await this.employeeModel
       .find(options)
+      .sort({ createdAt: -1 })
       .select('-password -token')
       .limit(limit)
       .skip(limit * (page - 1));
