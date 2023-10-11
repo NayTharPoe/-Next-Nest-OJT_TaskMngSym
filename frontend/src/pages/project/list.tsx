@@ -139,9 +139,7 @@ const CustomNoRowsOverlay = () => {
 
 const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [IdToDelete, setIdToDelete] = useState(null);
-  const [IdToEdit, setIdToEdit] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [limit, setLimit] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
@@ -196,7 +194,7 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
         const row = params.row;
         return (
           <>
-            <EditButton onClick={() => handleEditOpenDialog(row._id)}>Edit</EditButton>
+            <EditButton onClick={() => router.push(`/project/edit/${row._id}`)}>Edit</EditButton>
             <RemoveButton onClick={() => handleDeleteOpenDialog(row._id)}>Remove</RemoveButton>
           </>
         );
@@ -217,16 +215,6 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
         endDate: dayjs(row.endDate).format('YYYY-MM-DD'),
       }))
     : [];
-
-  const handleEditProject = (id: any) => {
-    setEditDialogOpen(false);
-    router.push(`/project/edit/${id}`);
-  };
-
-  const handleEditOpenDialog = (id: any) => {
-    setEditDialogOpen(true);
-    setIdToEdit(id);
-  };
 
   const handleDeleteOpenDialog = (id: any) => {
     setDeleteDialogOpen(true);
@@ -441,12 +429,6 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
         onClose={() => setDeleteDialogOpen(false)}
         onClick={() => handleDeleteProject(IdToDelete)}
         status="delete"
-      />
-      <ConfirmDialog
-        open={editDialogOpen}
-        onClose={() => setEditDialogOpen(false)}
-        onClick={() => handleEditProject(IdToEdit)}
-        status="edit"
       />
     </Box>
   );
