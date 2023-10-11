@@ -233,30 +233,23 @@ const ReportAddPage = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get(`${config.SERVER_DOMAIN}/tasks/list?page=1&limit=2000`);
-      const responseData = res.data?.data || [];
-
-      let taskOptions = [];
-      let selectedTaskData = [];
-
       const user = localStorage.getItem('user');
-      if (user) {
-        const currentUserData = JSON.parse(user);
-        const filterTaskOptions = responseData.filter(
-          (task: any) => task?.assignedEmployee?._id === currentUserData?._id
-        );
+      const currentUserData = user ? JSON.parse(user) : null;
 
-        console.log(filterTaskOptions);
-        taskOptions =
-          currentUserData?.position !== '1'
-            ? filterTaskOptions
-            : responseData.map((task: { _id: any }, index: number) => ({
-                value: task._id,
-                label: index + 1,
-              }));
-      }
+      const response = await axios.get(`${config.SERVER_DOMAIN}/tasks/list?page=1&limit=2000`);
+      const responseData = response.data?.data || [];
 
-      selectedTaskData = responseData.map((task: any) => ({
+      const assignedTasks =
+        currentUserData && currentUserData?.position !== '1'
+          ? responseData.filter((task: any) => task?.assignedEmployee?._id === currentUserData._id)
+          : responseData;
+
+      const taskOptions = assignedTasks.map((task: { _id: any }, index: number) => ({
+        value: task._id,
+        label: index + 1,
+      }));
+
+      const selectedTaskData = responseData.map((task: any) => ({
         key: task._id,
         taskTitle: task?.title,
         project: task.project?.projectName,

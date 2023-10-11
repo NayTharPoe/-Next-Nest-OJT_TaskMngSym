@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Header from '@/layouts/header';
 import RenderContent from '@/layouts/nav';
 
@@ -16,6 +14,7 @@ const MainLayout = (props: any) => {
   const drawerWidth = 290;
 
   const { window, children } = props;
+
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -68,8 +67,9 @@ const MainLayout = (props: any) => {
           }}
           sx={{
             display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': {
+            '.MuiDrawer-paper': {
               boxSizing: 'border-box',
+              width: drawerWidth,
             },
           }}
           PaperProps={{
@@ -85,7 +85,7 @@ const MainLayout = (props: any) => {
           variant="permanent"
           sx={{
             display: { xs: 'none', md: 'block' },
-            '& .MuiDrawer-paper': {
+            '.MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
             },

@@ -57,7 +57,6 @@ const CustomNoRowsOverlay = () => {
 
 const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
   const [filterRow, setFilterRow] = useState([]);
-  const [loggedInUser, setLoggedInUser] = useState<any>({});
   const router = useRouter();
   const columns: GridColDef[] = [
     {
@@ -215,39 +214,45 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
     },
   ];
 
-  const formattedRow = taskData?.data
-    .filter((task: any) => task.status !== '3')
-    .map((task: any, index: number) => ({
-      _id: task._id,
-      displayId: index + 1,
-      title: task?.title,
-      description: task.description ? task.description : '-',
-      project: task?.project?.projectName ? task?.project?.projectName : '-',
-      assignedEmployee: task?.assignedEmployee?.employeeName ? task?.assignedEmployee?.employeeName : '-',
-      estimateHour: task.estimateHour ? task.estimateHour + ' hrs' : '-',
-      actualHour: task.actualHour ? task.actualHour + ' hrs' : '-',
-      status: task?.status,
-      estimate_start_date: task.estimate_start_date ? task.estimate_start_date : 'N/A',
-      estimate_finish_date: task.estimate_finish_date ? task.estimate_finish_date : 'N/A',
-      actual_start_date: task.actual_start_date ? task.actual_start_date : 'N/A',
-      actual_finish_date: task.actual_finish_date ? task.actual_finish_date : 'N/A',
-    }));
+  const formattedRow =
+    taskData?.data?.length > 0
+      ? taskData?.data
+          .filter((task: any) => task.status !== '3')
+          .map((task: any, index: number) => ({
+            _id: task._id,
+            displayId: index + 1,
+            title: task?.title,
+            description: task.description ? task.description : '-',
+            project: task?.project?.projectName ? task?.project?.projectName : '-',
+            assignedEmployee: task?.assignedEmployee?.employeeName
+              ? task?.assignedEmployee?.employeeName
+              : '-',
+            estimateHour: task.estimateHour ? task.estimateHour + ' hrs' : '-',
+            actualHour: task.actualHour ? task.actualHour + ' hrs' : '-',
+            status: task?.status,
+            estimate_start_date: task.estimate_start_date ? task.estimate_start_date : 'N/A',
+            estimate_finish_date: task.estimate_finish_date ? task.estimate_finish_date : 'N/A',
+            actual_start_date: task.actual_start_date ? task.actual_start_date : 'N/A',
+            actual_finish_date: task.actual_finish_date ? task.actual_finish_date : 'N/A',
+          }))
+      : [];
 
   useEffect(() => {
     const user = localStorage.getItem('user');
-    if (user) {
-      const currentUserData = JSON.parse(user);
-      setLoggedInUser(currentUserData);
+    const currentUserData = user ? JSON.parse(user) : null;
 
-      if (currentUserData?.position !== '1') {
-        const result = formattedRow?.length
-          ? formattedRow?.filter((task: any) => task?.assignedEmployee === currentUserData?.employeeName)
-          : [];
-        setFilterRow(result);
-      } else {
-        setFilterRow(formattedRow);
-      }
-    }
+    currentUserData && currentUserData?.position !== '1'
+      ? setFilterRow(
+          formattedRow?.filter((task: any) => task?.assignedEmployee === currentUserData?.employeeName)
+        )
+      : setFilterRow(formattedRow);
+  }, []);
+
+  useEffect(() => {
+    const user = localStorage.getItem("user")
+    const currentUserData = user ? JSON.parse(user) : null
+
+    !currentUserData && router.push('/auth/login')
   }, []);
 
   return (
@@ -430,25 +435,27 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
         <Typography variant="h2" sx={{ textAlign: 'center', mb: 3 }}>
           Top Not Closed Tasks
         </Typography>
-        <DataGrid
-          rows={filterRow}
-          columns={columns}
-          getRowId={(row) => row._id}
-          getRowHeight={() => 'auto'}
-          slots={{ noRowsOverlay: CustomNoRowsOverlay }}
-          sx={{
-            backgroundColor: palette.common.white,
-            borderRadius: '1rem',
-            '.MuiDataGrid-cell': { py: '20px' },
-            '.MuiDataGrid-cell:focus,.MuiDataGrid-columnHeader:focus,.MuiDataGrid-cell:focus-within,.MuiDataGrid-columnHeader:focus-within':
-              {
-                outline: 'none',
-              },
-            '.MuiDataGrid-columnHeaders': { fontSize: '.95rem', py: '2.3rem' },
-            '.MuiDataGrid-cellContent': { fontSize: '.85rem' },
-            '.MuiDataGrid-footerContainer': { display: 'none' },
-          }}
-        />
+        <Box sx={{ height: 350 }}>
+          <DataGrid
+            rows={filterRow}
+            columns={columns}
+            getRowId={(row) => row._id}
+            getRowHeight={() => 'auto'}
+            slots={{ noRowsOverlay: CustomNoRowsOverlay }}
+            sx={{
+              backgroundColor: palette.common.white,
+              borderRadius: '1rem',
+              '.MuiDataGrid-cell': { py: '20px' },
+              '.MuiDataGrid-cell:focus,.MuiDataGrid-columnHeader:focus,.MuiDataGrid-cell:focus-within,.MuiDataGrid-columnHeader:focus-within':
+                {
+                  outline: 'none',
+                },
+              '.MuiDataGrid-columnHeaders': { fontSize: '.95rem', py: '2.3rem' },
+              '.MuiDataGrid-cellContent': { fontSize: '.85rem' },
+              '.MuiDataGrid-footerContainer': { display: 'none' },
+            }}
+          />
+        </Box>
         <Box sx={{ textAlign: 'center' }}>
           <Button
             sx={{

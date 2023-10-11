@@ -3,7 +3,6 @@ import { Box, List, ListItemText } from '@mui/material';
 import { StyledNavItem, StyledNavItemIcon } from './styles';
 import { useRouter } from 'next/router';
 import palette from '@/theme/palette';
-
 const NavSection = ({ data = [], ...other }) => {
   return (
     <Box {...other}>

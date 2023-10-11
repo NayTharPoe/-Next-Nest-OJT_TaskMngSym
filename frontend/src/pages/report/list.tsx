@@ -334,7 +334,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                         <Box component="span" sx={{ fontWeight: '600', fontSize: '1.2rem' }}>
                           {row.reportBy.employeeName}
                         </Box>{' '}
-                        ({row.reportBy.position === '1' ? 'Member' : 'Admin'})
+                        ({row.reportBy.position !== '1' ? 'Member' : 'Admin'})
                       </Typography>
                     </Box>
                     <Box>
