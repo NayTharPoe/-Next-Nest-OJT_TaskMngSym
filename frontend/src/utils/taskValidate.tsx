@@ -7,15 +7,16 @@ export const TaskAddSchema = yup.object().shape({
   title: yup.string().required("Title is required"),
   estimateHour: yup
     .number()
-    .test("estimateHour", "Hour must be greater than 0", function (value: any) {
-      if (value !== undefined && value >= 0) {
-        return value;
-      }
-    })
+    .typeError("Estimate hour must be a number")
+    .min(1, "Hour must be greater than 0")
     .required("Estimate hour is required"),
-  estimate_start_date: yup.date().required("Estimate start date is required"),
+  estimate_start_date: yup
+    .date()
+    .typeError("Invalid date format")
+    .required("Estimate start date is required"),
   estimate_finish_date: yup
     .date()
+    .typeError("Invalid date format")
     .test(
       "estimate_finish_date",
       "Estimate finish date cannot be less than start date",
@@ -38,23 +39,18 @@ export const TaskEditSchema = yup.object().shape({
   status: yup.string().required("Status is required"),
   estimateHour: yup
     .number()
-    .test("estimateHour", "Hour must be greater than 0", function (value: any) {
-      if (value !== undefined && value >= 0) {
-        return value;
-      }
-    })
+    .typeError("Estimate hour must be a number")
+    .min(1, "Hour must be greater than 0")
     .required("Estimate hour is required"),
   actualHour: yup
     .number()
-    .test("actualHour", "Hour must be greater than 0", function (value: any) {
-      if (value !== undefined && value >= 0) {
-        return value;
-      }
-    })
+    .typeError("Actual hour must be a number")
+    .min(1, "Hour must be greater than 0")
     .required("Actual hour is required"),
-  estimate_start_date: yup.date(),
+  estimate_start_date: yup.date().typeError("Invalid date format"),
   estimate_finish_date: yup
     .date()
+    .typeError("Invalid date format")
     .test(
       "estimate_finish_date",
       "Estimate finish date cannot be less than start date",
@@ -66,9 +62,10 @@ export const TaskEditSchema = yup.object().shape({
         return value >= endDate;
       }
     ),
-  actual_start_date: yup.date(),
+  actual_start_date: yup.date().typeError("Invalid date format"),
   actual_finish_date: yup
     .date()
+    .typeError("Invalid date format")
     .test(
       "actual_finish_date",
       "Actual finish date cannot be less than start date",

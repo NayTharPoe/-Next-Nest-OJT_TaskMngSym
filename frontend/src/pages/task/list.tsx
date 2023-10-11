@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { ReactElement, useState, useEffect } from 'react';
-import { alpha } from '@mui/material/styles';
+import * as React from "react";
+import { ReactElement, useState, useEffect } from "react";
+import { alpha } from "@mui/material/styles";
 import {
   Box,
   Table,
@@ -18,21 +18,21 @@ import {
   Select,
   MenuItem,
   Chip,
-} from '@mui/material';
-import { visuallyHidden } from '@mui/utils';
-import MainLayout from '@/layouts/MainLayout';
-import AddIcon from '@mui/icons-material/Add';
-import type { NextPageWithLayout } from '../_app';
-import TableBtn from '@/components/tableBtn';
-import ConfirmDialog from '@/components/commonDialog';
-import palette from '@/theme/palette';
-import { useRouter } from 'next/navigation';
-import dayjs from 'dayjs';
-import Loading from '@/components/loading';
-import TaskDownload from '@/components/taskDownload';
-import ProjectSearchBox from '@/components/ProjectSearchBox';
-import { apiClient } from '@/services/apiClient';
-import config from '@/config';
+} from "@mui/material";
+import { visuallyHidden } from "@mui/utils";
+import MainLayout from "@/layouts/MainLayout";
+import AddIcon from "@mui/icons-material/Add";
+import type { NextPageWithLayout } from "../_app";
+import TableBtn from "@/components/tableBtn";
+import ConfirmDialog from "@/components/commonDialog";
+import palette from "@/theme/palette";
+import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
+import Loading from "@/components/loading";
+import TaskDownload from "@/components/taskDownload";
+import ProjectSearchBox from "@/components/ProjectSearchBox";
+import { apiClient } from "@/services/apiClient";
+import config from "@/config";
 
 interface Data {
   _id: string;
@@ -92,26 +92,32 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-type Order = 'asc' | 'desc';
+type Order = "asc" | "desc";
 
 function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key
-): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
-  return order === 'desc'
+): (
+  a: { [key in Key]: number | string },
+  b: { [key in Key]: number | string }
+) => number {
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
+function stableSort<T>(
+  array: readonly T[],
+  comparator: (a: T, b: T) => number
+) {
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
+  // stabilizedThis.sort((a, b) => {
+  //   const order = comparator(a[0], b[0]);
+  //   if (order !== 0) {
+  //     return order;
+  //   }
+  //   return a[1] - b[1];
+  // });
   return stabilizedThis.map((el) => el[0]);
 }
 
@@ -125,105 +131,109 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: '_id',
+    id: "_id",
     numeric: false,
     disablePadding: false,
-    label: 'ID',
+    label: "ID",
   },
   {
-    id: 'title',
+    id: "title",
     numeric: false,
     minWidth: 120,
     disablePadding: false,
-    label: 'Title',
+    label: "Title",
   },
   {
-    id: 'description',
+    id: "description",
     numeric: false,
     minWidth: 150,
     disablePadding: false,
-    label: 'Description',
+    label: "Description",
   },
   {
-    id: 'project',
+    id: "project",
     numeric: false,
     minWidth: 140,
     disablePadding: false,
-    label: 'Project Name',
+    label: "Project Name",
   },
   {
-    id: 'assignedEmployee',
+    id: "assignedEmployee",
     numeric: false,
     minWidth: 140,
     disablePadding: false,
-    label: 'Assigned Employee',
+    label: "Assigned Employee",
   },
   {
-    id: 'estimateHour',
+    id: "estimateHour",
     numeric: false,
     minWidth: 100,
     disablePadding: false,
-    label: 'Estimate Hour',
+    label: "Estimate Hour",
   },
   {
-    id: 'actualHour',
+    id: "actualHour",
     numeric: false,
     disablePadding: false,
-    label: 'Actual Hour',
+    label: "Actual Hour",
   },
   {
-    id: 'status',
+    id: "status",
     numeric: false,
     disablePadding: false,
-    label: 'Status',
+    label: "Status",
   },
   {
-    id: 'estimate_start_date',
-    numeric: false,
-    minWidth: 150,
-    disablePadding: false,
-    label: 'Estimate Start Date',
-  },
-  {
-    id: 'estimate_finish_date',
+    id: "estimate_start_date",
     numeric: false,
     minWidth: 150,
     disablePadding: false,
-    label: 'Estimate Finish Date',
+    label: "Estimate Start Date",
   },
   {
-    id: 'actual_start_date',
+    id: "estimate_finish_date",
     numeric: false,
     minWidth: 150,
     disablePadding: false,
-    label: 'Actual Start Date',
+    label: "Estimate Finish Date",
   },
   {
-    id: 'actual_finish_date',
+    id: "actual_start_date",
     numeric: false,
     minWidth: 150,
     disablePadding: false,
-    label: 'Actual Finish Date',
+    label: "Actual Start Date",
   },
   {
-    id: 'action',
+    id: "actual_finish_date",
+    numeric: false,
+    minWidth: 150,
+    disablePadding: false,
+    label: "Actual Finish Date",
+  },
+  {
+    id: "action",
     numeric: false,
     disablePadding: false,
-    label: 'Action',
+    label: "Action",
   },
 ];
 
 interface EnhancedTableProps {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
+  onRequestSort: (
+    event: React.MouseEvent<unknown>,
+    property: keyof Data
+  ) => void;
   order: Order;
   orderBy: string;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { order, orderBy, onRequestSort } = props;
-  const createSortHandler = (property: any) => (event: React.MouseEvent<unknown>) => {
-    onRequestSort(event, property);
-  };
+  const createSortHandler =
+    (property: any) => (event: React.MouseEvent<unknown>) => {
+      onRequestSort(event, property);
+    };
 
   return (
     <TableHead>
@@ -231,29 +241,31 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            align={headCell.numeric ? "right" : "left"}
+            padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ '.MuiTableSortLabel-root': { fontSize: '1rem' } }}
+            sx={{ ".MuiTableSortLabel-root": { fontSize: "1rem" } }}
           >
-            {headCell.id === 'actions' ? (
+            {headCell.id === "actions" ? (
               <TableSortLabel
                 style={{ minWidth: headCell.minWidth }}
-                sx={{ '.MuiSvgIcon-root': { display: 'none' } }}
+                sx={{ ".MuiSvgIcon-root": { display: "none" } }}
               >
                 {headCell.label}
               </TableSortLabel>
             ) : (
               <TableSortLabel
                 active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
+                direction={orderBy === headCell.id ? order : "asc"}
                 style={{ minWidth: headCell.minWidth }}
                 onClick={createSortHandler(headCell.id)}
               >
                 {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    {order === "desc"
+                      ? "sorted descending"
+                      : "sorted ascending"}
                   </Box>
                 ) : null}
               </TableSortLabel>
@@ -284,12 +296,24 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
-          bgcolor: (theme: any) => alpha(theme.palette.charcoal.main, theme.palette.action.activatedOpacity),
+          bgcolor: (theme: any) =>
+            alpha(
+              theme.palette.charcoal.main,
+              theme.palette.action.activatedOpacity
+            ),
         }),
       }}
     >
-      <Typography sx={{ display: 'flex', alignItems: 'center' }} variant="h6" id="tableTitle" component="div">
-        <ProjectSearchBox value={searchText} inputSearch={handleSearchInputChange} />
+      <Typography
+        sx={{ display: "flex", alignItems: "center" }}
+        variant="h6"
+        id="tableTitle"
+        component="div"
+      >
+        <ProjectSearchBox
+          value={searchText}
+          inputSearch={handleSearchInputChange}
+        />
       </Typography>
     </Toolbar>
   );
@@ -300,15 +324,15 @@ const AddButton = (props: any) => {
     <Button
       variant="contained"
       sx={{
-        padding: '10px 15px',
-        borderRadius: '25px',
-        boxShadow: 'none',
+        padding: "10px 15px",
+        borderRadius: "25px",
+        boxShadow: "none",
         background: palette.primary.main,
         color: palette.text.primary,
-        '&:hover': {
+        "&:hover": {
           background: palette.primary.main,
           borderColor: palette.primary.border,
-          boxShadow: 'none',
+          boxShadow: "none",
         },
       }}
       {...props}
@@ -320,32 +344,32 @@ const AddButton = (props: any) => {
 
 const ChipStatus = (props: any) => {
   const { children } = props;
-  let bgColor = '';
-  let color = '';
-  if (children === 'Opened') {
-    bgColor = '#2499ef33';
-    color = '#2499ef';
-  } else if (children === 'In progress') {
-    bgColor = '#ffcb1f33';
-    color = '#c6a808';
-  } else if (children === 'Finished') {
-    bgColor = '#8fff8f4d';
-    color = '#52c41a';
-  } else if (children === 'Closed') {
-    bgColor = '#ffb8c5';
-    color = 'crimson';
+  let bgColor = "";
+  let color = "";
+  if (children === "Opened") {
+    bgColor = "#2499ef33";
+    color = "#2499ef";
+  } else if (children === "In progress") {
+    bgColor = "#ffcb1f33";
+    color = "#c6a808";
+  } else if (children === "Finished") {
+    bgColor = "#8fff8f4d";
+    color = "#52c41a";
+  } else if (children === "Closed") {
+    bgColor = "#ffb8c5";
+    color = "crimson";
   }
   return <Chip label={children} sx={{ background: bgColor, color: color }} />;
 };
 
 const TaskList: NextPageWithLayout = () => {
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('project');
+  const [order, setOrder] = React.useState<Order>("asc");
+  const [orderBy, setOrderBy] = React.useState<keyof Data>("project");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [searchText, setSearchText] = useState<string>('');
-  const [IdToDelete, setIdToDelete] = useState<string | number>('');
+  const [searchText, setSearchText] = useState<string>("");
+  const [IdToDelete, setIdToDelete] = useState<string | number>("");
   const [taskList, setTaskList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -354,22 +378,30 @@ const TaskList: NextPageWithLayout = () => {
   const router = useRouter();
 
   const statusOption = [
-    { value: '0', label: 'Opened' },
-    { value: '1', label: 'In progress' },
-    { value: '2', label: 'Finished' },
-    { value: '3', label: 'Closed' },
+    { value: "0", label: "Opened" },
+    { value: "1", label: "In progress" },
+    { value: "2", label: "Finished" },
+    { value: "3", label: "Closed" },
   ];
 
   useEffect(() => {
     setIsLoading(true);
     const taskApi = async () => {
       const taskApi = await apiClient.get(
-        `${config.SERVER_DOMAIN}/tasks/list?page=1&limit=100&keyword=${keyword == 4 ? '' : keyword}`
+        `${config.SERVER_DOMAIN}/tasks/list?page=1&limit=100&keyword=${
+          keyword == 4 ? "" : keyword
+        }`
       );
-      const projectApi = await apiClient.get(`${config.SERVER_DOMAIN}/projects/list?page=1&limit=100`);
-      const employeeApi = await apiClient.get(`${config.SERVER_DOMAIN}/employees/list?page=1&limit=100`);
+      const projectApi = await apiClient.get(
+        `${config.SERVER_DOMAIN}/projects/list?page=1&limit=100`
+      );
+      const employeeApi = await apiClient.get(
+        `${config.SERVER_DOMAIN}/employees/list?page=1&limit=100`
+      );
       const taskData = taskApi.data.data.map((task: any, index: any) => {
-        const statusValue = statusOption.find((option) => option.value === task.status)?.label;
+        const statusValue = statusOption.find(
+          (option) => option.value === task.status
+        )?.label;
 
         const project = projectApi.data.data.filter(
           (projectData: any) => projectData._id === task.project?._id
@@ -379,24 +411,25 @@ const TaskList: NextPageWithLayout = () => {
         )[0]?.employeeName;
         return {
           ...task,
-          num: task._id.length + index - 23,
-          project: project ? project : '-',
-          assignedEmployee: employee ? employee : '-',
-          description: task.description ? task.description : '-',
-          status: statusValue ? statusValue : 'Open',
-          actualHour: task.actualHour ? task.actualHour : '-',
+          // num: task._id.length + index - 23,
+          num: index + 1,
+          project: project ? project : "-",
+          assignedEmployee: employee ? employee : "-",
+          description: task.description ? task.description : "-",
+          status: statusValue ? statusValue : "Open",
+          actualHour: task.actualHour ? task.actualHour : "-",
           estimate_start_date: task.estimate_start_date
-            ? dayjs(task.estimate_start_date).format('MM-DD-YYYY')
-            : '-',
+            ? dayjs(task.estimate_start_date).format("MM-DD-YYYY")
+            : "-",
           estimate_finish_date: task.estimate_finish_date
-            ? dayjs(task.estimate_finish_date).format('MM-DD-YYYY')
-            : '-',
+            ? dayjs(task.estimate_finish_date).format("MM-DD-YYYY")
+            : "-",
           actual_start_date: task.actual_start_date
-            ? dayjs(task.actual_start_date).format('MM-DD-YYYY')
-            : '-',
+            ? dayjs(task.actual_start_date).format("MM-DD-YYYY")
+            : "-",
           actual_finish_date: task.actual_finish_date
-            ? dayjs(task.actual_finish_date).format('MM-DD-YYYY')
-            : '-',
+            ? dayjs(task.actual_finish_date).format("MM-DD-YYYY")
+            : "-",
         };
       });
       setTaskList(taskData);
@@ -411,9 +444,12 @@ const TaskList: NextPageWithLayout = () => {
     setPage(0);
   };
 
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+  const handleRequestSort = (
+    event: React.MouseEvent<unknown>,
+    property: keyof Data
+  ) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
@@ -421,7 +457,9 @@ const TaskList: NextPageWithLayout = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -433,7 +471,9 @@ const TaskList: NextPageWithLayout = () => {
       return (
         title?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
         project?.toLowerCase().includes(searchText.toLowerCase().trim()) ||
-        assignedEmployee?.toLowerCase().includes(searchText.toLowerCase().trim())
+        assignedEmployee
+          ?.toLowerCase()
+          .includes(searchText.toLowerCase().trim())
       );
     });
     setDownloadData(filteredRows);
@@ -441,14 +481,15 @@ const TaskList: NextPageWithLayout = () => {
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - taskList.length) : 0;
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - taskList.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(filterRows(taskList, searchText), getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage
-      ),
+      stableSort(
+        filterRows(taskList, searchText),
+        getComparator(order, orderBy)
+      ).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [order, orderBy, page, rowsPerPage, taskList, searchText]
@@ -460,7 +501,9 @@ const TaskList: NextPageWithLayout = () => {
 
   const handleDelete = () => {
     apiClient.delete(`${config.SERVER_DOMAIN}/task/${IdToDelete}`);
-    setTaskList((prevList: any) => prevList?.filter((row: any) => row._id !== IdToDelete));
+    setTaskList((prevList: any) =>
+      prevList?.filter((row: any) => row._id !== IdToDelete)
+    );
     setOpen(false);
   };
 
@@ -469,34 +512,34 @@ const TaskList: NextPageWithLayout = () => {
       {isLoading && <Loading />}
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
+          display: "flex",
+          justifyContent: "space-between",
           mt: 2,
         }}
       >
         <TaskDownload datas={downloadData} />
-        <AddButton onClick={() => router.push('/task/add')}>
+        <AddButton onClick={() => router.push("/task/add")}>
           <AddIcon fontSize="small" sx={{ mr: 1 }} /> New Task
         </AddButton>
       </Box>
       <Paper
         sx={{
-          'media (min-width : 300px)': { width: 'calc(100% - 290px)' },
+          "media (min-width : 300px)": { width: "calc(100% - 290px)" },
           mb: 2,
           mt: 3,
           p: 2,
           background: palette.common.white,
-          borderRadius: '1.1rem',
+          borderRadius: "1.1rem",
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <EnhancedTableToolbar
             numSelected={selected.length}
             searchText={searchText}
             onSearchChange={handleSearchChange}
           />
           <Select
-            sx={{ height: '50px', borderRadius: '8px' }}
+            sx={{ height: "50px", borderRadius: "8px" }}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={keyword}
@@ -514,28 +557,63 @@ const TaskList: NextPageWithLayout = () => {
         </Box>
         <TableContainer>
           <Table sx={{}} aria-labelledby="tableTitle">
-            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+            />
             {taskList.length > 0 && visibleRows.length > 0 ? (
               <TableBody>
                 {visibleRows.map((row, _index) => {
                   return (
-                    <TableRow hover role="checkbox" key={row._id} sx={{ cursor: 'pointer' }}>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.num}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.title}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.description}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.project}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.assignedEmployee}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.estimateHour}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.actualHour}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      key={row._id}
+                      sx={{ cursor: "pointer" }}
+                    >
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.num}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.title}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.description}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.project}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.assignedEmployee}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.estimateHour}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.actualHour}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
                         <ChipStatus>{row.status}</ChipStatus>
                       </TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.estimate_start_date}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.estimate_finish_date}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.actual_start_date}</TableCell>
-                      <TableCell sx={{ fontSize: '.9rem' }}>{row.actual_finish_date}</TableCell>
-                      <TableCell sx={{ display: 'flex' }}>
-                        <TableBtn onClick={() => handleEditTask(row._id.toString())}>Edit</TableBtn>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.estimate_start_date}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.estimate_finish_date}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.actual_start_date}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: ".9rem" }}>
+                        {row.actual_finish_date}
+                      </TableCell>
+                      <TableCell sx={{ display: "flex" }}>
+                        <TableBtn
+                          onClick={() => handleEditTask(row._id.toString())}
+                        >
+                          Edit
+                        </TableBtn>
                         <TableBtn
                           onClick={() => {
                             setOpen(true);
@@ -564,7 +642,7 @@ const TaskList: NextPageWithLayout = () => {
               <TableBody>
                 <TableRow>
                   <TableCell colSpan={6}>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
                       <img
                         width={340}
                         height={320}
@@ -586,6 +664,13 @@ const TaskList: NextPageWithLayout = () => {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{
+            ".MuiInputBase-root": {
+              border: `1px solid ${palette.accent.light}`,
+              borderRadius: "0.85rem",
+              padding: "0 .75rem",
+            },
+          }}
         />
       </Paper>
     </>

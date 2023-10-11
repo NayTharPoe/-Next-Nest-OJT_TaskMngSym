@@ -9,7 +9,7 @@ import config from "@/config";
 const VerifyAccount = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [statusText, setStatusText] = useState("");
+  const [statusText, setStatusText] = useState(0);
 
   const router = useRouter();
 
@@ -19,7 +19,7 @@ const VerifyAccount = () => {
       .then((res) => {
         console.log(res);
         setOpen(true);
-        setStatusText(res.statusText);
+        setStatusText(res.status);
         setMessage(res.data?.message);
       })
       .catch((err) => {
@@ -35,7 +35,7 @@ const VerifyAccount = () => {
 
   const handleClose = () => {
     setOpen(false);
-    if (statusText === "OK") {
+    if (statusText === 200) {
       router.push("/auth/login");
     }
   };
