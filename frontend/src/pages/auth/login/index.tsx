@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import AuthButton from "@/components/authBtn";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Controller, useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import AuthButton from '@/components/authBtn';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Controller, useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   Grid,
@@ -13,26 +13,26 @@ import {
   Stack,
   TextField,
   Typography,
-} from "@mui/material";
-import React, { useState } from "react";
-import axios from "axios";
-import AuthDialog from "@/components/authDialog";
-import Loading from "@/components/loading";
-import config from "@/config";
+} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import AuthDialog from '@/components/authDialog';
+import Loading from '@/components/loading';
+import config from '@/config';
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "transparent",
-  outline: "none",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  bgcolor: 'transparent',
+  outline: 'none',
 };
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -53,9 +53,9 @@ const Login = () => {
       .post(`${config.SERVER_DOMAIN}/auth/login`, data)
       .then((res: any) => {
         const userData = res.data.result;
-        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem('user', JSON.stringify(userData));
         setIsLoading(false);
-        router.push("/");
+        router.push('/');
       })
       .catch((err) => {
         setIsLoading(false);
@@ -63,6 +63,13 @@ const Login = () => {
         setMessage(err.response?.data.message);
       });
   };
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    const token = user ? JSON.parse(user)?.token : null;
+
+    token && router.push('/');
+  }, []);
 
   return (
     <>
@@ -73,15 +80,14 @@ const Login = () => {
             item
             md={6}
             sx={{
-              display: { xs: "none", md: "flex" },
-              background:
-                "linear-gradient(20deg,#2f3136 0.89%,rgba(47, 49, 54, 0) 103.49%)",
-              justifyContent: "center",
-              alignItems: "center",
+              display: { xs: 'none', md: 'flex' },
+              background: 'linear-gradient(20deg,#2f3136 0.89%,rgba(47, 49, 54, 0) 103.49%)',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
             <img
-              style={{ width: "70%", height: "auto", objectFit: "cover" }}
+              style={{ width: '70%', height: 'auto', objectFit: 'cover' }}
               src="/auth-img/login.png"
               alt="login-img"
             />
@@ -95,20 +101,20 @@ const Login = () => {
             sx={{
               backgroundImage: {
                 xs: `url('/auth-img/login.png')`,
-                md: "none",
+                md: 'none',
               },
-              backgroundSize: "cover",
-              backgroundPosition: "center",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
             md={6}
             xs={12}
           >
             <Card
               sx={{
-                background: "#fff",
-                opacity: "95%",
-                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
-                padding: "20px",
+                background: '#fff',
+                opacity: '95%',
+                boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
+                padding: '20px',
               }}
             >
               <Typography textAlign="center" variant="h4">
@@ -116,7 +122,7 @@ const Login = () => {
               </Typography>
               <Stack
                 sx={{
-                  width: { xs: "270px", sm: "380px" },
+                  width: { xs: '270px', sm: '380px' },
                 }}
                 mt={4}
                 spacing={3}
@@ -124,14 +130,14 @@ const Login = () => {
                 <Controller
                   name="email"
                   control={control}
-                  rules={{ required: "Email is required" }}
+                  rules={{ required: 'Email is required' }}
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      value={field.value || ""}
+                      value={field.value || ''}
                       name="email"
                       type="email"
-                      style={{ borderRadius: "25px" }}
+                      style={{ borderRadius: '25px' }}
                       onChange={(e) => field.onChange(e.target.value)}
                       label="Enter your email"
                       error={!!errors.email}
@@ -143,13 +149,13 @@ const Login = () => {
                 <Controller
                   name="password"
                   control={control}
-                  rules={{ required: "Password is required" }}
+                  rules={{ required: 'Password is required' }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       name="password"
-                      value={field.value || ""}
-                      type={showPassword ? "text" : "password"}
+                      value={field.value || ''}
+                      type={showPassword ? 'text' : 'password'}
                       onChange={(e) => field.onChange(e.target.value)}
                       label="Enter your password"
                       error={!!errors.password}
@@ -157,15 +163,8 @@ const Login = () => {
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowPassword(!showPassword)}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
+                            <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -176,12 +175,12 @@ const Login = () => {
               </Stack>
               <Stack mt={2}>
                 <Link
-                  style={{ color: "#2f3136" }}
+                  style={{ color: '#2f3136' }}
                   textAlign="end"
                   underline="none"
                   href="/auth/forget-password"
                 >
-                  {"Forget Password?"}
+                  {'Forget Password?'}
                 </Link>
               </Stack>
               <AuthButton>Login</AuthButton>

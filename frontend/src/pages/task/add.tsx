@@ -25,6 +25,8 @@ import AuthDialog from '@/components/authDialog';
 import Loading from '@/components/loading';
 import { apiClient } from '@/services/apiClient';
 import config from '@/config';
+import axios from 'axios';
+import { socket } from '../../socket';
 
 const TaskCreate = () => {
   const [selectProject, setSelectProject] = useState([]);
@@ -79,7 +81,29 @@ const TaskCreate = () => {
     };
     apiClient
       .post(`${config.SERVER_DOMAIN}/task/add`, result)
-      .then((res) => {
+      .then(async (res) => {
+        const task = res?.data?.data;
+        const assignedEmployeeName = selectEmployee.find(
+          (option: any) => option.value === task.assignedEmployee
+        )?.label;
+
+        const notificationPayload = {
+          tag: 'TASK',
+          createdByWhom: currentUserData?._id,
+          profile: currentUserData?.profile,
+          sendTo: task?.assignedEmployee,
+          message: `
+          A <span class='task-name'>${task?.title}</span> task has been created and assigned for
+          <span>${assignedEmployeeName} </span>
+         `,
+        };
+
+        const notificationResponse = await axios.post(
+          `${config.SERVER_DOMAIN}/notification/add`,
+          notificationPayload
+        );
+        socket.emit('taskCreated', notificationResponse?.data?.data);
+
         setOpen(true);
         setIsLoading(false);
         setStatusText(res.status);

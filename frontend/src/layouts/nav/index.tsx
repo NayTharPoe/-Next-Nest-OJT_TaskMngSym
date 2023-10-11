@@ -1,8 +1,9 @@
 import { styled, alpha } from '@mui/material/styles';
-import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
+import { Box, Link, Typography, Avatar, Stack } from '@mui/material';
 import { navConfig } from './config';
 import NavSection from '@/components/nav-section/NavSection';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const StyledAccount = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -18,10 +19,16 @@ const RenderContent = () => {
     displayName: loggedInUser?.employeeName,
     photoURL: loggedInUser?.profile,
   };
+  const location = useRouter();
 
   useEffect(() => {
     setLoggedInUser(JSON.parse(localStorage.getItem('user') ?? '{}'));
   }, []);
+
+  const permissionNavItem =
+    loggedInUser && loggedInUser?.position !== '1'
+      ? navConfig.filter((nav) => nav.user === 'true')
+      : navConfig;
 
   return (
     <div>
@@ -59,7 +66,7 @@ const RenderContent = () => {
         </Link>
       </Box>
 
-      <NavSection data={navConfig} />
+      <NavSection data={permissionNavItem} />
     </div>
   );
 };

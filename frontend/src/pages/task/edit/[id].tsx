@@ -25,6 +25,8 @@ import { TaskEditSchema } from '@/utils/taskValidate';
 import AuthDialog from '@/components/authDialog';
 import { apiClient } from '@/services/apiClient';
 import config from '@/config';
+import axios from 'axios';
+import { socket } from '../../../socket';
 
 const TaskEdit = () => {
   const [selectProject, setSelectProject] = useState([]);
@@ -106,7 +108,29 @@ const TaskEdit = () => {
     };
     apiClient
       .put(`${config.SERVER_DOMAIN}/task/edit/${router.query.id}`, result)
-      .then((res) => {
+      .then(async (res) => {
+        const task = res?.data?.data;
+        const assignedEmployeeName = selectEmployee.find(
+          (option: any) => option.value === task.assignedEmployee
+        )?.label;
+
+        const notificationPayload = {
+          tag: 'TASK',
+          createdByWhom: currentUserData?._id,
+          profile: currentUserData?.profile,
+          sendTo: task?.assignedEmployee,
+          message: `
+        A <span class="task-name">${task?.title}</span> task assigned for
+        <span>${assignedEmployeeName} </span> has been updated.
+         `,
+        };
+
+        const notificationResponse = await axios.post(
+          `${config.SERVER_DOMAIN}/notification/add`,
+          notificationPayload
+        );
+        socket.emit('taskUpdated', notificationResponse?.data?.data);
+
         setOpen(true);
         setIsLoading(false);
         setStatusText(res.status);

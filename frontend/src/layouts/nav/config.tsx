@@ -2,6 +2,7 @@ const navConfig = [
   {
     title: 'dashboard',
     path: '/',
+    user: 'true',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
         <rect width="9" height="9" x="2" y="2" fill="currentColor" rx="1"></rect>
@@ -14,6 +15,7 @@ const navConfig = [
   {
     title: 'user',
     path: '/employee/list',
+    user: 'false',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
         <path
@@ -36,6 +38,7 @@ const navConfig = [
   {
     title: 'project',
     path: '/project/list',
+    user: 'false',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
         <path
@@ -53,6 +56,7 @@ const navConfig = [
   {
     title: 'task',
     path: '/task/list',
+    user: 'true',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
         <path
@@ -81,6 +85,7 @@ const navConfig = [
   {
     title: 'report',
     path: '/report/list',
+    user: 'true',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
         <path fill="currentColor" d="M17 13H7a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2Z"></path>
