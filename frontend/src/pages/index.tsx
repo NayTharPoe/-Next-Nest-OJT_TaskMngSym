@@ -495,10 +495,10 @@ export default DashboardPage;
 export async function getServerSideProps() {
   try {
     const [employeesRes, tasksRes, projectsRes, reportsRes] = await Promise.all([
-      apiClient.get(`${config.SERVER_DOMAIN}/employees/list?page=1&limit=2000`),
-      apiClient.get(`${config.SERVER_DOMAIN}/tasks/list?page=1&limit=2000`),
-      apiClient.get(`${config.SERVER_DOMAIN}/projects/list?page=1&limit=2000`),
-      apiClient.get(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`),
+      axios.get(`${config.SERVER_DOMAIN}/employees/list?page=1&limit=2000`),
+      axios.get(`${config.SERVER_DOMAIN}/tasks/list?page=1&limit=2000`),
+      axios.get(`${config.SERVER_DOMAIN}/projects/list?page=1&limit=2000`),
+      axios.get(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`),
     ]);
 
     const dataCount = {
