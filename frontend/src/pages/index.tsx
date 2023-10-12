@@ -8,10 +8,11 @@ import ProjectIcon from '@/components/icons/ProjectIcon';
 import ReportIcon from '@/components/icons/ReportIcon';
 import EmployeeIcon from '@/components/icons/EmployeeIcon';
 import TaskIcon from '@/components/icons/TaskIcon';
-import axios from 'axios';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { StyledGridOverlay } from '@/components/styledGridOverlay';
 import config from '@/config';
+import axios from 'axios';
+import { apiClient } from '@/services/apiClient';
 
 const CustomNoRowsOverlay = () => {
   return (
@@ -249,10 +250,10 @@ const DashboardPage: NextPageWithLayout = ({ dataCount, taskData }: any) => {
   }, []);
 
   useEffect(() => {
-    const user = localStorage.getItem("user")
-    const currentUserData = user ? JSON.parse(user) : null
+    const user = localStorage.getItem('user');
+    const currentUserData = user ? JSON.parse(user) : null;
 
-    !currentUserData && router.push('/auth/login')
+    !currentUserData && router.push('/auth/login');
   }, []);
 
   return (
@@ -494,10 +495,10 @@ export default DashboardPage;
 export async function getServerSideProps() {
   try {
     const [employeesRes, tasksRes, projectsRes, reportsRes] = await Promise.all([
-      axios.get(`${config.SERVER_DOMAIN}/employees/list?page=1&limit=2000`),
-      axios.get(`${config.SERVER_DOMAIN}/tasks/list?page=1&limit=2000`),
-      axios.get(`${config.SERVER_DOMAIN}/projects/list?page=1&limit=2000`),
-      axios.get(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`),
+      apiClient.get(`${config.SERVER_DOMAIN}/employees/list?page=1&limit=2000`),
+      apiClient.get(`${config.SERVER_DOMAIN}/tasks/list?page=1&limit=2000`),
+      apiClient.get(`${config.SERVER_DOMAIN}/projects/list?page=1&limit=2000`),
+      apiClient.get(`${config.SERVER_DOMAIN}/reports/list?page=1&limit=2000`),
     ]);
 
     const dataCount = {

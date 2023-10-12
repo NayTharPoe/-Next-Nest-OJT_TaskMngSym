@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -9,8 +9,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Header from '@/layouts/header';
 import RenderContent from '@/layouts/nav';
+import { useRouter } from 'next/router';
 
 const MainLayout = (props: any) => {
+  const location = useRouter();
+  const router = useRouter();
   const drawerWidth = 290;
 
   const { window, children } = props;
@@ -22,6 +25,17 @@ const MainLayout = (props: any) => {
   };
 
   const container = window !== undefined ? () => window().document.body : undefined;
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    const position = user ? JSON.parse(user).position : null;
+
+    if (position !== '1') {
+      if (location.pathname.includes('employee') || location.pathname.includes('project')) {
+        router.push('/unAuthorized');
+      }
+    }
+  }, [location.pathname]);
 
   return (
     <Box sx={{ display: 'flex' }}>
