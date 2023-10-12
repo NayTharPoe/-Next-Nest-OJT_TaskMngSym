@@ -118,6 +118,7 @@ const MainLayout = (props: any) => {
       <Box
         component="main"
         sx={{
+          overflow: 'hidden',
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
