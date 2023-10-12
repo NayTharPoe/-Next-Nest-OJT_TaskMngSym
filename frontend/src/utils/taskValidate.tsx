@@ -62,7 +62,10 @@ export const TaskEditSchema = yup.object().shape({
         return value >= endDate;
       }
     ),
-  actual_start_date: yup.date().typeError("Invalid date format"),
+  actual_start_date: yup
+    .date()
+    .typeError("Invalid date format")
+    .required("Actual start date is required"),
   actual_finish_date: yup
     .date()
     .typeError("Invalid date format")
@@ -76,5 +79,6 @@ export const TaskEditSchema = yup.object().shape({
         }
         return value >= endDate;
       }
-    ),
+    )
+    .required("Actual finish date is required"),
 });
