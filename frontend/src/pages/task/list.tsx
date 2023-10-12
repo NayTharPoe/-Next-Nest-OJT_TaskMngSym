@@ -31,7 +31,7 @@ import dayjs from "dayjs";
 import Loading from "@/components/loading";
 import TaskDownload from "@/components/taskDownload";
 import ProjectSearchBox from "@/components/ProjectSearchBox";
-import { apiClient } from "@/services/apiClient";
+import axios from "axios";
 import config from "@/config";
 
 interface Data {
@@ -387,15 +387,15 @@ const TaskList: NextPageWithLayout = () => {
   useEffect(() => {
     setIsLoading(true);
     const taskApi = async () => {
-      const taskApi = await apiClient.get(
+      const taskApi = await axios.get(
         `${config.SERVER_DOMAIN}/tasks/list?page=1&limit=100&keyword=${
           keyword == 4 ? "" : keyword
         }`
       );
-      const projectApi = await apiClient.get(
+      const projectApi = await axios.get(
         `${config.SERVER_DOMAIN}/projects/list?page=1&limit=100`
       );
-      const employeeApi = await apiClient.get(
+      const employeeApi = await axios.get(
         `${config.SERVER_DOMAIN}/employees/list?page=1&limit=100`
       );
       const taskData = taskApi.data.data.map((task: any, index: any) => {
@@ -419,16 +419,16 @@ const TaskList: NextPageWithLayout = () => {
           status: statusValue ? statusValue : "Open",
           actualHour: task.actualHour ? task.actualHour : "-",
           estimate_start_date: task.estimate_start_date
-            ? dayjs(task.estimate_start_date).format("MM-DD-YYYY")
+            ? task.estimate_start_date
             : "-",
           estimate_finish_date: task.estimate_finish_date
-            ? dayjs(task.estimate_finish_date).format("MM-DD-YYYY")
+            ? task.estimate_finish_date
             : "-",
           actual_start_date: task.actual_start_date
-            ? dayjs(task.actual_start_date).format("MM-DD-YYYY")
+            ? task.actual_start_date
             : "-",
           actual_finish_date: task.actual_finish_date
-            ? dayjs(task.actual_finish_date).format("MM-DD-YYYY")
+            ? task.actual_finish_date
             : "-",
         };
       });
@@ -500,7 +500,7 @@ const TaskList: NextPageWithLayout = () => {
   };
 
   const handleDelete = () => {
-    apiClient.delete(`${config.SERVER_DOMAIN}/task/${IdToDelete}`);
+    axios.delete(`${config.SERVER_DOMAIN}/task/${IdToDelete}`);
     setTaskList((prevList: any) =>
       prevList?.filter((row: any) => row._id !== IdToDelete)
     );
