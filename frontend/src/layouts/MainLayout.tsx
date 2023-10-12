@@ -31,7 +31,11 @@ const MainLayout = (props: any) => {
     const position = user ? JSON.parse(user).position : null;
 
     if (position !== '1') {
-      if (location.pathname.includes('employee') || location.pathname.includes('project')) {
+      if (
+        location.pathname.includes('employee/list') ||
+        location.pathname.includes('employee/add') ||
+        location.pathname.includes('project')
+      ) {
         router.push('/unAuthorized');
       }
     }
