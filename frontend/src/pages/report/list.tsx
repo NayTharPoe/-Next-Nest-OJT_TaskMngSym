@@ -139,15 +139,14 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
     <Box sx={{ width: '100%', my: 4 }}>
       <Grid
         container
-        spacing={1}
+        spacing={2}
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
           mb: 4,
         }}
       >
-        <Grid item>
+        <Grid item sm={12} lg={8}>
           <Box component="form" onSubmit={handleSubmit}>
             <Grid container spacing={1} sx={{ alignItems: 'center' }}>
               <Grid item xs={6} sm={3}>
@@ -170,6 +169,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                     ),
                   }}
                   sx={{
+                    width: '100%',
                     '.MuiInputBase-root': {
                       borderRadius: '.4rem',
                     },
@@ -199,6 +199,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                     ),
                   }}
                   sx={{
+                    width: '100%',
                     '.MuiInputBase-root': {
                       borderRadius: '.4rem',
                     },
@@ -215,6 +216,7 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                   value={formData.selectedDate}
                   onChange={(newValue: any) => handleDateChange(newValue)}
                   sx={{
+                    width: '100%',
                     '.MuiInputBase-root': {
                       borderRadius: '.4rem',
                     },
@@ -225,12 +227,13 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={6} sm={1}>
+              <Grid item xs={6} sm={2}>
                 <Button
                   variant="contained"
                   size="large"
                   type="submit"
                   sx={{
+                    width: '100%',
                     backgroundColor: palette.primary.main,
                     color: palette.text.primary,
                     borderRadius: '.7rem',
@@ -246,14 +249,20 @@ const ReportListPage = ({ reports, page, rowPerPage }: any) => {
             </Grid>
           </Box>
         </Grid>
-        <Grid item>
-          <AddNewBtn AddNewBtnText="Add Report" path="/report/add" />
-          <ExcelDownloadButton
-            data={
-              formData.reportTo || formData.reportBy || formData.selectedDate ? reports?.data : allReports
-            }
-            fileName="report-list"
-          />
+        <Grid item sm={12} lg={4}>
+          <Grid container sx={{ alignItems: 'center', justifyContent: { md: 'flex-start', lg: 'flex-end' } }}>
+            <Grid item>
+              <AddNewBtn AddNewBtnText="Add Report" path="/report/add" />
+            </Grid>
+            <Grid item>
+              <ExcelDownloadButton
+                data={
+                  formData.reportTo || formData.reportBy || formData.selectedDate ? reports?.data : allReports
+                }
+                fileName="report-list"
+              />
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
 
