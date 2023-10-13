@@ -235,6 +235,7 @@ const ReportAddPage = () => {
     try {
       const user = localStorage.getItem('user');
       const currentUserData = user ? JSON.parse(user) : null;
+      setCurrentUserData(currentUserData);
 
       const response = await axios.get(`${config.SERVER_DOMAIN}/tasks/list?page=1&limit=2000`);
       const responseData = response.data?.data || [];
@@ -283,9 +284,9 @@ const ReportAddPage = () => {
       showDialog('No Data', 'Please add at least 1 report.');
     } else if (Object.keys(errors).length) {
       return;
-    } else if (totalHour !== 8) {
+    } else if (totalHour < 8) {
       handleDialogClose('null');
-      showDialog('Total Hours Limitations', 'Total hours must be 8 hours.');
+      showDialog('Total Hours Limitations', 'Total hours must not be less than 8 hours.');
     } else {
       showDialog('Successful Submission', 'Your report has been added successfully');
       handleDialogClose('success');

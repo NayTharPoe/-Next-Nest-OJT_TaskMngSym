@@ -244,6 +244,7 @@ const ProjectListPage = ({ projects, page, rowPerPage }: any) => {
     const currentPathname = router.pathname;
     const currentQuery = { ...router.query };
     currentQuery.limit = newLimit.toString();
+    currentQuery.page = '1';
 
     router.push({
       pathname: currentPathname,
