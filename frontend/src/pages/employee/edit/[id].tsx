@@ -1,4 +1,4 @@
-import MainLayout from '@/layouts/MainLayout';
+import MainLayout from "@/layouts/MainLayout";
 import {
   Box,
   Grid,
@@ -10,29 +10,30 @@ import {
   Select,
   Button,
   MenuItem,
-} from '@mui/material';
-import React, { ReactElement, useEffect, useState } from 'react';
-import BackupIcon from '@mui/icons-material/Backup';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useForm, Controller } from 'react-hook-form';
-import { useRouter } from 'next/router';
-import palette from '@/theme/palette';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
-import axios from 'axios';
-import Loading from '@/components/loading';
-import AuthDialog from '@/components/authDialog';
-import { apiClient } from '@/services/apiClient';
-import config from '@/config';
+} from "@mui/material";
+import React, { ReactElement, useEffect, useState } from "react";
+import BackupIcon from "@mui/icons-material/Backup";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useForm, Controller } from "react-hook-form";
+import { useRouter } from "next/router";
+import palette from "@/theme/palette";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import axios from "axios";
+import Loading from "@/components/loading";
+import AuthDialog from "@/components/authDialog";
+import { apiClient } from "@/services/apiClient";
+import config from "@/config";
 
 const EmployeeEdit = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedPhoto, setUploadedPhoto] = useState<any>(null);
   const [editUploadImg, setEditUploadImg] = useState<any>(null);
+  const [position, setUserPositon] = useState<any>("");
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [statusText, setStatusText] = useState(0);
 
   const router = useRouter();
@@ -48,37 +49,50 @@ const EmployeeEdit = () => {
   } = useForm();
 
   useEffect(() => {
+    const loginUser = localStorage.getItem("user");
+    if (loginUser) {
+      const { position } = JSON.parse(loginUser);
+      setUserPositon(position);
+    }
+  }, []);
+
+  useEffect(() => {
     setIsLoading(true);
     if (router.query?.id) {
-      apiClient.get(`${config.SERVER_DOMAIN}/employee/detail/${id}`).then((res) => {
-        setValue('employeeName', res.data.data.employeeName);
-        setValue('email', res.data.data.email);
-        setValue('address', res.data.data.address);
-        setValue('phone', res.data.data.phone);
-        setUploadedImage(res.data.data.profile);
-        setEditUploadImg(res.data.data.profile);
-        setValue('dob', res.data.data.dob);
-        setValue('position', res.data.data.position);
-        setIsLoading(false);
-      });
+      apiClient
+        .get(`${config.SERVER_DOMAIN}/employee/detail/${id}`)
+        .then((res) => {
+          setValue("employeeName", res.data.data.employeeName);
+          setValue("email", res.data.data.email);
+          setValue("address", res.data.data.address);
+          setValue("phone", res.data.data.phone);
+          setUploadedImage(res.data.data.profile);
+          setEditUploadImg(res.data.data.profile);
+          setValue("dob", res.data.data.dob);
+          setValue("position", res.data.data.position);
+          setIsLoading(false);
+        });
     }
   }, [router.query.id]);
 
   const onSubmit = (data: any) => {
     setIsLoading(true);
     const formData = new FormData();
-    formData.append('employeeName', data.employeeName);
-    formData.append('email', data.email);
-    formData.append('address', data.address ? data.address : '');
-    formData.append('phone', data.phone ? data.phone : '');
-    formData.append('dob', data.dob ? dayjs(data.dob).format('MM/DD/YYYY') : '');
-    formData.append('position', data.position);
+    formData.append("employeeName", data.employeeName);
+    formData.append("email", data.email);
+    formData.append("address", data.address ? data.address : "");
+    formData.append("phone", data.phone ? data.phone : "");
+    formData.append(
+      "dob",
+      data.dob ? dayjs(data.dob).format("MM/DD/YYYY") : ""
+    );
+    formData.append("position", data.position);
     if (uploadedPhoto) {
-      formData.append('profile', uploadedPhoto);
+      formData.append("profile", uploadedPhoto);
     } else if (editUploadImg) {
-      formData.append('profile', editUploadImg);
+      formData.append("profile", editUploadImg);
     } else {
-      formData.append('profile', '');
+      formData.append("profile", "");
     }
     apiClient
       .put(`${config.SERVER_DOMAIN}/employee/edit/${router.query.id}`, formData)
@@ -89,7 +103,7 @@ const EmployeeEdit = () => {
         setMessage(res.data?.message);
       })
       .catch((err) => {
-        if (err.code === 'ERR_NETWORK') {
+        if (err.code === "ERR_NETWORK") {
           setOpen(true);
           setIsLoading(false);
           setMessage(err.message);
@@ -103,14 +117,16 @@ const EmployeeEdit = () => {
 
   const handleClose = () => {
     setOpen(false);
-    if (statusText == 200) {
-      router.push('/employee/list');
+    if (statusText == 200 && position == 1) {
+      router.push("/employee/list");
+    } else {
+      router.push("/");
     }
   };
 
   const disabledDate = (current: any) => {
-    const todayDate = dayjs().startOf('day');
-    const currentDate = dayjs(current).startOf('day');
+    const todayDate = dayjs().startOf("day");
+    const currentDate = dayjs(current).startOf("day");
     return currentDate.isAfter(todayDate);
   };
 
@@ -129,7 +145,7 @@ const EmployeeEdit = () => {
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
-      if (file.type.match('image.*')) {
+      if (file.type.match("image.*")) {
         const reader = new FileReader();
 
         reader.onload = () => {
@@ -138,14 +154,14 @@ const EmployeeEdit = () => {
 
         reader.readAsDataURL(file);
       } else {
-        alert('Please select an image file (jpg, jpeg, png)');
+        alert("Please select an image file (jpg, jpeg, png)");
       }
     }
   };
 
   const handleFileInputChange = (e: any) => {
     const file = e.target.files[0];
-    if (file.type.match('image.*')) {
+    if (file.type.match("image.*")) {
       const reader = new FileReader();
 
       reader.onload = () => {
@@ -155,32 +171,48 @@ const EmployeeEdit = () => {
 
       reader.readAsDataURL(file);
     } else {
-      alert('Please select an image file (jpg, jpeg, png)');
+      alert("Please select an image file (jpg, jpeg, png)");
     }
   };
 
   const handleDeleteImage = () => {
     setUploadedImage(null);
-    setUploadedPhoto('');
+    setUploadedPhoto("");
     setEditUploadImg(null);
+  };
+
+  const handleCancel = () => {
+    if (position == 0) {
+      router.push("/");
+    } else {
+      router.push("/employee/list");
+    }
   };
 
   const CommonButton = (props: any) => {
     return (
       <Button
         fullWidth
-        type={props.text === 'save' ? 'submit' : 'button'}
+        type={props.text === "save" ? "submit" : "button"}
         variant="contained"
         sx={{
-          padding: '10px',
-          borderRadius: '.5rem',
-          boxShadow: 'none',
-          background: `${props.text === 'save' ? palette.primary.main : palette.secondary.main}`,
+          padding: "10px",
+          borderRadius: ".5rem",
+          boxShadow: "none",
+          background: `${
+            props.text === "save"
+              ? palette.primary.main
+              : palette.secondary.main
+          }`,
           color: palette.text.primary,
-          '&:hover': {
-            backgroundColor: `${props.text === 'save' ? palette.primary.main : palette.secondary.main}`,
+          "&:hover": {
+            backgroundColor: `${
+              props.text === "save"
+                ? palette.primary.main
+                : palette.secondary.main
+            }`,
             borderColor: palette.primary.border,
-            boxShadow: 'none',
+            boxShadow: "none",
           },
         }}
         {...props}
@@ -193,23 +225,23 @@ const EmployeeEdit = () => {
   return (
     <>
       {isLoading && <Loading />}
-      <Box sx={{ width: { md: '70%', sm: '80%' }, margin: '0 auto' }}>
+      <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
             <Grid item md={6} sm={6} xs={12}>
               <InputLabel>
-                Name <span style={{ color: 'red' }}>*</span>
+                Name <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="employeeName"
-                rules={{ required: 'Employee name is required' }}
+                rules={{ required: "Employee name is required" }}
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     fullWidth
                     id="employeeName"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -222,11 +254,11 @@ const EmployeeEdit = () => {
             </Grid>
             <Grid item md={6} sm={6} xs={12}>
               <InputLabel>
-                Email <span style={{ color: 'red' }}>*</span>
+                Email <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="email"
-                rules={{ required: 'Email is required' }}
+                rules={{ required: "Email is required" }}
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -234,7 +266,7 @@ const EmployeeEdit = () => {
                     {...field}
                     fullWidth
                     id="email"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -249,9 +281,9 @@ const EmployeeEdit = () => {
               <InputLabel>Profile Photo</InputLabel>
               <Box
                 sx={{
-                  position: 'relative',
-                  width: '48%',
-                  '@media (max-width: 600px)': { width: '65%' },
+                  position: "relative",
+                  width: "48%",
+                  "@media (max-width: 600px)": { width: "65%" },
                 }}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -260,12 +292,12 @@ const EmployeeEdit = () => {
                 {uploadedImage && (
                   <Box
                     sx={{
-                      position: 'absolute',
-                      width: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
+                      position: "absolute",
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
                     <CardMedia
@@ -273,24 +305,24 @@ const EmployeeEdit = () => {
                       alt="img-upload"
                       src={uploadedImage}
                       sx={{
-                        width: '100%',
-                        height: '170px',
-                        display: 'flex',
-                        borderRadius: '5px',
-                        justifyContent: 'center',
-                        objectFit: 'cover',
+                        width: "100%",
+                        height: "170px",
+                        display: "flex",
+                        borderRadius: "5px",
+                        justifyContent: "center",
+                        objectFit: "cover",
                       }}
                     />
                     <DeleteIcon
                       onClick={handleDeleteImage}
                       sx={{
-                        position: 'absolute',
-                        top: '0',
-                        right: '0',
-                        cursor: 'pointer',
-                        color: '#c33953',
-                        background: '#e6dadaf0',
-                        fontSize: '30px',
+                        position: "absolute",
+                        top: "0",
+                        right: "0",
+                        cursor: "pointer",
+                        color: "#c33953",
+                        background: "#e6dadaf0",
+                        fontSize: "30px",
                       }}
                     />
                   </Box>
@@ -298,7 +330,7 @@ const EmployeeEdit = () => {
                 {!uploadedImage && (
                   <input
                     id="file-input"
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
                     name="profile"
                     type="file"
                     accept=".jpg,.jpeg,.png"
@@ -307,27 +339,27 @@ const EmployeeEdit = () => {
                 )}
                 <label
                   style={{
-                    height: '170px',
-                    width: '100%',
-                    padding: '10px 15px',
-                    borderRadius: '6px',
-                    border: '1px solid #b0afaf',
-                    display: 'inline-block',
-                    cursor: 'pointer',
+                    height: "170px",
+                    width: "100%",
+                    padding: "10px 15px",
+                    borderRadius: "6px",
+                    border: "1px solid #b0afaf",
+                    display: "inline-block",
+                    cursor: "pointer",
                   }}
                   htmlFor="file-input"
                 >
                   <Box
                     sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      fontSize: '20px',
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      fontSize: "20px",
                     }}
                   >
-                    <BackupIcon sx={{ fontSize: '60px' }} />
+                    <BackupIcon sx={{ fontSize: "60px" }} />
                     <Typography>Choose a file or drag it here?</Typography>
                   </Box>
                 </label>
@@ -342,7 +374,7 @@ const EmployeeEdit = () => {
                   <TextField
                     {...field}
                     id="address"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -362,7 +394,7 @@ const EmployeeEdit = () => {
                     {...field}
                     type="number"
                     id="phone"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -380,12 +412,14 @@ const EmployeeEdit = () => {
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      sx={{ width: '100%' }}
+                      sx={{ width: "100%" }}
                       {...field}
                       value={field.value ? dayjs(field.value) : null}
                       shouldDisableDate={disabledDate}
                       onChange={(date) => {
-                        field.onChange(date ? dayjs(date).format('MM/DD/YYYY') : null);
+                        field.onChange(
+                          date ? dayjs(date).format("MM/DD/YYYY") : null
+                        );
                       }}
                     />
                   </LocalizationProvider>
@@ -394,7 +428,7 @@ const EmployeeEdit = () => {
             </Grid>
             <Grid item sm={6} xs={12}>
               <InputLabel>
-                Position <span style={{ color: 'red' }}>*</span>
+                Position <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="position"
@@ -415,14 +449,18 @@ const EmployeeEdit = () => {
               />
             </Grid>
           </Grid>
-          <Stack mt={3} direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2, sm: 4 }}>
-            <CommonButton onClick={() => router.push('/employee/list')}>Cancel</CommonButton>
+          <Stack
+            mt={3}
+            direction={{ xs: "column", sm: "row" }}
+            spacing={{ xs: 2, sm: 4 }}
+          >
+            <CommonButton onClick={handleCancel}>Cancel</CommonButton>
             <CommonButton text="save">Save</CommonButton>
-            <AuthDialog statusText={statusText} open={open} close={handleClose}>
-              {message}
-            </AuthDialog>
           </Stack>
         </form>
+        <AuthDialog statusText={statusText} open={open} close={handleClose}>
+          {message}
+        </AuthDialog>
       </Box>
     </>
   );

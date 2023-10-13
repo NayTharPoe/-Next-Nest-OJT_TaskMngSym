@@ -1,4 +1,4 @@
-import MainLayout from '@/layouts/MainLayout';
+import MainLayout from "@/layouts/MainLayout";
 import {
   Box,
   Grid,
@@ -10,28 +10,28 @@ import {
   Select,
   MenuItem,
   Button,
-} from '@mui/material';
-import React, { ReactElement, useState } from 'react';
-import BackupIcon from '@mui/icons-material/Backup';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useForm, Controller } from 'react-hook-form';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import palette from '@/theme/palette';
-import { DatePicker } from '@mui/x-date-pickers';
-import { useRouter } from 'next/router';
-import dayjs from 'dayjs';
-import AuthDialog from '@/components/authDialog';
-import Loading from '@/components/loading';
-import { apiClient } from '@/services/apiClient';
-import config from '@/config';
+} from "@mui/material";
+import React, { ReactElement, useState } from "react";
+import BackupIcon from "@mui/icons-material/Backup";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useForm, Controller } from "react-hook-form";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import palette from "@/theme/palette";
+import { DatePicker } from "@mui/x-date-pickers";
+import { useRouter } from "next/router";
+import dayjs from "dayjs";
+import AuthDialog from "@/components/authDialog";
+import Loading from "@/components/loading";
+import { apiClient } from "@/services/apiClient";
+import config from "@/config";
 
 const EmployeeCreate = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedPhoto, setuploadedPhoto] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [statusText, setStatusText] = useState(0);
 
   const router = useRouter();
@@ -45,26 +45,29 @@ const EmployeeCreate = () => {
   const handleClose = () => {
     setOpen(false);
     if (statusText == 200) {
-      router.push('/employee/list');
+      router.push("/employee/list");
     }
   };
 
   const disabledDate = (current: any) => {
-    const todayDate = dayjs().startOf('day');
-    const currentDate = dayjs(current).startOf('day');
+    const todayDate = dayjs().startOf("day");
+    const currentDate = dayjs(current).startOf("day");
     return currentDate.isAfter(todayDate);
   };
 
   const onSubmit = (data: any): void => {
     setIsLoading(true);
     const formData = new FormData();
-    formData.append('employeeName', data.employeeName);
-    formData.append('email', data.email);
-    formData.append('address', data.address ? data.address : '');
-    formData.append('phone', data.phone ? data.phone : '');
-    formData.append('dob', data.dob ? dayjs(data.dob).format('MM/DD/YYYY') : '');
-    formData.append('position', data.position);
-    formData.append('profile', uploadedPhoto);
+    formData.append("employeeName", data.employeeName);
+    formData.append("email", data.email);
+    formData.append("address", data.address ? data.address : "");
+    formData.append("phone", data.phone ? data.phone : "");
+    formData.append(
+      "dob",
+      data.dob ? dayjs(data.dob).format("MM/DD/YYYY") : ""
+    );
+    formData.append("position", data.position);
+    formData.append("profile", uploadedPhoto);
     apiClient
       .post(`${config.SERVER_DOMAIN}/employee/add`, formData)
       .then((res) => {
@@ -74,7 +77,7 @@ const EmployeeCreate = () => {
         setMessage(res.data?.message);
       })
       .catch((err) => {
-        if (err.code === 'ERR_NETWORK') {
+        if (err.code === "ERR_NETWORK") {
           setOpen(true);
           setIsLoading(false);
           setMessage(err.message);
@@ -101,7 +104,7 @@ const EmployeeCreate = () => {
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
-      if (file.type.match('image.*')) {
+      if (file.type.match("image.*")) {
         const reader = new FileReader();
 
         reader.onload = () => {
@@ -110,14 +113,14 @@ const EmployeeCreate = () => {
 
         reader.readAsDataURL(file);
       } else {
-        alert('Please select an image file (jpg, jpeg, png)');
+        alert("Please select an image file (jpg, jpeg, png)");
       }
     }
   };
 
   const handleFileInputChange = (e: any) => {
     const file = e.target.files[0];
-    if (file.type.match('image.*')) {
+    if (file.type.match("image.*")) {
       const reader = new FileReader();
 
       reader.onload = () => {
@@ -127,7 +130,7 @@ const EmployeeCreate = () => {
 
       reader.readAsDataURL(file);
     } else {
-      alert('Please select an image file (jpg, jpeg, png)');
+      alert("Please select an image file (jpg, jpeg, png)");
     }
   };
 
@@ -139,18 +142,26 @@ const EmployeeCreate = () => {
     return (
       <Button
         fullWidth
-        type={props.text === 'save' ? 'submit' : 'button'}
+        type={props.text === "save" ? "submit" : "button"}
         variant="contained"
         sx={{
-          padding: '10px',
-          borderRadius: '.5rem',
-          boxShadow: 'none',
-          background: `${props.text === 'save' ? palette.primary.main : palette.secondary.main}`,
+          padding: "10px",
+          borderRadius: ".5rem",
+          boxShadow: "none",
+          background: `${
+            props.text === "save"
+              ? palette.primary.main
+              : palette.secondary.main
+          }`,
           color: palette.text.primary,
-          '&:hover': {
-            backgroundColor: `${props.text === 'save' ? palette.primary.main : palette.secondary.main}`,
+          "&:hover": {
+            backgroundColor: `${
+              props.text === "save"
+                ? palette.primary.main
+                : palette.secondary.main
+            }`,
             borderColor: palette.primary.border,
-            boxShadow: 'none',
+            boxShadow: "none",
           },
         }}
         {...props}
@@ -163,23 +174,23 @@ const EmployeeCreate = () => {
   return (
     <>
       {isLoading && <Loading />}
-      <Box sx={{ width: { md: '70%', sm: '80%' }, margin: '0 auto' }}>
+      <Box sx={{ width: { md: "70%", sm: "80%" }, margin: "0 auto" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={4}>
             <Grid item md={6} sm={6} xs={12}>
               <InputLabel>
-                Name <span style={{ color: 'red' }}>*</span>
+                Name <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="employeeName"
-                rules={{ required: 'Employee name is required' }}
+                rules={{ required: "Employee name is required" }}
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     fullWidth
                     id="employeeName"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -192,18 +203,18 @@ const EmployeeCreate = () => {
             </Grid>
             <Grid item md={6} sm={6} xs={12}>
               <InputLabel>
-                Email <span style={{ color: 'red' }}>*</span>
+                Email <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="email"
-                rules={{ required: 'Email is required' }}
+                rules={{ required: "Email is required" }}
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     fullWidth
                     id="email"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -218,9 +229,9 @@ const EmployeeCreate = () => {
               <InputLabel>Profile Photo</InputLabel>
               <Box
                 sx={{
-                  position: 'relative',
-                  width: '48%',
-                  '@media (max-width: 600px)': { width: '65%' },
+                  position: "relative",
+                  width: "48%",
+                  "@media (max-width: 600px)": { width: "65%" },
                 }}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -229,12 +240,12 @@ const EmployeeCreate = () => {
                 {uploadedImage && (
                   <Box
                     sx={{
-                      position: 'absolute',
-                      width: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
+                      position: "absolute",
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
                     <CardMedia
@@ -242,24 +253,24 @@ const EmployeeCreate = () => {
                       alt="img-upload"
                       src={uploadedImage}
                       sx={{
-                        width: '100%',
-                        height: '170px',
-                        display: 'flex',
-                        borderRadius: '5px',
-                        justifyContent: 'center',
-                        objectFit: 'cover',
+                        width: "100%",
+                        height: "170px",
+                        display: "flex",
+                        borderRadius: "5px",
+                        justifyContent: "center",
+                        objectFit: "cover",
                       }}
                     />
                     <DeleteIcon
                       onClick={handleDeleteImage}
                       sx={{
-                        position: 'absolute',
-                        top: '0',
-                        right: '0',
-                        cursor: 'pointer',
-                        color: '#c33953',
-                        background: '#e6dadaf0',
-                        fontSize: '30px',
+                        position: "absolute",
+                        top: "0",
+                        right: "0",
+                        cursor: "pointer",
+                        color: "#c33953",
+                        background: "#e6dadaf0",
+                        fontSize: "30px",
                       }}
                     />
                   </Box>
@@ -267,7 +278,7 @@ const EmployeeCreate = () => {
                 {!uploadedImage && (
                   <input
                     id="file-input"
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
                     name="profile"
                     type="file"
                     accept=".jpg,.jpeg,.png"
@@ -276,27 +287,27 @@ const EmployeeCreate = () => {
                 )}
                 <label
                   style={{
-                    height: '170px',
-                    width: '100%',
-                    padding: '10px 15px',
-                    borderRadius: '6px',
-                    border: '1px solid #b0afaf',
-                    display: 'inline-block',
-                    cursor: 'pointer',
+                    height: "170px",
+                    width: "100%",
+                    padding: "10px 15px",
+                    borderRadius: "6px",
+                    border: "1px solid #b0afaf",
+                    display: "inline-block",
+                    cursor: "pointer",
                   }}
                   htmlFor="file-input"
                 >
                   <Box
                     sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      fontSize: '20px',
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      fontSize: "20px",
                     }}
                   >
-                    <BackupIcon sx={{ fontSize: '60px' }} />
+                    <BackupIcon sx={{ fontSize: "60px" }} />
                     <Typography>Choose a file or drag it here?</Typography>
                   </Box>
                 </label>
@@ -311,7 +322,7 @@ const EmployeeCreate = () => {
                   <TextField
                     {...field}
                     id="address"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -331,7 +342,7 @@ const EmployeeCreate = () => {
                     {...field}
                     id="phone"
                     type="number"
-                    value={field.value || ''}
+                    value={field.value || ""}
                     onChange={(e) => {
                       field.onChange(e.target.value);
                     }}
@@ -349,7 +360,7 @@ const EmployeeCreate = () => {
                 render={({ field }) => (
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      sx={{ width: '100%' }}
+                      sx={{ width: "100%" }}
                       {...field}
                       value={field.value || null}
                       shouldDisableDate={disabledDate}
@@ -363,7 +374,7 @@ const EmployeeCreate = () => {
             </Grid>
             <Grid item sm={6} xs={12}>
               <InputLabel>
-                Position <span style={{ color: 'red' }}>*</span>
+                Position <span style={{ color: "red" }}>*</span>
               </InputLabel>
               <Controller
                 name="position"
@@ -383,15 +394,22 @@ const EmployeeCreate = () => {
                 )}
               />
             </Grid>
-          </Grid>
-          <Stack mt={3} direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2, sm: 4 }}>
-            <CommonButton onClick={() => router.push('/employee/list')}>Cancel</CommonButton>
-            <CommonButton text="save">Save</CommonButton>
-            <AuthDialog statusText={statusText} open={open} close={handleClose}>
-              {message}
-            </AuthDialog>
+          </Grid>{" "}
+          <Stack
+            mt={3}
+            direction={{ xs: "column", sm: "row" }}
+            spacing={{ xs: 2, sm: 4 }}
+          >
+            {" "}
+            <CommonButton onClick={() => router.push("/employee/list")}>
+              Cancel
+            </CommonButton>
+            <CommonButton text="save">Save</CommonButton>{" "}
           </Stack>
         </form>
+        <AuthDialog statusText={statusText} open={open} close={handleClose}>
+          {message}{" "}
+        </AuthDialog>
       </Box>
     </>
   );

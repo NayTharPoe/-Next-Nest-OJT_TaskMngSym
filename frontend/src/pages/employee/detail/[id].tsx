@@ -26,6 +26,15 @@ const EmployeeList = () => {
 
   const [employeeData, setEmployeeData] = useState<any>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [userPosition, setUserPosition] = useState<any>("");
+
+  useEffect(() => {
+    const loginUser = localStorage.getItem("user");
+    if (loginUser) {
+      const { position } = JSON.parse(loginUser);
+      setUserPosition(position);
+    }
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -38,6 +47,14 @@ const EmployeeList = () => {
         });
     }
   }, [router.query.id]);
+
+  const handleCancel = () => {
+    if (userPosition == 0) {
+      router.push("/");
+    } else {
+      router.push("/employee/list");
+    }
+  };
 
   return (
     <>
@@ -199,10 +216,7 @@ const EmployeeList = () => {
                 >
                   Edit
                 </CardBtn>
-                <CardBtn
-                  onClick={() => router.push(`/employee/list`)}
-                  text="Cancel"
-                >
+                <CardBtn onClick={handleCancel} text="Cancel">
                   Cancel
                 </CardBtn>
               </Stack>
