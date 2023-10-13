@@ -41,6 +41,8 @@ const EmployeeList = () => {
   const [keyword, setKeyword] = useState("");
   const [searchErr, setSearchErr] = useState("");
 
+  const router = useRouter();
+
   useEffect(() => {
     apiClient
       .get(
@@ -57,7 +59,7 @@ const EmployeeList = () => {
           setEmployeeList([]);
         }
       });
-  }, [keyword]);
+  }, [keyword, page, limit]);
 
   useEffect(() => {
     apiClient
@@ -75,9 +77,7 @@ const EmployeeList = () => {
           setEmployeeList([]);
         }
       });
-  }, [page, limit, keyword]);
-
-  const router = useRouter();
+  }, [router, page, limit]);
 
   const handleDelete = () => {
     apiClient.delete(`${config.SERVER_DOMAIN}/employee/${deleteId}`);
@@ -145,6 +145,8 @@ const EmployeeList = () => {
     const currentPathname = router.pathname;
     const currentQuery = { ...router.query };
     currentQuery.limit = newLimit.toString();
+    currentQuery.page = "1";
+    setPage(1);
 
     router.push({
       pathname: currentPathname,
@@ -202,11 +204,11 @@ const EmployeeList = () => {
               <Card
                 sx={{
                   background: "#fbfbfb",
-                  width: "250px",
+                  width: "300px",
                   borderRadius: "20px",
-                  "@media (min-width: 320px)": {
-                    width: "250px",
-                  },
+                  // "@media (min-width: 320px)": {
+                  //   width: "255px",
+                  // },
                 }}
               >
                 <div
