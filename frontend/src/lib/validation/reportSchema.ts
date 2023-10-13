@@ -19,8 +19,7 @@ export const ReportSchema = yup.object().shape({
       hours: yup
         .number()
         .typeError('Hours must be a number')
-        .min(0, 'hours must be greater than or equal to 0')
-        .max(8, 'hours must be less than or equal to 8')
+        .min(8, 'hours must be greater than or equal to 8')
         .required('Hours is required'),
     })
   ),
