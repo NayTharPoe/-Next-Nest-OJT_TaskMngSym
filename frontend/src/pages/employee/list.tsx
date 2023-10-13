@@ -77,7 +77,7 @@ const EmployeeList = () => {
           setEmployeeList([]);
         }
       });
-  }, [router, page, limit]);
+  }, [keyword, page, limit]);
 
   const handleDelete = () => {
     apiClient.delete(`${config.SERVER_DOMAIN}/employee/${deleteId}`);
